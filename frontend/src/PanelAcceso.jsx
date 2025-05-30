@@ -50,13 +50,13 @@ const PanelAcceso = () => {
             {dropdownOpen && (
               <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in">
                 <a
-                  href="#"
+                  href="/procesarpua"
                   className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                 >
                   Crear PUA
                 </a>
                 <a
-                  href="#"
+                  href="/puaversion"
                   className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                 >
                   Consultar PUA

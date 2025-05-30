@@ -1,6 +1,952 @@
-import React from "react";
+import React, { useState } from "react";
+
+const DatosPuaForm = () => (
+  <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Unidad de aprendizaje:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Investigación de operaciones I" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Creditos:</label>
+      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Horas totales:</label>
+      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Horas teoricas:</label>
+      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="2" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Horas practicas:</label>
+      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="1" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Area:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Ciencias de la Ingeniería" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Núcleo:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Sustantivo" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Tipo:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Obligatorio" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Art. 57 RGA:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="NO" />
+    </div>
+    <div>
+      <label className="block font-semibold text-gray-700 mb-1">Plan de Estudio:</label>
+      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="2009" />
+    </div>
+  </form>
+);
+
+const CompetenciasPerfilEgresoTabs = () => {
+  const [tab, setTab] = useState(0);
+  // Genéricas
+  const genericas = [
+    "Conocimiento de la lengua extranjera",
+    "La utilización de las TIC’s en el ámbito profesional",
+    "Habilidades de investigación",
+    "Habilidades cognitivas",
+    "Capacidad individual",
+    "Capacidades metodológicas",
+    "Capacidad de organización",
+    "Sensibilidad para temas medioambientales",
+    "Destrezas sociales"
+  ];
+  const [selectedGenericas, setSelectedGenericas] = useState([0, 1, 2]);
+
+  // Específicas
+  const especificas = [
+    "Diseñar, implantar y operar soluciones tecnológicas controladas mediante sistemas computacionales.",
+    "Diseñar, y construir sistemas y componentes de software aplicando las técnicas de los sistemas inteligentes en cualquier ámbito de aplicación.",
+    "Esto es solo una prueba"
+  ];
+  const [selectedEspecificas, setSelectedEspecificas] = useState([0, 1, 2]);
+
+  // Genéricas handlers
+  const handleCheck = idx => {
+    setSelectedGenericas(selectedGenericas.includes(idx)
+      ? selectedGenericas.filter(i => i !== idx)
+      : [...selectedGenericas, idx]);
+  };
+  const handleRemove = idx => {
+    setSelectedGenericas(selectedGenericas.filter(i => i !== idx));
+  };
+
+  // Específicas handlers
+  const handleCheckEsp = idx => {
+    setSelectedEspecificas(selectedEspecificas.includes(idx)
+      ? selectedEspecificas.filter(i => i !== idx)
+      : [...selectedEspecificas, idx]);
+  };
+  const handleRemoveEsp = idx => {
+    setSelectedEspecificas(selectedEspecificas.filter(i => i !== idx));
+  };
+
+  return (
+    <div>
+      <div className="flex border-b mb-4">
+        <button onClick={() => setTab(0)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Genéricas</button>
+        <button onClick={() => setTab(1)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Específicas</button>
+        <button onClick={() => setTab(2)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Competencias de Formación y Unidad</button>
+      </div>
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Genéricas */}
+        {tab === 0 && (
+          <>
+            <div className="flex-1">
+              <div className="bg-white border rounded p-2">
+                {genericas.map((g, idx) => (
+                  <label key={g} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
+                    <input type="checkbox" checked={selectedGenericas.includes(idx)} onChange={() => handleCheck(idx)} />
+                    <span className="text-gray-800">{g}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center">
+              <button type="button" className="bg-blue-600 text-white rounded px-3 py-2 shadow hover:bg-blue-700">
+                <span className="fa fa-arrow-right" />
+              </button>
+            </div>
+            <div className="flex-1">
+              <div className="bg-white border rounded p-2 min-h-[120px]">
+                {selectedGenericas.map(idx => (
+                  <div key={genericas[idx]} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
+                    <span className="text-gray-800">{genericas[idx]}</span>
+                    <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemove(idx)}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        {/* Específicas */}
+        {tab === 1 && (
+          <>
+            <div className="flex-1">
+              <div className="bg-white border rounded p-2">
+                {especificas.map((e, idx) => (
+                  <label key={e} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
+                    <input type="checkbox" checked={selectedEspecificas.includes(idx)} onChange={() => handleCheckEsp(idx)} />
+                    <span className="text-gray-800">{e}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center">
+              <button type="button" className="bg-blue-600 text-white rounded px-3 py-2 shadow hover:bg-blue-700">
+                <span className="fa fa-arrow-right" />
+              </button>
+            </div>
+            <div className="flex-1">
+              <div className="bg-white border rounded p-2 min-h-[120px]">
+                {selectedEspecificas.map(idx => (
+                  <div key={especificas[idx]} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
+                    <span className="text-gray-800">{especificas[idx]}</span>
+                    <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemoveEsp(idx)}>
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        {/* Competencias de Formación y Unidad */}
+        {tab === 2 && (
+          <form className="w-full flex flex-col gap-4">
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Competencias del área de formación</label>
+              <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" placeholder="" />
+            </div>
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Competencia de Unidad de Aprendizaje</label>
+              <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" placeholder="" />
+            </div>
+            <div>
+              <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 mt-2 flex items-center gap-2 shadow hover:bg-blue-700">
+                <span className="fa fa-check" />
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+      {/* Eliminados los botones de la pestaña de Competencias del perfil de Egreso */}
+    </div>
+  );
+};
+
+const BibliografiaSugerida = () => {
+  const librosDisponibles = [
+    {
+      titulo: "BIG JAVA Early Objects",
+      autores: "Cay Horstmann",
+      editorial: "Wiley"
+    },
+    {
+      titulo: "Cálculo",
+      autores: "Ron Larson, Bruce H. Edwards",
+      editorial: "McGraw Hill"
+    }
+  ];
+  const [libroSeleccionado, setLibroSeleccionado] = useState(librosDisponibles[0].titulo);
+  const [tipo, setTipo] = useState("Básica");
+  const [agregados, setAgregados] = useState([
+    { ...librosDisponibles[0], tipo: "Básica" },
+    { ...librosDisponibles[0], tipo: "Básica" },
+    { ...librosDisponibles[1], tipo: "Básica" }
+  ]);
+
+  const handleAgregar = e => {
+    e.preventDefault();
+    const libro = librosDisponibles.find(l => l.titulo === libroSeleccionado);
+    if (!libro) return;
+    setAgregados([...agregados, { ...libro, tipo }]);
+  };
+  const handleEliminar = idx => {
+    setAgregados(agregados.filter((_, i) => i !== idx));
+  };
+
+  return (
+    <div className="border rounded bg-gray-50 p-4">
+      <form className="flex flex-col md:flex-row gap-4 items-start" onSubmit={handleAgregar}>
+        <div className="flex flex-col gap-2 min-w-[200px]">
+          <select
+            className="border rounded px-2 py-1"
+            value={libroSeleccionado}
+            onChange={e => setLibroSeleccionado(e.target.value)}
+          >
+            {librosDisponibles.map(l => (
+              <option key={l.titulo} value={l.titulo}>{l.titulo}</option>
+            ))}
+          </select>
+          <div className="flex flex-col gap-1 mt-2">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="tipo" value="Básica" checked={tipo === "Básica"} onChange={() => setTipo("Básica")}/>
+              Básica
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" name="tipo" value="Complementaria" checked={tipo === "Complementaria"} onChange={() => setTipo("Complementaria")}/>
+              Complementaria
+            </label>
+          </div>
+        </div>
+        <button type="submit" className="bg-blue-700 text-white rounded px-3 py-2 mt-6 md:mt-0 flex items-center justify-center h-10 w-10 shadow hover:bg-blue-800">
+          <span className="fa fa-arrow-right" />
+        </button>
+        <div className="flex-1 w-full">
+          <div className="bg-white border rounded p-2 min-h-[120px]">
+            {agregados.map((l, idx) => (
+              <div key={idx} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0 gap-2">
+                <div>
+                  <div className="font-semibold text-gray-800 leading-tight">{l.titulo}</div>
+                  <div className="text-sm text-gray-600 italic">{l.autores}{l.editorial ? `, ${l.editorial}` : ''}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2 py-1 rounded-full bg-gray-400 text-white font-semibold`}>{l.tipo}</span>
+                  <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleEliminar(idx)}>
+                    ×
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+const ComiteCurricular = () => {
+  // Obtener la fecha actual en formato d/m/yyyy
+  const today = new Date();
+  const fechaActual = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+  return (
+    <div className="border rounded bg-gray-50 p-4">
+      <div className="overflow-x-auto">
+        <table className="w-full border text-sm">
+          <tbody>
+            <tr className="align-top">
+              <td className="border px-2 py-2 w-1/2 font-medium">Nombre y firma de los docentes que participaron en su elaboración</td>
+              <td className="border px-2 py-2">
+                <select className="w-full border rounded px-2 py-1 mb-2">
+                  <option>Seleccione...</option>
+                </select>
+                <button className="border rounded bg-gray-200 px-3 py-1 text-sm">Guardar</button>
+              </td>
+            </tr>
+            <tr className="align-top">
+              <td className="border px-2 py-2 font-medium">Nombre y firma del Presidente y/o Secretario de la Academia; o en su caso, del responsable del comité Curricular</td>
+              <td className="border px-2 py-2">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Presidente:</span>
+                    <input className="border rounded px-2 py-1 flex-1 bg-gray-100" value="Mtro. Enrique Perera Abreu" disabled />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Secretario:</span>
+                    <input className="border rounded px-2 py-1 flex-1 bg-gray-100" value="Mtra Diana Concepción Mex Alvarez" disabled />
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className="border px-2 py-2 font-medium">Nombre y firma del coordinador de carrera</td>
+              <td className="border px-2 py-2">
+                <input className="border rounded px-2 py-1 w-full bg-gray-100" value="Mtra Nancy Geogina Ortiz Cuevas" disabled />
+              </td>
+            </tr>
+            <tr>
+              <td className="border px-2 py-2 font-medium">Nombre y firma del Secretario Académico</td>
+              <td className="border px-2 py-2">
+                <input className="border rounded px-2 py-1 w-full bg-gray-100" value="M. en C Carlos Alfonso Chavez Arias" disabled />
+              </td>
+            </tr>
+            <tr>
+              <td className="border px-2 py-2 font-medium">Nombre y firma del Director de la Facultad o Escuela</td>
+              <td className="border px-2 py-2">
+                <input className="border rounded px-2 py-1 w-full bg-gray-100" value="M. en C. Guadalupe Manuel Estrada Segovia" disabled />
+              </td>
+            </tr>
+            <tr>
+              <td className="border px-2 py-2 font-medium">Fecha de elaboración o modificación</td>
+              <td className="border px-2 py-2">
+                <input className="border rounded px-2 py-1 w-full bg-gray-100" value={fechaActual} disabled />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const PerfilAcademicoModal = ({ open, onClose, onAdd, titulo }) => {
+  const [perfil, setPerfil] = useState("");
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in">
+        <div className="flex items-center justify-between border-b px-4 py-2">
+          <span className="font-semibold">{titulo}</span>
+          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+        </div>
+        <div className="p-4">
+          <label className="block font-semibold mb-1">Perfil:</label>
+          <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" value={perfil} onChange={e => setPerfil(e.target.value)} />
+        </div>
+        <div className="flex justify-end gap-2 border-t px-4 py-2">
+          <button className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
+          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd(perfil); setPerfil(""); onClose(); }}>Agregar</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PerfilDocenteTabs = () => {
+  const [tab, setTab] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(0); // 0: Académicos, 1: Profesionales, 2: Docentes
+  const [perfilesAcademicos, setPerfilesAcademicos] = useState([]);
+  const [perfilesProfesionales, setPerfilesProfesionales] = useState([]);
+  const [perfilesDocentes, setPerfilesDocentes] = useState([]);
+
+  const handleAddPerfil = (perfil) => {
+    if (!perfil.trim()) return;
+    if (modalType === 0) setPerfilesAcademicos([...perfilesAcademicos, perfil]);
+    else if (modalType === 1) setPerfilesProfesionales([...perfilesProfesionales, perfil]);
+    else if (modalType === 2) setPerfilesDocentes([...perfilesDocentes, perfil]);
+  };
+
+  return (
+    <div>
+      <PerfilAcademicoModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onAdd={handleAddPerfil}
+        titulo={modalType === 0 ? 'Perfil Académico...' : modalType === 1 ? 'Perfil Profesional...' : 'Perfil Docente...'}
+      />
+      <div className="flex border-b mb-4">
+        <button onClick={() => setTab(0)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Académicos</button>
+        <button onClick={() => setTab(1)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Profesionales</button>
+        <button onClick={() => setTab(2)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Docentes</button>
+      </div>
+      <div className="mt-4">
+        {tab === 0 && (
+          <>
+            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(0); setModalOpen(true); }}>Nuevo perfil...</button>
+            <div className="space-y-2">
+              {perfilesAcademicos.map((perfil, idx) => (
+                <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
+                  <span>{perfil}</span>
+                  <button
+                    className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
+                    onClick={() => setPerfilesAcademicos(perfilesAcademicos.filter((_, i) => i !== idx))}
+                    title="Eliminar"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {tab === 1 && (
+          <>
+            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(1); setModalOpen(true); }}>Nuevo perfil...</button>
+            <div className="space-y-2">
+              {perfilesProfesionales.map((perfil, idx) => (
+                <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
+                  <span>{perfil}</span>
+                  <button
+                    className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
+                    onClick={() => setPerfilesProfesionales(perfilesProfesionales.filter((_, i) => i !== idx))}
+                    title="Eliminar"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {tab === 2 && (
+          <>
+            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(2); setModalOpen(true); }}>Nuevo perfil...</button>
+            <div className="space-y-2">
+              {perfilesDocentes.map((perfil, idx) => (
+                <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
+                  <span>{perfil}</span>
+                  <button
+                    className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
+                    onClick={() => setPerfilesDocentes(perfilesDocentes.filter((_, i) => i !== idx))}
+                    title="Eliminar"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const EvaluacionFinal = () => {
+  const [instrumentos, setInstrumentos] = useState([
+    { nombre: '', porcentaje: '' },
+    { nombre: '', porcentaje: '' },
+    { nombre: '', porcentaje: '' },
+    { nombre: '', porcentaje: '' },
+  ]);
+
+  const handleChange = (idx, field, value) => {
+    setInstrumentos(instrumentos.map((ins, i) => i === idx ? { ...ins, [field]: value } : ins));
+  };
+
+  const handleGuardar = e => {
+    e.preventDefault();
+    // Aquí podrías manejar el guardado
+  };
+
+  return (
+    <form className="space-y-3" onSubmit={handleGuardar}>
+      {instrumentos.map((ins, idx) => (
+        <div key={idx} className="flex gap-2 items-center">
+          <input
+            type="text"
+            className="flex-1 border rounded px-3 py-2 text-sm"
+            placeholder="Instrumentos de evaluacion final"
+            value={ins.nombre}
+            onChange={e => handleChange(idx, 'nombre', e.target.value)}
+          />
+          <div className="flex items-center border rounded overflow-hidden w-32">
+            <input
+              type="number"
+              className="w-full px-2 py-2 text-sm border-0 focus:ring-0 focus:outline-none"
+              placeholder=""
+              value={ins.porcentaje}
+              onChange={e => handleChange(idx, 'porcentaje', e.target.value)}
+              min="0"
+              max="100"
+            />
+            <span className="bg-gray-100 px-2 py-2 text-gray-600 text-xs border-l">%</span>
+          </div>
+        </div>
+      ))}
+      <div className="flex justify-end">
+        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+      </div>
+    </form>
+  );
+};
+
+const EvaluacionPorCompetencias = () => {
+  const [instrumentos, setInstrumentos] = useState([
+    { nombre: 'Exades', porcentaje: '40' },
+    { nombre: '', porcentaje: '' },
+    { nombre: '', porcentaje: '' },
+    { nombre: '', porcentaje: '' },
+  ]);
+
+  const handleChange = (idx, field, value) => {
+    setInstrumentos(instrumentos.map((ins, i) => i === idx ? { ...ins, [field]: value } : ins));
+  };
+
+  const handleGuardar = e => {
+    e.preventDefault();
+    // Aquí podrías manejar el guardado
+  };
+
+  return (
+    <form className="space-y-3" onSubmit={handleGuardar}>
+      {instrumentos.map((ins, idx) => (
+        <div key={idx} className="flex gap-2 items-center">
+          <input
+            type="text"
+            className={`flex-1 border rounded px-3 py-2 text-sm${idx === 0 ? ' font-semibold' : ''}`}
+            placeholder="Instrumentos de evaluacion por Competencias"
+            value={ins.nombre}
+            onChange={e => handleChange(idx, 'nombre', e.target.value)}
+          />
+          <div className="flex items-center border rounded overflow-hidden w-32">
+            <input
+              type="number"
+              className="w-full px-2 py-2 text-sm border-0 focus:ring-0 focus:outline-none"
+              placeholder=""
+              value={ins.porcentaje}
+              onChange={e => handleChange(idx, 'porcentaje', e.target.value)}
+              min="0"
+              max="100"
+            />
+            <span className="bg-gray-100 px-2 py-2 text-gray-600 text-xs border-l">%</span>
+          </div>
+        </div>
+      ))}
+      <div className="flex justify-end">
+        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+      </div>
+    </form>
+  );
+};
+
+const accordionData = [
+  { title: "Datos del pua", content: <DatosPuaForm /> },
+  { title: "Competencias del Perfil de Egreso", content: <CompetenciasPerfilEgresoTabs /> },
+  { title: "Bibliografía sugerida", content: <BibliografiaSugerida /> },
+  { title: "Comité Curricular", content: <ComiteCurricular /> },
+  { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
+  { title: "Evaluación Final", content: <EvaluacionFinal /> },
+  { title: "Evaluación Por Competencias", content: <EvaluacionPorCompetencias /> },
+];
+
+function Accordion() {
+  const [openIndex, setOpenIndex] = useState(null);
+  return (
+    <div className="space-y-2">
+      {accordionData.map((item, idx) => (
+        <div key={item.title}>
+          <button
+            type="button"
+            className={`w-full text-left px-4 py-2 border rounded bg-gray-50 hover:bg-gray-100 focus:outline-none font-medium text-gray-800 ${openIndex === idx ? 'border-blue-400 bg-blue-50 text-blue-900' : ''}`}
+            onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
+          >
+            {item.title}
+          </button>
+          {openIndex === idx && (
+            <div className="p-4 border border-t-0 rounded-b bg-white animate-fade-in text-gray-800">
+              {item.content}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Modal para nuevo tema
+const NuevoTemaModal = ({ open, onClose, onAdd, numero }) => {
+  const [tema, setTema] = useState("");
+  const [num, setNum] = useState(numero || 1);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
+        <div className="flex items-center justify-between border-b px-4 py-2">
+          <span className="font-semibold">Nuevo tema...</span>
+          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+        </div>
+        <div className="p-4">
+          <div className="flex gap-4 items-center">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">Número</label>
+              <input type="number" className="border rounded px-2 py-1 w-16 text-black" value={num} min={1} onChange={e => setNum(e.target.value)} />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1 text-black">Tema</label>
+              <input type="text" className="border rounded px-2 py-1 w-full text-black" value={tema} onChange={e => setTema(e.target.value)} />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 border-t px-4 py-2">
+          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ num, tema }); setTema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal para nuevo subtema
+const NuevoSubtemaModal = ({ open, onClose, onAdd, numero }) => {
+  const [subtema, setSubtema] = useState("");
+  const [num, setNum] = useState(numero || 1);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
+        <div className="flex items-center justify-between border-b px-4 py-2">
+          <span className="font-semibold">Nuevo subtema...</span>
+          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+        </div>
+        <div className="p-4">
+          <div className="flex gap-4 items-center">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">Número</label>
+              <input type="number" className="border rounded px-2 py-1 w-16 text-black" value={num} min={1} onChange={e => setNum(e.target.value)} />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1 text-black">Subtema</label>
+              <input type="text" className="border rounded px-2 py-1 w-full text-black" value={subtema} onChange={e => setSubtema(e.target.value)} />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 border-t px-4 py-2">
+          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ num, subtema }); setSubtema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Panel de Subcompetencia como componente separado
+const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [activeSubTab, setActiveSubTab] = useState(0);
+  // Estado para modal y lista de temas
+  const [modalTemaOpen, setModalTemaOpen] = useState(false);
+  const [modalSubtemaOpen, setModalSubtemaOpen] = useState(false);
+  const [temas, setTemas] = useState([]);
+  const [subtemasByTema, setSubtemasByTema] = useState({});
+  const [mostrarSubtemas, setMostrarSubtemas] = useState(null);
+  const [modalActividadOpen, setModalActividadOpen] = useState(false);
+  const [actividades, setActividades] = useState([]);
+  // Bibliografía
+  const [modalBiblioOpen, setModalBiblioOpen] = useState(false);
+  const [biblios, setBiblios] = useState([]);
+  const bibliosEjemplo = [
+    "Fundamentos de programación - Luis Joyanes Aguilar",
+    "Cálculo - Ron Larson, Bruce H. Edwards",
+    "BIG JAVA Early Objects - Cay Horstmann",
+    "Matemáticas avanzadas para ingeniería - Dennis G. Zill",
+    "Física universitaria - Sears, Zemansky",
+    "Introducción a la estadística - Walpole, Myers"
+  ];
+
+  const handleAgregarSubtema = (temaIdx, subtema) => {
+    setSubtemasByTema(prev => ({
+      ...prev,
+      [temaIdx]: prev[temaIdx] ? [...prev[temaIdx], subtema] : [subtema]
+    }));
+  };
+
+  const handleEliminarSubtema = (temaIdx, subtemaIdx) => {
+    setSubtemasByTema(prev => ({
+      ...prev,
+      [temaIdx]: prev[temaIdx].filter((_, i) => i !== subtemaIdx)
+    }));
+  };
+
+  return (
+    <div className="border rounded bg-white shadow">
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <span className="font-semibold text-gray-700">{nombre}</span>
+        <button
+          type="button"
+          className="text-gray-400 hover:text-red-600 ml-4 text-lg font-bold px-2 py-0.5"
+          onClick={onRemove}
+          title="Eliminar"
+        >
+          ×
+        </button>
+      </div>
+      {/* Tabs */}
+      <div className="border-b flex text-sm bg-white pl-8">
+        <button
+          className={`px-6 py-2 border-b-2 bg-white ${activeTab === 0 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
+          style={{ backgroundColor: 'white' }}
+          onClick={() => setActiveTab(0)}
+        >
+          Información
+        </button>
+        <button
+          className={`px-6 py-2 border-b-2 bg-white ${activeTab === 1 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
+          style={{ backgroundColor: 'white' }}
+          onClick={() => setActiveTab(1)}
+        >
+          Temas, Actividades y Bibliografía
+        </button>
+        <button
+          className={`px-6 py-2 border-b-2 bg-white ${activeTab === 2 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
+          style={{ backgroundColor: 'white' }}
+          onClick={() => setActiveTab(2)}
+        >
+          Evaluación, Ambientes y Materiales
+        </button>
+      </div>
+      {/* Tab Content */}
+      {activeTab === 0 && (
+        <div className="p-4">
+          <label className="block font-semibold mb-1 text-blue-900">Descripción de la Subcompetencia:</label>
+          <textarea className="w-full border rounded px-2 py-2 min-h-[60px] mb-4 text-gray-800 bg-white" placeholder="" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-blue-900">Sesiones:</label>
+              <input type="number" className="w-full border rounded px-2 py-1 text-gray-800 bg-white" defaultValue={0} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-blue-900">Ponderacion:</label>
+              <input type="number" className="w-full border rounded px-2 py-1 text-gray-800 bg-white" defaultValue={0} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-blue-900">Número de Subcompetencia:</label>
+              <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100 text-gray-800" value={idx+1} disabled />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-blue-900">Parcial:</label>
+              <select className="w-full border rounded px-2 py-1 text-gray-800 bg-white">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button type="button" className="text-green-600 text-2xl"><span className="fa fa-check" /></button>
+          </div>
+        </div>
+      )}
+      {activeTab === 1 && (
+        <div className="p-4 flex">
+          {/* Subtabs verticales */}
+          <div className="flex flex-col border rounded mr-4 min-w-[160px] bg-white pl-4">
+            <button
+              className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 0 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 0 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(0)}
+            >
+              Temas
+            </button>
+            <button
+              className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 1 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 1 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(1)}
+            >
+              Actividades
+            </button>
+            <button
+              className={`px-4 py-2 text-left bg-white ${activeSubTab === 2 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 2 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(2)}
+            >
+              Bibliografía
+            </button>
+          </div>
+          <div className="flex-1">
+            <NuevoTemaModal
+              open={modalTemaOpen}
+              onClose={() => setModalTemaOpen(false)}
+              onAdd={nuevo => setTemas([...temas, nuevo])}
+              numero={temas.length + 1}
+            />
+            <NuevoSubtemaModal
+              open={modalSubtemaOpen !== false && modalSubtemaOpen !== null}
+              onClose={() => setModalSubtemaOpen(false)}
+              onAdd={nuevo => { handleAgregarSubtema(modalSubtemaOpen, nuevo); setModalSubtemaOpen(false); }}
+              numero={subtemasByTema[modalSubtemaOpen]?.length + 1 || 1}
+            />
+            <NuevaBibliografiaModal
+              open={modalBiblioOpen}
+              onClose={() => setModalBiblioOpen(false)}
+              onAdd={b => setBiblios([...biblios, b])}
+              ejemplos={bibliosEjemplo}
+            />
+            <div className="flex justify-between items-center mb-2">
+              {activeSubTab === 0 && <button className="border px-2 py-1 rounded text-xs" onClick={() => setModalTemaOpen(true)}>Nuevo tema...</button>}
+              {activeSubTab === 2 && <button className="border px-2 py-1 rounded text-xs" onClick={() => setModalBiblioOpen(true)}>Nueva bibliografía...</button>}
+            </div>
+            {/* Placeholder de contenido */}
+            {activeSubTab === 0 && temas.length === 0 && (
+              <div className="border rounded bg-gray-50 p-4 text-gray-500 text-sm">
+                Seleccione una opción del menú lateral.
+              </div>
+            )}
+            {activeSubTab === 0 && temas.length > 0 && (
+              <table className="w-full border text-black text-sm bg-white">
+                <tbody>
+                  {temas.map((t, i) => (
+                    <React.Fragment key={i}>
+                      <tr className="border-b last:border-b-0">
+                        <td className="border px-2 py-1 w-10 text-center align-middle text-black">{t.num}</td>
+                        <td className="border px-2 py-1 align-middle text-black">{t.tema}</td>
+                        <td className="border px-2 py-1 align-middle w-1 whitespace-nowrap">
+                          <button className="text-gray-400 hover:text-red-600 text-base px-2" title="Eliminar" onClick={() => setTemas(temas.filter((_, idx) => idx !== i))}>×</button>
+                        </td>
+                        <td className="border px-2 py-1 align-middle w-1 whitespace-nowrap">
+                          <button className="border px-2 py-1 rounded text-xs mr-1 text-white" onClick={() => setModalSubtemaOpen(i)}>Agregar Subtema</button>
+                          <button className="border px-2 py-1 rounded text-xs text-white" onClick={() => setMostrarSubtemas(mostrarSubtemas === i ? null : i)}>Mostrar subtemas</button>
+                        </td>
+                      </tr>
+                      {mostrarSubtemas === i && subtemasByTema[i] && (
+                        <tr>
+                          <td colSpan={4} className="p-2 bg-gray-50">
+                            <div className="flex items-center border rounded p-2 bg-white">
+                              <ul className="flex-1">
+                                {subtemasByTema[i].map((s, j) => (
+                                  <li key={j} className="flex items-center justify-between text-black">
+                                    <span>{s.num}. {s.subtema}</span>
+                                    <button className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleEliminarSubtema(i, j)}>×</button>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {activeSubTab === 1 && (
+              <div>
+                <button className="border px-2 py-1 rounded text-xs mb-2 text-black" onClick={() => setModalActividadOpen(true)}>Nueva actividad...</button>
+                <table className="w-full border text-black text-sm bg-white">
+                  <thead>
+                    <tr>
+                      <th className="border px-2 py-1 font-semibold text-center">Alumno</th>
+                      <th className="border px-2 py-1 font-semibold text-center">Docente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Aquí se mostrarán las actividades capturadas */}
+                    {actividades.length === 0 && (
+                      <tr>
+                        <td className="border px-2 py-4 text-center" colSpan={2}></td>
+                      </tr>
+                    )}
+                    {actividades.map((a, idx) => (
+                      <tr key={idx}>
+                        <td className="border px-2 py-1">{a.alumno}</td>
+                        <td className="border px-2 py-1">{a.docente}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <NuevoActividadModal
+                  open={modalActividadOpen}
+                  onClose={() => setModalActividadOpen(false)}
+                  onAdd={act => setActividades([...actividades, act])}
+                />
+              </div>
+            )}
+            {activeSubTab === 2 && (
+              <div>
+                {biblios.length === 0 ? (
+                  <div className="border rounded bg-gray-50 p-4 text-gray-500 text-sm">No hay bibliografía agregada.</div>
+                ) : (
+                  <ul className="divide-y divide-gray-200 bg-white rounded border">
+                    {biblios.map((b, i) => (
+                      <li key={i} className="flex items-center justify-between px-3 py-2 text-black">
+                        <span>{b}</span>
+                        <button className="text-gray-400 hover:text-red-600 ml-2" onClick={() => setBiblios(biblios.filter((_, idx) => idx !== i))}>×</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {activeTab === 2 && (
+        <div className="p-4 flex">
+          {/* Subtabs verticales para Evaluación, Ambientes y Materiales */}
+          <div className="flex flex-col border rounded mr-4 min-w-[220px] bg-white pl-4">
+            <button
+              className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 0 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 0 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(0)}
+            >
+              Criterios
+            </button>
+            <button
+              className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 1 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 1 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(1)}
+            >
+              Evidencias
+            </button>
+            <button
+              className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 2 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 2 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(2)}
+            >
+              Ambiente de trabajo o aprendizaje
+            </button>
+            <button
+              className={`px-4 py-2 text-left bg-white ${activeSubTab === 3 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
+              style={{ backgroundColor: activeSubTab === 3 ? '#EFF6FF' : 'white' }}
+              onClick={() => setActiveSubTab(3)}
+            >
+              Materiales y recursos didácticos
+            </button>
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-2">
+              {activeSubTab === 0 && <button className="border px-2 py-1 rounded text-xs">Nuevo criterio</button>}
+              {activeSubTab === 1 && <button className="border px-2 py-1 rounded text-xs">Nueva evidencia</button>}
+              {activeSubTab === 2 && <button className="border px-2 py-1 rounded text-xs">Nuevo ambiente</button>}
+              {activeSubTab === 3 && <button className="border px-2 py-1 rounded text-xs">Nuevo material</button>}
+            </div>
+            {/* Placeholder de contenido */}
+            <div className="border rounded bg-gray-50 p-4 text-gray-500 text-sm">Seleccione una opción del menú lateral.</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProcesarPua = () => {
+  const [subcompetencias, setSubcompetencias] = useState([]);
+  const handleAgregarSubcompetencia = () => {
+    setSubcompetencias([...subcompetencias, `Subcompetencia ${subcompetencias.length + 1}`]);
+  };
+
   return (
     <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100">
       {/* Header */}
@@ -26,8 +972,8 @@ const ProcesarPua = () => {
               Pua <span className="ml-1">▼</span>
             </button>
             <div className="hidden absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in">
-              <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors">Crear PUA</a>
-              <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors">Consultar PUA</a>
+              <a href="/procesarpua" className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors">Crear PUA</a>
+              <a href="/puaversion" className="block px-4 py-2 text-blue-900 hover:bg-blue-50 hover:text-blue-700 transition-colors">Consultar PUA</a>
             </div>
           </div>
           {/* Dropdown Estadísticas */}
@@ -106,7 +1052,7 @@ const ProcesarPua = () => {
           <div className="text-center text-lg font-semibold text-gray-700 mb-4">
             Bienvenido M. en C. Guadalupe Manuel Estrada Segovia
           </div>
-          <div className="bg-white border rounded-xl shadow p-6">
+          <div className="bg-white border rounded-xl shadow p-6 mb-8">
             <div className="text-center text-base font-bold text-gray-700 mb-4">Programa de aprendizaje</div>
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
               <div className="flex-1 min-w-[200px]">
@@ -129,6 +1075,39 @@ const ProcesarPua = () => {
               </div>
             </div>
           </div>
+
+          {/* Pestañas desplegables tipo acordeón */}
+          <div className="bg-white border rounded-xl shadow p-4">
+            <Accordion />
+          </div>
+          {/* Renderizar pestañas de subcompetencias */}
+          {(subcompetencias.length > 0) && (
+            <div className="flex flex-col gap-4 mt-6">
+              {subcompetencias.map((nombre, idx) => (
+                <SubcompetenciaPanel
+                  key={idx}
+                  nombre={nombre}
+                  idx={idx}
+                  onRemove={() => setSubcompetencias(subcompetencias.filter((_, i) => i !== idx))}
+                />
+              ))}
+            </div>
+          )}
+          <div className="flex justify-end gap-2 mt-8">
+            <button
+              type="button"
+              className="border px-3 py-2 rounded bg-white text-gray-800 text-sm hover:bg-gray-100"
+              onClick={handleAgregarSubcompetencia}
+            >
+              Generar subcompetencia...
+            </button>
+            <button type="button" className="border px-3 py-2 rounded bg-white text-gray-800 text-sm flex items-center gap-2 hover:bg-gray-100">
+              <span className="fa fa-print" /> Imprimir
+            </button>
+            <button type="button" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2">
+              <span className="fa fa-check" /> Finalizar
+            </button>
+          </div>
         </div>
       </main>
 
@@ -140,6 +1119,69 @@ const ProcesarPua = () => {
           Laboratorio de Diseño de Aplicaciones Móviles
         </div>
       </footer>
+    </div>
+  );
+};
+
+// Modal para nueva bibliografía
+const NuevaBibliografiaModal = ({ open, onClose, onAdd, ejemplos }) => {
+  const [selected, setSelected] = React.useState("");
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
+        <div className="flex items-center justify-between border-b px-4 py-2">
+          <span className="font-semibold">Nueva bibliografía...</span>
+          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+        </div>
+        <div className="p-4">
+          <div className="flex gap-2 items-center">
+            <select className="border rounded px-2 py-1 w-full text-black" value={selected} onChange={e => setSelected(e.target.value)}>
+              <option value="">Seleccione libro...</option>
+              {ejemplos.map((ej, i) => (
+                <option key={i} value={ej}>{ej}</option>
+              ))}
+            </select>
+            <button className="bg-blue-600 text-white rounded px-3 py-1" onClick={() => { if(selected) { onAdd(selected); setSelected(""); onClose(); } }}>➤</button>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 border-t px-4 py-2">
+          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modal para nueva actividad
+const NuevoActividadModal = ({ open, onClose, onAdd }) => {
+  const [alumno, setAlumno] = React.useState("");
+  const [docente, setDocente] = React.useState("");
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
+        <div className="flex items-center justify-between border-b px-4 py-2">
+          <span className="font-semibold">Nueva actividad...</span>
+          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+        </div>
+        <div className="p-4">
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">Alumno</label>
+              <input type="text" className="border rounded px-2 py-1 w-full text-black" value={alumno} onChange={e => setAlumno(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-black">Docente</label>
+              <input type="text" className="border rounded px-2 py-1 w-full text-black" value={docente} onChange={e => setDocente(e.target.value)} />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 border-t px-4 py-2">
+          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ alumno, docente }); setAlumno(""); setDocente(""); onClose(); }}>Agregar</button>
+        </div>
+      </div>
     </div>
   );
 };

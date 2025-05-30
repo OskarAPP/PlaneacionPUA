@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [email, setEmail] = useState('gmestrad@uacam.mx');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('ejemplo@uacam.mx');
+  const [password, setPassword] = useState('ejemplo123');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
