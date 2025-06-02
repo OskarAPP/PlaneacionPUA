@@ -46,6 +46,16 @@ export default {
         'xl': '1280px',  // Escritorio grande
         '2xl': '1536px', // Monitores 4K
       },
+      // Add custom animation and keyframes
+      animation: {
+        'slide-down': 'slide-down 0.3s ease-out',
+      },
+      keyframes: {
+        'slide-down': {
+          '0%': { opacity: '0', transform: 'translateY(-10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
     },
   },
   plugins: [
