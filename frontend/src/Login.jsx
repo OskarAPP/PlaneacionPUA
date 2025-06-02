@@ -23,6 +23,7 @@ function Login() {
       const data = await response.json();
       if (response.ok && data.user) {
         // Autenticación exitosa
+        localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/panelacceso');
       } else {
         setError(data.message || 'Credenciales incorrectas');

@@ -4,6 +4,7 @@ const PanelAcceso = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [estadisticasOpen, setEstadisticasOpen] = useState(false);
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [docente, setDocente] = useState(null);
   const dropdownRef = useRef(null);
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
@@ -25,6 +26,19 @@ const PanelAcceso = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  // Obtener id_docente del usuario logueado (puede venir de localStorage o props)
+  useEffect(() => {
+    // Suponiendo que el id_docente se guarda en localStorage tras el login
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.id_docente) {
+      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setDocente(data.docente);
+        });
+    }
   }, []);
 
   return (
@@ -129,11 +143,11 @@ const PanelAcceso = () => {
           <div className="mb-6">
             <div className="bg-blue-700 text-white px-2 py-1 font-semibold rounded-t">Datos Personales</div>
             <div className="pl-4 pt-2">
-              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Título:</div><div className="text-gray-900">M. en C.</div></div>
-              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Nombre:</div><div className="text-gray-900">Guadalupe Manuel</div></div>
-              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Apellido paterno:</div><div className="text-gray-900">Estrada</div></div>
-              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Apellido materno:</div><div className="text-gray-900">Segovia</div></div>
-              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">email:</div><div className="text-gray-900">gmestrad@uacam.mx</div></div>
+              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Título:</div><div className="text-gray-900">{docente ? docente.prefijo : ''}</div></div>
+              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Nombre:</div><div className="text-gray-900">{docente ? docente.nombre : ''}</div></div>
+              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Apellido paterno:</div><div className="text-gray-900">{docente ? docente.apellido_paterno : ''}</div></div>
+              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">Apellido materno:</div><div className="text-gray-900">{docente ? docente.apellido_materno : ''}</div></div>
+              <div className="flex flex-col sm:flex-row mb-1"><div className="w-48 font-semibold text-blue-900">email:</div><div className="text-gray-900">{docente ? docente.correo : ''}</div></div>
             </div>
           </div>
           {/* Datos Académicos */}
