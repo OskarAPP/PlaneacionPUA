@@ -111,7 +111,7 @@ const CompetenciasPerfilEgresoTabs = () => {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center">
-              <button type="button" className="bg-blue-600 text-white rounded px-3 py-2 shadow hover:bg-blue-700">
+              <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-2 mt-6 md:mt-0 flex items-center justify-center h-10 w-10 shadow hover:bg-blue-50 hover:border-blue-800">
                 <span className="fa fa-arrow-right" />
               </button>
             </div>
@@ -143,7 +143,7 @@ const CompetenciasPerfilEgresoTabs = () => {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center">
-              <button type="button" className="bg-blue-600 text-white rounded px-3 py-2 shadow hover:bg-blue-700">
+              <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-2 mt-6 md:mt-0 flex items-center justify-center h-10 w-10 shadow hover:bg-blue-50 hover:border-blue-800">
                 <span className="fa fa-arrow-right" />
               </button>
             </div>
@@ -173,7 +173,7 @@ const CompetenciasPerfilEgresoTabs = () => {
               <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" placeholder="" />
             </div>
             <div>
-              <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 mt-2 flex items-center gap-2 shadow hover:bg-blue-700">
+              <button type="submit" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-2 mt-2 flex items-center gap-2 shadow hover:bg-blue-50 hover:border-blue-800">
                 <span className="fa fa-check" />
               </button>
             </div>
@@ -240,7 +240,7 @@ const BibliografiaSugerida = () => {
             </label>
           </div>
         </div>
-        <button type="submit" className="bg-blue-700 text-white rounded px-3 py-2 mt-6 md:mt-0 flex items-center justify-center h-10 w-10 shadow hover:bg-blue-800">
+        <button type="submit" className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded hover:bg-blue-50 hover:border-blue-800">
           <span className="fa fa-arrow-right" />
         </button>
         <div className="flex-1 w-full">
@@ -346,7 +346,7 @@ const PerfilAcademicoModal = ({ open, onClose, onAdd, titulo }) => {
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
           <button className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
-          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd(perfil); setPerfil(""); onClose(); }}>Agregar</button>
+          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd(perfil); setPerfil(""); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -384,7 +384,7 @@ const PerfilDocenteTabs = () => {
       <div className="mt-4">
         {tab === 0 && (
           <>
-            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(0); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(0); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesAcademicos.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
@@ -403,7 +403,7 @@ const PerfilDocenteTabs = () => {
         )}
         {tab === 1 && (
           <>
-            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(1); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(1); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesProfesionales.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
@@ -422,7 +422,7 @@ const PerfilDocenteTabs = () => {
         )}
         {tab === 2 && (
           <>
-            <button className="border px-2 py-1 rounded text-xs mb-4" onClick={() => { setModalType(2); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(2); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesDocentes.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
@@ -487,7 +487,7 @@ const EvaluacionFinal = () => {
         </div>
       ))}
       <div className="flex justify-end">
-        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+        <button type="submit" className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded hover:bg-blue-50 hover:border-blue-800">Guardar</button>
       </div>
     </form>
   );
@@ -536,7 +536,7 @@ const EvaluacionPorCompetencias = () => {
         </div>
       ))}
       <div className="flex justify-end">
-        <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+        <button type="submit" className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded hover:bg-blue-50 hover:border-blue-800">Guardar</button>
       </div>
     </form>
   );
@@ -602,7 +602,7 @@ const NuevoTemaModal = ({ open, onClose, onAdd, numero }) => {
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
           <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
-          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ num, tema }); setTema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, tema }); setTema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -635,7 +635,7 @@ const NuevoSubtemaModal = ({ open, onClose, onAdd, numero }) => {
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
           <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
-          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ num, subtema }); setSubtema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, subtema }); setSubtema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -795,8 +795,8 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
               ejemplos={bibliosEjemplo}
             />
             <div className="flex justify-between items-center mb-2">
-              {activeSubTab === 0 && <button className="border px-2 py-1 rounded text-xs" onClick={() => setModalTemaOpen(true)}>Nuevo tema...</button>}
-              {activeSubTab === 2 && <button className="border px-2 py-1 rounded text-xs" onClick={() => setModalBiblioOpen(true)}>Nueva bibliografía...</button>}
+              {activeSubTab === 0 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalTemaOpen(true)}>Nuevo tema...</button>}
+              {activeSubTab === 2 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalBiblioOpen(true)}>Nueva bibliografía...</button>}
             </div>
             {/* Placeholder de contenido */}
             {activeSubTab === 0 && temas.length === 0 && (
@@ -816,8 +816,8 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
                           <button className="text-gray-400 hover:text-red-600 text-base px-2" title="Eliminar" onClick={() => setTemas(temas.filter((_, idx) => idx !== i))}>×</button>
                         </td>
                         <td className="border px-2 py-1 align-middle w-1 whitespace-nowrap">
-                          <button className="border px-2 py-1 rounded text-xs mr-1 text-white" onClick={() => setModalSubtemaOpen(i)}>Agregar Subtema</button>
-                          <button className="border px-2 py-1 rounded text-xs text-white" onClick={() => setMostrarSubtemas(mostrarSubtemas === i ? null : i)}>Mostrar subtemas</button>
+                          <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mr-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalSubtemaOpen(i)}>Agregar Subtema</button>
+                          <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800" onClick={() => setMostrarSubtemas(mostrarSubtemas === i ? null : i)}>Mostrar subtemas</button>
                         </td>
                       </tr>
                       {mostrarSubtemas === i && subtemasByTema[i] && (
@@ -843,7 +843,7 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
             )}
             {activeSubTab === 1 && (
               <div>
-                <button className="border px-2 py-1 rounded text-xs mb-2 text-black" onClick={() => setModalActividadOpen(true)}>Nueva actividad...</button>
+                <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalActividadOpen(true)}>Nueva actividad...</button>
                 <table className="w-full border text-black text-sm bg-white">
                   <thead>
                     <tr>
@@ -927,10 +927,10 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
           </div>
           <div className="flex-1">
             <div className="flex justify-between items-center mb-2">
-              {activeSubTab === 0 && <button className="border px-2 py-1 rounded text-xs">Nuevo criterio</button>}
-              {activeSubTab === 1 && <button className="border px-2 py-1 rounded text-xs">Nueva evidencia</button>}
-              {activeSubTab === 2 && <button className="border px-2 py-1 rounded text-xs">Nuevo ambiente</button>}
-              {activeSubTab === 3 && <button className="border px-2 py-1 rounded text-xs">Nuevo material</button>}
+              {activeSubTab === 0 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo criterio</button>}
+              {activeSubTab === 1 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nueva evidencia</button>}
+              {activeSubTab === 2 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo ambiente</button>}
+              {activeSubTab === 3 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo material</button>}
             </div>
             {/* Placeholder de contenido */}
             <div className="border rounded bg-gray-50 p-4 text-gray-500 text-sm">Seleccione una opción del menú lateral.</div>
@@ -1027,7 +1027,7 @@ const ProcesarPua = () => {
             <i className="fa fa-user mr-1" />Mi Cuenta <span className="ml-1">▼</span>
           </button>
           <div className="fixed top-16 right-8 w-56 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in">
-            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
+            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors" onClick={() => window.location.href = '/panelacceso'}>
               <span className="fa fa-home" /> Inicio
             </a>
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
@@ -1036,7 +1036,7 @@ const ProcesarPua = () => {
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
               <span className="fa fa-key" /> Contraseña
             </a>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
+            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors" onClick={() => window.location.href = '/docentes'}>
               <span className="fa fa-cog" /> Configuración
             </a>
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-red-700 hover:bg-red-200 hover:text-red-900 transition-colors">
@@ -1096,15 +1096,15 @@ const ProcesarPua = () => {
           <div className="flex justify-end gap-2 mt-8">
             <button
               type="button"
-              className="border px-3 py-2 rounded bg-white text-gray-800 text-sm hover:bg-gray-100"
+              className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded hover:bg-blue-50 hover:border-blue-800"
               onClick={handleAgregarSubcompetencia}
             >
               Generar subcompetencia...
             </button>
-            <button type="button" className="border px-3 py-2 rounded bg-white text-gray-800 text-sm flex items-center gap-2 hover:bg-gray-100">
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800">
               <span className="fa fa-print" /> Imprimir
             </button>
-            <button type="button" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2">
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800">
               <span className="fa fa-check" /> Finalizar
             </button>
           </div>
@@ -1142,7 +1142,7 @@ const NuevaBibliografiaModal = ({ open, onClose, onAdd, ejemplos }) => {
                 <option key={i} value={ej}>{ej}</option>
               ))}
             </select>
-            <button className="bg-blue-600 text-white rounded px-3 py-1" onClick={() => { if(selected) { onAdd(selected); setSelected(""); onClose(); } }}>➤</button>
+            <button className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { if(selected) { onAdd(selected); setSelected(""); onClose(); } }}>➤</button>
           </div>
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
@@ -1179,7 +1179,7 @@ const NuevoActividadModal = ({ open, onClose, onAdd }) => {
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
           <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
-          <button className="bg-blue-600 text-white rounded px-4 py-1" onClick={() => { onAdd({ alumno, docente }); setAlumno(""); setDocente(""); onClose(); }}>Agregar</button>
+          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ alumno, docente }); setAlumno(""); setDocente(""); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>

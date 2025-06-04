@@ -38,12 +38,12 @@ function Login() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('./src/Imagenes/UAC.png')" }}
     >
-      <div className="w-screen h-screen flex items-center justify-center p-4">
+      <div className="w-screen h-screen flex items-center justify-center p-2">
         <div className="flex flex-col w-full items-center justify-center">
           {/* Formulario con efecto blur */}
-          <div className="p-8 sm:p-10 w-full max-w-lg flex items-center justify-center mx-auto">
-            <div className="w-full max-w-md bg-dark/10 backdrop-blur rounded-3xl shadow-2xl p-8 border border-white/60" style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)'}}>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-pastel-navy mb-6 text-center">¡Bienvenido!</h2>
+          <div className="p-2 sm:p-6 w-full max-w-sm flex items-center justify-center mx-auto">
+            <div className="w-full max-w-xs bg-dark/10 backdrop-blur rounded-2xl shadow-2xl p-4 border border-white/60" style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)'}}>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-pastel-navy mb-4 text-center">¡Bienvenido!</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="block text-pastel-navy font-semibold text-sm uppercase tracking-wide">
@@ -95,7 +95,7 @@ function Login() {
       <img 
         src={aniversarioImg} 
         alt="60 Aniversario UACAM" 
-        className="fixed top-4 left-9 w-80 h-auto z-40 select-none pointer-events-none" 
+        className="fixed top-4 left-9 w-32 h-auto z-40 select-none pointer-events-none" 
         style={{minWidth: '100px', minHeight: 'auto'}}
       />
     </div>

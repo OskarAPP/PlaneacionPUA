@@ -134,10 +134,10 @@ const PanelAcceso = () => {
             </button>
             {cuentaOpen && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Inicio</a>
+                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md" onClick={() => window.location.href = '/panelacceso'}>Inicio</a>
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Perfil</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Contraseña</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Configuración</a>
+                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md" onClick={() => window.location.href = '/docentes'}>Contraseña</a>
+                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md" onClick={() => window.location.href = '/docentes'}>Configuración</a>
                 <a href="#" className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Cerrar sesión</a>
               </div>
             )}
@@ -148,37 +148,37 @@ const PanelAcceso = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 py-4 shadow-sm">
-          <div className="flex items-center gap-4">
+        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-md bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
+              className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-800 font-semibold leading-tight text-right">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-800 font-semibold leading-tight text-right">
               Programas de Unidad<br />de Aprendizaje
             </span>
-            <img src="../src/imagenes/60aniversario.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
+            <img src="../src/imagenes/60aniversario.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
           </div>
         </header>
 
         {/* Main Body */}
-        <main className="flex-1 flex flex-col items-center py-10 px-4 overflow-auto">
-          <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
+        <main className="flex-1 flex flex-col items-center py-4 px-2 overflow-auto">
+          <h1 className="text-2xl font-bold text-blue-900 mb-4 text-center">
             {greeting}, {docente ? docente.nombre : "Usuario"}
           </h1>
-          <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Datos Personales */}
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transform hover:shadow-xl transition-shadow duration-300">
-              <h2 className="text-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-800 px-4 py-2 rounded-t-lg -mt-6 -mx-6">
+            <div className="bg-white rounded-lg shadow p-3 border border-gray-100">
+              <h2 className="text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-800 px-2 py-1 rounded-t-lg -mt-3 -mx-3">
                 Datos Personales
               </h2>
-              <div className="mt-6 space-y-4">
+              <div className="mt-3 space-y-2">
                 <Row label="Título" value={docente?.prefijo || "N/A"} />
                 <Row label="Nombre" value={docente?.nombre || "N/A"} />
                 <Row label="Apellido Paterno" value={docente?.apellido_paterno || "N/A"} />
@@ -188,11 +188,11 @@ const PanelAcceso = () => {
             </div>
 
             {/* Datos Académicos */}
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transform hover:shadow-xl transition-shadow duration-300">
-              <h2 className="text-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-800 px-4 py-2 rounded-t-lg -mt-6 -mx-6">
+            <div className="bg-white rounded-lg shadow p-3 border border-gray-100">
+              <h2 className="text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-800 px-2 py-1 rounded-t-lg -mt-3 -mx-3">
                 Datos Académicos
               </h2>
-              <div className="mt-6 space-y-4">
+              <div className="mt-3 space-y-2">
                 <Row label="Unidad Académica" value={<Link href="#">Derecho</Link>} />
                 <Row label="Cargo" value="Docente" />
                 <Row label="Unidad Académica" value={<Link href="#">Enfermería</Link>} />
@@ -202,7 +202,7 @@ const PanelAcceso = () => {
                 <Row label="Accesos" value={
                   <>
                     <Link href="#">Docente</Link><br />
-                    <Link href="#">Administrador</Link>
+                    <Link href="#">Docentes</Link>
                   </>
                 } />
               </div>
@@ -211,9 +211,9 @@ const PanelAcceso = () => {
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-600 text-white py-4 flex flex-col items-center shadow-inner">
-          <img src="../src/imagenes/60aniversario.png" alt="Facultad de Ingeniería" className="w-12 h-12 mb-2" />
-          <div className="text-center text-xs">
+        <footer className="bg-gray-600 text-white py-2 flex flex-col items-center shadow-inner">
+          <img src="../src/imagenes/60aniversario.png" alt="Facultad de Ingeniería" className="w-8 h-8 mb-1" />
+          <div className="text-center text-[10px]">
             Facultad de Ingeniería<br />
             Laboratorio de Diseño de Aplicaciones Móviles
           </div>

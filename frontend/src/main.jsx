@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import './Administrador.jsx'
 import './PanelAcceso.jsx'
 
 createRoot(document.getElementById('root')).render(

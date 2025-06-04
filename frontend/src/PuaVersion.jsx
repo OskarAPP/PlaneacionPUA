@@ -63,7 +63,7 @@ const PuaVersion = () => {
             <i className="fa fa-user mr-1" />Mi Cuenta <span className="ml-1">▼</span>
           </button>
           <div className="fixed top-16 right-8 w-56 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in">
-            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
+            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors" onClick={() => window.location.href = '/panelacceso'}>
               <span className="fa fa-home" /> Inicio
             </a>
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
@@ -72,7 +72,7 @@ const PuaVersion = () => {
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
               <span className="fa fa-key" /> Contraseña
             </a>
-            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors">
+            <a href="#" className="flex items-center gap-2 px-4 py-2 text-blue-900 hover:bg-blue-200 hover:text-blue-900 transition-colors" onClick={() => window.location.href = '/docentes'}>
               <span className="fa fa-cog" /> Configuración
             </a>
             <a href="#" className="flex items-center gap-2 px-4 py-2 text-red-700 hover:bg-red-200 hover:text-red-900 transition-colors">
