@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Docentes = () => {
+const RegistroCarreras = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
@@ -13,7 +13,6 @@ const Docentes = () => {
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
 
-  // Cerrar menús si se hace clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
       [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef].forEach(ref => {
@@ -31,7 +30,6 @@ const Docentes = () => {
     };
   }, []);
 
-  // Cerrar sidebar si se hace clic fuera
   useEffect(() => {
     function handleSidebarClickOutside(event) {
       const sidebar = document.querySelector('aside');
@@ -45,16 +43,34 @@ const Docentes = () => {
     };
   }, [sidebarOpen]);
 
-  // Alternar dropdowns
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Form state
+  const [form, setForm] = useState({
+    nombre: '',
+    facultad: '',
+    plan: ''
+  });
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    // Aquí iría la lógica para registrar la carrera
+    alert('Carrera registrada (demo)');
   };
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out z-50`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out z-50 overflow-y-auto max-h-screen custom-scrollbar`}
+        style={{ scrollbarColor: '#2563eb #fff', scrollbarWidth: 'thin' }}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-blue-700">Menú</h2>
@@ -76,8 +92,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['docentes'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Docentes registrados</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/docentes" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Docentes registrados</a>
+                <a href="/registrodocentes" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -88,8 +104,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['carreras'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Carreras registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/carreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Carreras registradas</a>
+                <a href="/registrocarreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -164,7 +180,7 @@ const Docentes = () => {
               </svg>
             </button>
             {cuentaOpen && (
-              <div className="ml-4 mt-2 space-y-2">
+              <div className="absolute left-0 mt-2 w-full bg-white border border-blue-200 rounded shadow-lg z-50 animate-fade-in">
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md" onClick={() => window.location.href = '/panelacceso'}>Inicio</a>
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Perfil</a>
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md" onClick={() => window.location.href = '/docentes'}>Contraseña</a>
@@ -198,48 +214,31 @@ const Docentes = () => {
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            {/* Barra de búsqueda */}
-            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
-            <div className="bg-white border rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Docente:</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i className="fa fa-search" /></span>
-                  <input
-                    type="text"
-                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    placeholder="Nombre del Docente o Apellidos"
-                  />
+            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Registro de Carrera</div>
+            <form onSubmit={handleSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">Nombre de la Carrera:</label>
+                  <input type="text" name="nombre" value={form.nombre} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
+                  <select name="facultad" value={form.facultad} onChange={handleChange} className="w-full border rounded px-3 py-2">
+                    <option value="">Seleccione facultad...</option>
+                    <option value="Ingeniería">Ingeniería</option>
+                    <option value="Ciencias">Ciencias</option>
+                    <option value="Humanidades">Humanidades</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">Plan de Estudios:</label>
+                  <input type="text" name="plan" value={form.plan} onChange={handleChange} className="w-full border rounded px-3 py-2" />
                 </div>
               </div>
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2">
-                  <option>A a Z</option>
-                  <option>Z a A</option>
-                </select>
+              <div className="flex justify-center mt-4">
+                <button type="submit" className="bg-blue-700 text-white font-semibold px-12 py-2 rounded hover:bg-blue-800 transition-colors">Registrar</button>
               </div>
-            </div>
-            {/* Lista de docentes */}
-            <div className="bg-blue-100 text-blue-900 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
-            <div className="overflow-x-auto bg-white rounded-b-md shadow">
-              <table className="min-w-full text-sm text-left text-blue-900">
-                <thead>
-                  <tr className="border-b bg-blue-50">
-                    <th className="px-3 py-2 font-bold">#</th>
-                    <th className="px-3 py-2 font-bold">Prefijo</th>
-                    <th className="px-3 py-2 font-bold">Nombre(s)</th>
-                    <th className="px-3 py-2 font-bold">Apellido Paterno</th>
-                    <th className="px-3 py-2 font-bold">Apellido Materno</th>
-                    <th className="px-3 py-2 font-bold">Correo</th>
-                    <th className="px-3 py-2 font-bold">Facultad</th>
-                  </tr>
-                </thead>
-                <tbody className="text-blue-900">
-                  {/* Aquí irían los datos de los docentes */}
-                </tbody>
-              </table>
-            </div>
+            </form>
           </div>
         </main>
         {/* Footer */}
@@ -251,8 +250,21 @@ const Docentes = () => {
           </div>
         </footer>
       </div>
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+          background: #fff;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #2563eb;
+          border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #fff;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Docentes;
+export default RegistroCarreras;
