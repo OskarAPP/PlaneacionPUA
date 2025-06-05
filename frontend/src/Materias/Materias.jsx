@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Docentes = () => {
+const Materias = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
@@ -13,7 +13,6 @@ const Docentes = () => {
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
 
-  // Cerrar menús si se hace clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
       [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef].forEach(ref => {
@@ -31,7 +30,6 @@ const Docentes = () => {
     };
   }, []);
 
-  // Cerrar sidebar si se hace clic fuera
   useEffect(() => {
     function handleSidebarClickOutside(event) {
       const sidebar = document.querySelector('aside');
@@ -45,7 +43,6 @@ const Docentes = () => {
     };
   }, [sidebarOpen]);
 
-  // Alternar dropdowns
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
@@ -90,7 +87,7 @@ const Docentes = () => {
             {dropdownOpen['carreras'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/carreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Carreras registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registrocarreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -102,7 +99,7 @@ const Docentes = () => {
             {dropdownOpen['materias'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/materias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Materias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registromaterias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -199,47 +196,101 @@ const Docentes = () => {
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            {/* Barra de búsqueda */}
-            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
-            <div className="bg-white border rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Docente:</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i className="fa fa-search" /></span>
-                  <input
-                    type="text"
-                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    placeholder="Nombre del Docente o Apellidos"
-                  />
+            {/* Barra de búsqueda y ordenamiento */}
+            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center">Buscar</div>
+            <div className="bg-white border rounded-b-md p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2">
+                <label htmlFor="materia-search" className="font-semibold text-gray-800 mr-2 min-w-fit">Materia:</label>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+                  </span>
+                  <input id="materia-search" type="text" placeholder="Nombre de la Materia" className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
                 </div>
               </div>
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2">
-                  <option>A a Z</option>
-                  <option>Z a A</option>
+              <div className="flex flex-col md:flex-row md:items-center gap-2 min-w-fit">
+                <label htmlFor="ordenar" className="font-semibold text-gray-800 mr-2">Ordenar alfabéticamente por:</label>
+                <select id="ordenar" className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                  <option value="az">A a Z</option>
+                  <option value="za">Z a A</option>
                 </select>
               </div>
             </div>
-            {/* Lista de docentes */}
-            <div className="bg-blue-100 text-blue-900 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
-            <div className="overflow-x-auto bg-white rounded-b-md shadow">
-              <table className="min-w-full text-sm text-left text-blue-900">
-                <thead>
-                  <tr className="border-b bg-blue-50">
-                    <th className="px-3 py-2 font-bold">#</th>
-                    <th className="px-3 py-2 font-bold">Prefijo</th>
-                    <th className="px-3 py-2 font-bold">Nombre(s)</th>
-                    <th className="px-3 py-2 font-bold">Apellido Paterno</th>
-                    <th className="px-3 py-2 font-bold">Apellido Materno</th>
-                    <th className="px-3 py-2 font-bold">Correo</th>
-                    <th className="px-3 py-2 font-bold">Facultad</th>
-                  </tr>
-                </thead>
-                <tbody className="text-blue-900">
-                  {/* Aquí irían los datos de los docentes */}
-                </tbody>
-              </table>
+            {/* Tabla de materias */}
+            <div className="mt-6">
+              <div className="bg-blue-100 text-blue-800 text-lg font-medium rounded-t-md px-4 py-2 text-center">Lista de materias</div>
+              <div className="overflow-x-auto border rounded-b-md">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-white">
+                    <tr>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase"></th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">#</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Materia</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Área</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Núcleo</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Tipo</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Art57</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Academia</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Horas Prácticas</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Horas Teóricas</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Horas Totales</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 uppercase">Créditos Totales</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {/* Ejemplo de fila, reemplazar con datos reales */}
+                    <tr className="hover:bg-blue-50 transition-colors">
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">
+                        <button className="text-red-600 hover:text-red-800 focus:outline-none" title="Eliminar">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">1</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 font-bold">Matemáticas I</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm">
+                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
+                          <option>Ciencias Básicas y Matemáticas</option>
+                          <option>Ingeniería</option>
+                          <option>Humanidades</option>
+                        </select>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm">
+                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
+                          <option>Núcleo Común</option>
+                          <option>Núcleo Básico</option>
+                          <option>Núcleo Especializado</option>
+                        </select>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm">
+                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
+                          <option>Obligatoria</option>
+                          <option>Optativa</option>
+                        </select>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm">
+                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
+                          <option>Sí</option>
+                          <option>No</option>
+                        </select>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm">
+                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
+                          <option>Matemáticas</option>
+                          <option>Física</option>
+                          <option>Química</option>
+                        </select>
+                      </td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">2</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">3</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">5</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-700 font-bold text-center">8</td>
+                    </tr>
+                    {/* Fin ejemplo */}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </main>
@@ -269,4 +320,4 @@ const Docentes = () => {
   );
 };
 
-export default Docentes;
+export default Materias;

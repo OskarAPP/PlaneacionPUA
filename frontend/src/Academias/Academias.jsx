@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Docentes = () => {
+const Academias = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
@@ -13,12 +13,18 @@ const Docentes = () => {
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
 
-  // Cerrar menús si se hace clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
       [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef].forEach(ref => {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setDropdownOpen(prev => ({ ...prev, [ref.current.dataset.key]: false }));
+        if (
+          ref.current &&
+          ref.current.dataset &&
+          !ref.current.contains(event.target)
+        ) {
+          const key = ref.current.dataset.key;
+          if (key) {
+            setDropdownOpen(prev => ({ ...prev, [key]: false }));
+          }
         }
       });
       if (cuentaRef.current && !cuentaRef.current.contains(event.target)) {
@@ -31,7 +37,6 @@ const Docentes = () => {
     };
   }, []);
 
-  // Cerrar sidebar si se hace clic fuera
   useEffect(() => {
     function handleSidebarClickOutside(event) {
       const sidebar = document.querySelector('aside');
@@ -45,9 +50,34 @@ const Docentes = () => {
     };
   }, [sidebarOpen]);
 
-  // Alternar dropdowns
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Opciones de facultad para el dropdown
+  const facultades = [
+    "Contaduría y Administración",
+    "Ingeniería",
+    "Ciencias",
+    "Humanidades",
+    "Artes",
+    "Salud"
+  ];
+  // Estado para la facultad seleccionada por fila (ejemplo estático para 2 filas)
+  const [selectedFacultad, setSelectedFacultad] = useState([
+    "Ingeniería",
+    "Ciencias"
+  ]);
+  const [facultadDropdownOpen, setFacultadDropdownOpen] = useState([false, false]);
+
+  // Maneja la apertura/cierre del dropdown por fila
+  const handleFacultadDropdown = idx => {
+    setFacultadDropdownOpen(open => open.map((v, i) => i === idx ? !v : false));
+  };
+  // Maneja la selección de facultad por fila
+  const handleSelectFacultad = (idx, facultad) => {
+    setSelectedFacultad(sel => sel.map((v, i) => i === idx ? facultad : v));
+    setFacultadDropdownOpen(open => open.map((v, i) => i === idx ? false : v));
   };
 
   return (
@@ -90,7 +120,7 @@ const Docentes = () => {
             {dropdownOpen['carreras'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/carreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Carreras registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registrocarreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -102,7 +132,7 @@ const Docentes = () => {
             {dropdownOpen['materias'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/materias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Materias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registromaterias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -113,8 +143,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['academias'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Academias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/academias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Academias registradas</a>
+                <a href="/registroacademias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -136,8 +166,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['compeGen'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Competencias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/competenciasg" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Competencias registradas</a>
+                <a href="/registrocompeg" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -199,21 +229,19 @@ const Docentes = () => {
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            {/* Barra de búsqueda */}
-            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
-            <div className="bg-white border rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+            {/* Buscador y ordenamiento */}
+            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
+            <div className="bg-white border rounded-b-md p-4 flex flex-col md:flex-row md:items-end gap-4 mb-4">
               <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Docente:</label>
+                <label className="block text-gray-700 font-semibold mb-1">Academia:</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i className="fa fa-search" /></span>
-                  <input
-                    type="text"
-                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    placeholder="Nombre del Docente o Apellidos"
-                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M21 21l-4-4m0 0A7 7 0 105 5a7 7 0 0012 12z' /></svg>
+                  </span>
+                  <input type="text" placeholder="Nombre de la Academia" className="pl-10 pr-3 py-2 border rounded w-full focus:outline-none" />
                 </div>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 md:max-w-xs">
                 <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
                 <select className="w-full border rounded px-3 py-2">
                   <option>A a Z</option>
@@ -221,23 +249,58 @@ const Docentes = () => {
                 </select>
               </div>
             </div>
-            {/* Lista de docentes */}
-            <div className="bg-blue-100 text-blue-900 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
-            <div className="overflow-x-auto bg-white rounded-b-md shadow">
-              <table className="min-w-full text-sm text-left text-blue-900">
+            {/* Tabla de academias */}
+            <div className="bg-[#d6edf9] text-[#1a3c5a] text-base font-semibold rounded-t-md px-4 py-2 text-center border border-[#b5d6ea]">Lista de Academias</div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-[#b5d6ea]">
                 <thead>
-                  <tr className="border-b bg-blue-50">
-                    <th className="px-3 py-2 font-bold">#</th>
-                    <th className="px-3 py-2 font-bold">Prefijo</th>
-                    <th className="px-3 py-2 font-bold">Nombre(s)</th>
-                    <th className="px-3 py-2 font-bold">Apellido Paterno</th>
-                    <th className="px-3 py-2 font-bold">Apellido Materno</th>
-                    <th className="px-3 py-2 font-bold">Correo</th>
-                    <th className="px-3 py-2 font-bold">Facultad</th>
+                  <tr className="bg-white">
+                    <th className="border border-[#b5d6ea] px-3 py-2 text-left w-12"></th>
+                    <th className="border border-[#b5d6ea] px-3 py-2 text-left">#</th>
+                    <th className="border border-[#b5d6ea] px-3 py-2 text-left">Academia</th>
+                    <th className="border border-[#b5d6ea] px-3 py-2 text-left">Facultad</th>
                   </tr>
                 </thead>
-                <tbody className="text-blue-900">
-                  {/* Aquí irían los datos de los docentes */}
+                <tbody>
+                  {/* Ejemplo de fila, puedes mapear datos reales aquí */}
+                  {[{nombre: 'Matemáticas'}, {nombre: 'Física'}].map((row, idx) => (
+                    <tr key={idx}>
+                      <td className="border border-[#b5d6ea] px-2 py-2 text-center">
+                        <button className="text-red-600 hover:text-red-800" title="Eliminar">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </td>
+                      <td className="border border-[#b5d6ea] px-3 py-2">{idx + 1}</td>
+                      <td className="border border-[#b5d6ea] px-3 py-2">{row.nombre}</td>
+                      <td className="border border-[#b5d6ea] px-3 py-2 relative">
+                        <button
+                          type="button"
+                          className="w-full flex items-center justify-between border rounded px-3 py-1 bg-white text-gray-800 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                          onClick={() => handleFacultadDropdown(idx)}
+                        >
+                          <span className="truncate text-left">{selectedFacultad[idx]}</span>
+                          <svg className="ml-2 h-4 w-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {facultadDropdownOpen[idx] && (
+                          <div className="absolute left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-10 animate-fade-in">
+                            {facultades.map(fac => (
+                              <button
+                                key={fac}
+                                className={`block w-full text-left px-3 py-1 hover:bg-blue-100 ${selectedFacultad[idx] === fac ? 'font-semibold text-blue-700' : ''}`}
+                                onClick={() => handleSelectFacultad(idx, fac)}
+                              >
+                                {fac}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -269,4 +332,4 @@ const Docentes = () => {
   );
 };
 
-export default Docentes;
+export default Academias;

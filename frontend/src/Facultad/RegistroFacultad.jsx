@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Docentes = () => {
+const RegistroFacultad = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
@@ -13,12 +13,18 @@ const Docentes = () => {
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
 
-  // Cerrar menús si se hace clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
       [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef].forEach(ref => {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setDropdownOpen(prev => ({ ...prev, [ref.current.dataset.key]: false }));
+        if (
+          ref.current &&
+          ref.current.dataset &&
+          !ref.current.contains(event.target)
+        ) {
+          const key = ref.current.dataset.key;
+          if (key) {
+            setDropdownOpen(prev => ({ ...prev, [key]: false }));
+          }
         }
       });
       if (cuentaRef.current && !cuentaRef.current.contains(event.target)) {
@@ -31,7 +37,6 @@ const Docentes = () => {
     };
   }, []);
 
-  // Cerrar sidebar si se hace clic fuera
   useEffect(() => {
     function handleSidebarClickOutside(event) {
       const sidebar = document.querySelector('aside');
@@ -45,9 +50,19 @@ const Docentes = () => {
     };
   }, [sidebarOpen]);
 
-  // Alternar dropdowns
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Estado del formulario
+  const [form, setForm] = useState({ nombre: "" });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+  const handleSubmit = e => {
+    e.preventDefault();
+    alert("Facultad registrada (demo)");
   };
 
   return (
@@ -90,7 +105,7 @@ const Docentes = () => {
             {dropdownOpen['carreras'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/carreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Carreras registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registrocarreras" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -102,7 +117,7 @@ const Docentes = () => {
             {dropdownOpen['materias'] && (
               <div className="ml-4 mt-2 space-y-2">
                 <a href="/materias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Materias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registromaterias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -113,8 +128,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['academias'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Academias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/academias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Academias registradas</a>
+                <a href="/registroacademias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -125,7 +140,7 @@ const Docentes = () => {
             </button>
             {dropdownOpen['facultad'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/registrofacultad" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -136,8 +151,8 @@ const Docentes = () => {
             </button>
             {dropdownOpen['compeGen'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Competencias registradas</a>
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
+                <a href="/competenciasg" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Competencias registradas</a>
+                <a href="/registrocompeg" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
           </div>
@@ -199,48 +214,18 @@ const Docentes = () => {
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            {/* Barra de búsqueda */}
-            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
-            <div className="bg-white border rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Docente:</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i className="fa fa-search" /></span>
-                  <input
-                    type="text"
-                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    placeholder="Nombre del Docente o Apellidos"
-                  />
+            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Facultad</div>
+            <form onSubmit={handleSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <label className="block text-gray-800 font-bold mb-1">Facultad:</label>
+                  <input type="text" name="nombre" value={form.nombre} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
                 </div>
               </div>
-              <div className="flex-1">
-                <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2">
-                  <option>A a Z</option>
-                  <option>Z a A</option>
-                </select>
+              <div className="flex justify-center mt-2">
+                <button type="submit" className="bg-[#3578b3] text-white font-semibold w-1/2 md:w-1/3 px-12 py-2 rounded hover:bg-[#285a87] transition-colors">Registrar</button>
               </div>
-            </div>
-            {/* Lista de docentes */}
-            <div className="bg-blue-100 text-blue-900 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
-            <div className="overflow-x-auto bg-white rounded-b-md shadow">
-              <table className="min-w-full text-sm text-left text-blue-900">
-                <thead>
-                  <tr className="border-b bg-blue-50">
-                    <th className="px-3 py-2 font-bold">#</th>
-                    <th className="px-3 py-2 font-bold">Prefijo</th>
-                    <th className="px-3 py-2 font-bold">Nombre(s)</th>
-                    <th className="px-3 py-2 font-bold">Apellido Paterno</th>
-                    <th className="px-3 py-2 font-bold">Apellido Materno</th>
-                    <th className="px-3 py-2 font-bold">Correo</th>
-                    <th className="px-3 py-2 font-bold">Facultad</th>
-                  </tr>
-                </thead>
-                <tbody className="text-blue-900">
-                  {/* Aquí irían los datos de los docentes */}
-                </tbody>
-              </table>
-            </div>
+            </form>
           </div>
         </main>
         {/* Footer */}
@@ -269,4 +254,4 @@ const Docentes = () => {
   );
 };
 
-export default Docentes;
+export default RegistroFacultad;

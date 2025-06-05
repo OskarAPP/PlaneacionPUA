@@ -125,7 +125,7 @@ const RegistroDocentes = () => {
             </button>
             {dropdownOpen['materias'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Materias registradas</a>
+                <a href="/materias" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Materias registradas</a>
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md">Formulario de registro</a>
               </div>
             )}
