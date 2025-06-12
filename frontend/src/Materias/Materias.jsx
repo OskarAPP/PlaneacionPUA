@@ -4,6 +4,9 @@ const Materias = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [materias, setMaterias] = useState([]);
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("az");
   const cuentaRef = useRef(null);
   const docentesRef = useRef(null);
   const carrerasRef = useRef(null);
@@ -43,9 +46,43 @@ const Materias = () => {
     };
   }, [sidebarOpen]);
 
+  useEffect(() => {
+    fetch("http://localhost:8000/api/materias")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setMaterias(data);
+        else if (Array.isArray(data.materias)) setMaterias(data.materias);
+      })
+      .catch(() => setMaterias([]));
+  }, []);
+
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Está seguro de eliminar la materia?")) return;
+    try {
+      const res = await fetch(`http://localhost:8000/api/materias/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setMaterias((prev) => prev.filter((m) => m.id !== id));
+      } else {
+        alert("Error al eliminar la materia.");
+      }
+    } catch {
+      alert("Error de conexión con el servidor.");
+    }
+  };
+
+  const filteredMaterias = materias.filter((m) =>
+    m.materia && m.materia.toLowerCase().includes(search.toLowerCase())
+  ).sort((a, b) => {
+    if (!a.materia || !b.materia) return 0;
+    if (sortOrder === "az") return a.materia.localeCompare(b.materia, 'es', { sensitivity: 'base' });
+    else return b.materia.localeCompare(a.materia, 'es', { sensitivity: 'base' });
+  });
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
@@ -205,12 +242,12 @@ const Materias = () => {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
                   </span>
-                  <input id="materia-search" type="text" placeholder="Nombre de la Materia" className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  <input id="materia-search" type="text" placeholder="Nombre de la Materia" className="pl-10 pr-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400" value={search} onChange={e => setSearch(e.target.value)} />
                 </div>
               </div>
               <div className="flex flex-col md:flex-row md:items-center gap-2 min-w-fit">
                 <label htmlFor="ordenar" className="font-semibold text-gray-800 mr-2">Ordenar alfabéticamente por:</label>
-                <select id="ordenar" className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <select id="ordenar" className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
                   <option value="az">A a Z</option>
                   <option value="za">Z a A</option>
                 </select>
@@ -238,56 +275,32 @@ const Materias = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-100">
-                    {/* Ejemplo de fila, reemplazar con datos reales */}
-                    <tr className="hover:bg-blue-50 transition-colors">
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">
-                        <button className="text-red-600 hover:text-red-800 focus:outline-none" title="Eliminar">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">1</td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 font-bold">Matemáticas I</td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm">
-                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
-                          <option>Ciencias Básicas y Matemáticas</option>
-                          <option>Ingeniería</option>
-                          <option>Humanidades</option>
-                        </select>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm">
-                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
-                          <option>Núcleo Común</option>
-                          <option>Núcleo Básico</option>
-                          <option>Núcleo Especializado</option>
-                        </select>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm">
-                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
-                          <option>Obligatoria</option>
-                          <option>Optativa</option>
-                        </select>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm">
-                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
-                          <option>Sí</option>
-                          <option>No</option>
-                        </select>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm">
-                        <select className="border border-gray-400 rounded px-2 py-1 bg-gray-100 focus:outline-none">
-                          <option>Matemáticas</option>
-                          <option>Física</option>
-                          <option>Química</option>
-                        </select>
-                      </td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">2</td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">3</td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">5</td>
-                      <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-700 font-bold text-center">8</td>
-                    </tr>
-                    {/* Fin ejemplo */}
+                    {filteredMaterias.length === 0 ? (
+                      <tr><td colSpan={12} className="text-center py-4 text-gray-400">No hay materias registradas.</td></tr>
+                    ) : (
+                      filteredMaterias.map((materia, idx) => (
+                        <tr key={materia.id || idx} className="hover:bg-blue-50 transition-colors">
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">
+                            <button className="text-red-600 hover:text-red-800 focus:outline-none" title="Eliminar" onClick={() => handleDelete(materia.id)}>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 font-semibold">{idx + 1}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 font-bold">{materia.materia}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.area}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.nucleo}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.tipo}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.art57}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.academia}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">{materia.horas_practicas}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">{materia.horas_teoricas}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 text-center">{materia.horas_totales}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-700 font-bold text-center">{materia.creditos_totales}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

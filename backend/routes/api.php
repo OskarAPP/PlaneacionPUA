@@ -12,3 +12,4 @@ Route::get('/docente/{id_docente}', [DocenteController::class, 'show']);
 Route::get('/docentes', [DocenteController::class, 'index']);
 Route::get('/materias', [MateriaController::class, 'index']);
 Route::post('/materias', [MateriaController::class, 'store']);
+Route::delete('/materias/{id}', [MateriaController::class, 'destroy']);

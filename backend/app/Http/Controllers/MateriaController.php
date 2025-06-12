@@ -39,4 +39,15 @@ class MateriaController extends Controller
             'materia' => $materia
         ], 201);
     }
+
+    // Eliminar una materia
+    public function destroy($id)
+    {
+        $materia = Materia::find($id);
+        if (!$materia) {
+            return response()->json(['success' => false, 'message' => 'Materia no encontrada'], 404);
+        }
+        $materia->delete();
+        return response()->json(['success' => true, 'message' => 'Materia eliminada correctamente']);
+    }
 }
