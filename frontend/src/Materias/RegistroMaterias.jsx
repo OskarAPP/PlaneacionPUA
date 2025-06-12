@@ -75,10 +75,41 @@ const RegistroMaterias = () => {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // Aquí iría la lógica para registrar la materia
-    alert('Materia registrada (demo)');
+    // Mapeo de campos del frontend a los nombres esperados por la API
+    const payload = {
+      materia: form.materia,
+      facultad: form.facultad,
+      carrera: form.carrera,
+      area: form.area,
+      nucleo: form.nucleo,
+      tipo: form.tipo,
+      art57: form.art57,
+      academia: form.academia,
+      horas_practicas: Number(form.horasPracticas),
+      horas_teoricas: Number(form.horasTeoricas),
+      horas_totales: Number(form.horasTotales),
+      creditos_totales: Number(form.creditos)
+    };
+    try {
+      const res = await fetch('http://localhost:8000/api/materias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Materia registrada exitosamente');
+        setForm({
+          materia: '', facultad: '', carrera: '', area: '', nucleo: '', tipo: '', creditos: '', horasTotales: '', horasTeoricas: '', horasPracticas: '', art57: 'Si', academia: ''
+        });
+      } else {
+        alert('Error al registrar materia: ' + (data.message || 'Verifica los datos.'));
+      }
+    } catch (err) {
+      alert('Error de conexión con el servidor.');
+    }
   };
 
   return (
