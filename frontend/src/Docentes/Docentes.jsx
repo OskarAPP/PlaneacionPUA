@@ -16,6 +16,11 @@ const Docentes = () => {
   // Estado para los docentes
   const [docentesData, setDocentesData] = useState([]);
 
+  // Estado para el término de búsqueda
+  const [searchTerm, setSearchTerm] = useState("");
+  // Estado para el orden
+  const [sortOrder, setSortOrder] = useState("az");
+
   // Obtener docentes desde la API
   useEffect(() => {
     fetch('http://localhost:8000/api/docentes')
@@ -24,6 +29,27 @@ const Docentes = () => {
         if (data.success) setDocentesData(data.docentes);
       });
   }, []);
+
+  // Docentes filtrados y ordenados
+  const filteredDocentes = docentesData
+    .filter((docente) => {
+      const term = searchTerm.toLowerCase();
+      return (
+        docente.nombre?.toLowerCase().includes(term) ||
+        docente.apellido_paterno?.toLowerCase().includes(term) ||
+        docente.apellido_materno?.toLowerCase().includes(term)
+      );
+    })
+    .sort((a, b) => {
+      // Ordenar por nombre, luego apellidos
+      const fullA = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
+      const fullB = `${b.nombre} ${b.apellido_paterno} ${b.apellido_materno}`.toLowerCase();
+      if (sortOrder === "az") {
+        return fullA.localeCompare(fullB);
+      } else {
+        return fullB.localeCompare(fullA);
+      }
+    });
 
   // Cerrar menús si se hace clic fuera
   useEffect(() => {
@@ -222,14 +248,16 @@ const Docentes = () => {
                     type="text"
                     className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
                     placeholder="Nombre del Docente o Apellidos"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
               <div className="flex-1">
                 <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2">
-                  <option>A a Z</option>
-                  <option>Z a A</option>
+                <select className="w-full border rounded px-3 py-2" value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+                  <option value="az">A a Z</option>
+                  <option value="za">Z a A</option>
                 </select>
               </div>
             </div>
@@ -250,7 +278,7 @@ const Docentes = () => {
                 </thead>
                 <tbody className="text-blue-900">
                   {/* Aquí irían los datos de los docentes */}
-                  {docentesData.map((docente, idx) => (
+                  {filteredDocentes.map((docente, idx) => (
                     <tr key={docente.id_docente} className="border-b hover:bg-blue-50">
                       <td className="px-3 py-2">{idx + 1}</td>
                       <td className="px-3 py-2">{docente.prefijo}</td>
