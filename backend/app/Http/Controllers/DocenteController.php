@@ -22,4 +22,14 @@ class DocenteController extends Controller
             ], 404);
         }
     }
+
+    // Obtener todos los docentes (solo los campos requeridos)
+    public function index()
+    {
+        $docentes = Docente::select('id_docente', 'prefijo', 'nombre', 'apellido_paterno', 'apellido_materno', 'correo')->get();
+        return response()->json([
+            'success' => true,
+            'docentes' => $docentes
+        ]);
+    }
 }

@@ -13,6 +13,18 @@ const Docentes = () => {
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
 
+  // Estado para los docentes
+  const [docentesData, setDocentesData] = useState([]);
+
+  // Obtener docentes desde la API
+  useEffect(() => {
+    fetch('http://localhost:8000/api/docentes')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setDocentesData(data.docentes);
+      });
+  }, []);
+
   // Cerrar menús si se hace clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
@@ -238,6 +250,17 @@ const Docentes = () => {
                 </thead>
                 <tbody className="text-blue-900">
                   {/* Aquí irían los datos de los docentes */}
+                  {docentesData.map((docente, idx) => (
+                    <tr key={docente.id_docente} className="border-b hover:bg-blue-50">
+                      <td className="px-3 py-2">{idx + 1}</td>
+                      <td className="px-3 py-2">{docente.prefijo}</td>
+                      <td className="px-3 py-2">{docente.nombre}</td>
+                      <td className="px-3 py-2">{docente.apellido_paterno}</td>
+                      <td className="px-3 py-2">{docente.apellido_materno}</td>
+                      <td className="px-3 py-2">{docente.correo}</td>
+                      <td className="px-3 py-2 text-gray-400 italic">(Sin facultad)</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
