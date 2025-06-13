@@ -4,6 +4,7 @@ const RegistroDocentes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const cuentaRef = useRef(null);
   const docentesRef = useRef(null);
   const carrerasRef = useRef(null);
@@ -59,19 +60,66 @@ const RegistroDocentes = () => {
     correo: '',
     contrasena: '',
     prefijo: '',
-    tipoAcceso: 'Docente',
+    tipoAcceso: '',
     rol: ''
   });
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para registrar al docente
-    alert('Docente registrado (demo)');
+    setMensaje("");
+    setError("");
+    setLoading(true);
+    // Validación mínima
+    if (!form.nombres || !form.apellidoPaterno || !form.correo || !form.contrasena) {
+      setError("Por favor, completa los campos obligatorios.");
+      setLoading(false);
+      return;
+    }
+    const payload = {
+      nombres: form.nombres,
+      apellidop: form.apellidoPaterno,
+      apellidom: form.apellidoMaterno,
+      facultad: form.facultad,
+      correo: form.correo,
+      contraseña: form.contrasena,
+      prefijo: form.prefijo,
+      tipo_acceso: form.tipoAcceso,
+      rol: form.rol
+    };
+    try {
+      const res = await fetch('http://localhost:8000/api/personal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMensaje('Docente registrado exitosamente.');
+        setForm({
+          nombres: '',
+          apellidoPaterno: '',
+          apellidoMaterno: '',
+          facultad: '',
+          correo: '',
+          contrasena: '',
+          prefijo: '',
+          tipoAcceso: '',
+          rol: ''
+        });
+      } else {
+        setError(data.message || 'Error al registrar docente.');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor.');
+    }
+    setLoading(false);
   };
 
   return (
@@ -224,15 +272,17 @@ const RegistroDocentes = () => {
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
             <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Docentes</div>
-            <form onSubmit={handleSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6" autoComplete="off">
+              {mensaje && <div className="bg-green-100 text-green-800 px-4 py-2 rounded mb-2 text-center">{mensaje}</div>}
+              {error && <div className="bg-red-100 text-red-800 px-4 py-2 rounded mb-2 text-center">{error}</div>}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Nombre(s):</label>
-                  <input type="text" name="nombres" value={form.nombres} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+                  <label className="block text-gray-700 font-semibold mb-1">Nombre(s): <span className="text-red-500">*</span></label>
+                  <input type="text" name="nombres" value={form.nombres} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Apellido Paterno:</label>
-                  <input type="text" name="apellidoPaterno" value={form.apellidoPaterno} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+                  <label className="block text-gray-700 font-semibold mb-1">Apellido Paterno: <span className="text-red-500">*</span></label>
+                  <input type="text" name="apellidoPaterno" value={form.apellidoPaterno} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-1">Apellido Materno:</label>
@@ -250,12 +300,12 @@ const RegistroDocentes = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Correo:</label>
-                  <input type="email" name="correo" value={form.correo} onChange={handleChange} className="w-full border rounded px-3 py-2 bg-blue-50" />
+                  <label className="block text-gray-700 font-semibold mb-1">Correo: <span className="text-red-500">*</span></label>
+                  <input type="email" name="correo" value={form.correo} onChange={handleChange} className="w-full border rounded px-3 py-2 bg-blue-50" required autoComplete="email" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Contraseña:</label>
-                  <input type="password" name="contrasena" value={form.contrasena} onChange={handleChange} className="w-full border rounded px-3 py-2 bg-blue-50" />
+                  <label className="block text-gray-700 font-semibold mb-1">Contraseña: <span className="text-red-500">*</span></label>
+                  <input type="password" name="contrasena" value={form.contrasena} onChange={handleChange} className="w-full border rounded px-3 py-2 bg-blue-50" required autoComplete="new-password" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -281,7 +331,7 @@ const RegistroDocentes = () => {
                 </div>
               </div>
               <div className="flex justify-center mt-4">
-                <button type="submit" className="bg-blue-700 text-white font-semibold px-12 py-2 rounded hover:bg-blue-800 transition-colors">Registrar</button>
+                <button type="submit" className="bg-blue-700 text-white font-semibold px-12 py-2 rounded hover:bg-blue-800 transition-colors disabled:opacity-60" disabled={loading}>{loading ? 'Registrando...' : 'Registrar'}</button>
               </div>
             </form>
           </div>
@@ -295,7 +345,7 @@ const RegistroDocentes = () => {
           </div>
         </footer>
       </div>
-      <style jsx global>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
           background: #fff;

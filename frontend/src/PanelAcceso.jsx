@@ -260,7 +260,7 @@ const PanelAcceso = () => {
               {cuentaOpen && (
                 <ul className="mt-1 space-y-1 pl-6 border-l border-blue-200 ml-3">
                   <li>
-                    <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Inicio</a>
+                    <a href="/PanelAcceso" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Inicio</a>
                   </li>
                   <li>
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>

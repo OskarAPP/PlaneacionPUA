@@ -16,6 +16,7 @@ import CompetenciasG from './CompetenciasGen/CompetenciasG';
 import RegistroCompeG from './CompetenciasGen/RegistroCompeG';
 import CompetenciasE from './CompetenciasEspe/CompetenciasE';
 import RegistroCompeE from './CompetenciasEspe/RegistroCompeE';
+import FacultadesRegistradas from './Facultad/Facultades';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
       <Route path="/registrocompeg" element={<RegistroCompeG />} />
       <Route path="/competenciase" element={<CompetenciasE />} />
       <Route path="/registrocompee" element={<RegistroCompeE />} />
+      <Route path="/facultades" element={<FacultadesRegistradas />} />
     </Routes>
   );
 }
