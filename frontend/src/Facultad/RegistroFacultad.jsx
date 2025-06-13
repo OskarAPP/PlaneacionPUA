@@ -56,13 +56,36 @@ const RegistroFacultad = () => {
 
   // Estado del formulario
   const [form, setForm] = useState({ nombre: "" });
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    alert("Facultad registrada (demo)");
+    setMensaje("");
+    setError("");
+    if (!form.nombre.trim()) {
+      setError("El nombre de la facultad es obligatorio.");
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:8000/api/facultades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ facultad: form.nombre })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMensaje("Facultad registrada exitosamente.");
+        setForm({ nombre: "" });
+      } else {
+        setError(data.message || "Error al registrar la facultad.");
+      }
+    } catch (err) {
+      setError("Error de conexión con el servidor.");
+    }
   };
 
   return (
@@ -222,6 +245,8 @@ const RegistroFacultad = () => {
                   <input type="text" name="nombre" value={form.nombre} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
                 </div>
               </div>
+              {mensaje && <div className="text-green-600 text-center">{mensaje}</div>}
+              {error && <div className="text-red-600 text-center">{error}</div>}
               <div className="flex justify-center mt-2">
                 <button type="submit" className="bg-[#3578b3] text-white font-semibold w-1/2 md:w-1/3 px-12 py-2 rounded hover:bg-[#285a87] transition-colors">Registrar</button>
               </div>
