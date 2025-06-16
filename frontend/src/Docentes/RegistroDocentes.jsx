@@ -86,7 +86,7 @@ const RegistroDocentes = () => {
       nombres: form.nombres,
       apellidop: form.apellidoPaterno,
       apellidom: form.apellidoMaterno,
-      facultad: form.facultad,
+      facultad: form.facultad, // id_facultad
       correo: form.correo,
       contraseña: form.contrasena,
       prefijo: form.prefijo,
@@ -121,6 +121,16 @@ const RegistroDocentes = () => {
     }
     setLoading(false);
   };
+
+  // Facultades para el select
+  const [facultades, setFacultades] = useState([]);
+  useEffect(() => {
+    fetch('http://localhost:8000/api/facultades')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setFacultades(data);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
@@ -294,9 +304,9 @@ const RegistroDocentes = () => {
                   <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
                   <select name="facultad" value={form.facultad} onChange={handleChange} className="w-full border rounded px-3 py-2">
                     <option value="">Seleccione facultad...</option>
-                    <option value="Ingeniería">Ingeniería</option>
-                    <option value="Ciencias">Ciencias</option>
-                    <option value="Humanidades">Humanidades</option>
+                    {facultades.map(fac => (
+                      <option key={fac.id_facultad} value={fac.id_facultad}>{fac.facultad}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
