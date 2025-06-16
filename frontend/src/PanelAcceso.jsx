@@ -99,6 +99,12 @@ const PanelAcceso = () => {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
+  // --- NUEVO: Cerrar dropdowns del sidebar al salir con el mouse ---
+  const handleSidebarMouseLeave = () => {
+    setEstadisticasOpen(false);
+    setCuentaOpen(false);
+  };
+
   // Ajuste: envuelve todo el contenido en un div que cubre toda la pantalla y aplica fondo claro
   return (
     <div className="bg-gray-50 min-h-screen w-full">
@@ -176,6 +182,7 @@ const PanelAcceso = () => {
       <aside 
         className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-hidden${sidebarOpen ? ' w-64' : ''}`}
         aria-label="Sidebar"
+        onMouseLeave={handleSidebarMouseLeave}
       >
         <div className="h-full px-2 py-4 flex flex-col">
           <ul className="space-y-1 font-medium">
@@ -298,17 +305,9 @@ const PanelAcceso = () => {
                 <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
                 <p className="text-2xl font-bold mb-6">{greeting}, <span className="text-2xl font-extrabold">{docente?.nombre || "Usuario"}</span></p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">       
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                    <h3 className="font-extrabold text-2xl text-white mb-3">Datos Personales</h3>
-                    <div className="space-y-2">
-                      <Row label="Nombre" value={<span className="text-lg font-bold text-gray-300">{docente?.nombre || "N/A"}</span>} white/>
-                      <Row label="Correo" value={<span className="text-lg font-bold text-gray-300">{docente?.correo || "N/A"}</span>} white/>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                    <h3 className="font-semibold text-white mb-3">Accesos Rápidos</h3>
+                    <h3 className="font-extrabold text-2xl text-white mb-3">Accesos Rápidos</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <a href="/procesarpua" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
@@ -342,6 +341,37 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Configuración</span>
                         </div>
                       </a>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full">
+                    <h3 className="font-extrabold text-2xl text-white mb-3">Notificaciones Nuevas</h3>
+                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px]">
+                      {/* Notificaciones de muestra */}
+                      <div className="flex items-start gap-2">
+                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-blue-500"></span>
+                        <div>
+                          <span className="font-semibold text-gray-800">Nueva materia registrada</span>
+                          <div className="text-gray-600 text-sm">Se ha agregado la materia "Matemáticas Discretas".</div>
+                          <div className="text-xs text-gray-400">Hace 2 horas</div>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-green-500"></span>
+                        <div>
+                          <span className="font-semibold text-gray-800">Docente asignado</span>
+                          <div className="text-gray-600 text-sm">El docente Juan Pérez fue asignado a "Ingeniería".</div>
+                          <div className="text-xs text-gray-400">Hace 1 día</div>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-yellow-500"></span>
+                        <div>
+                          <span className="font-semibold text-gray-800">Actualización de PUA</span>
+                          <div className="text-gray-600 text-sm">El PUA de "Programación" fue actualizado.</div>
+                          <div className="text-xs text-gray-400">Hace 3 días</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
