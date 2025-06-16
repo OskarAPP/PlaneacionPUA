@@ -40,7 +40,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           </li>
           {/* Menú Estadísticas */}
           <li className="relative">
-            <button
+            <button type="button"
               onClick={() => setEstadisticasOpen(!estadisticasOpen)}
               className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
@@ -69,7 +69,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           </li>
           {/* Menú Mi Cuenta */}
           <li className="relative">
-            <button
+            <button type="button"
               onClick={() => setCuentaOpen(!cuentaOpen)}
               className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
@@ -115,43 +115,43 @@ const DatosPuaForm = () => (
   <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Unidad de aprendizaje:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Investigación de operaciones I" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="Investigación de operaciones I" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Creditos:</label>
-      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
+      <input type="number" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Horas totales:</label>
-      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
+      <input type="number" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="3" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Horas teoricas:</label>
-      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="2" />
+      <input type="number" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="2" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Horas practicas:</label>
-      <input type="number" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="1" />
+      <input type="number" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="1" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Area:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Ciencias de la Ingeniería" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="Ciencias de la Ingeniería" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Núcleo:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Sustantivo" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="Sustantivo" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Tipo:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="Obligatorio" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="Obligatorio" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Art. 57 RGA:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="NO" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="NO" />
     </div>
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Plan de Estudio:</label>
-      <input type="text" className="w-full border rounded px-2 py-1 bg-gray-100" placeholder="2009" />
+      <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="2009" />
     </div>
   </form>
 );
@@ -203,9 +203,9 @@ const CompetenciasPerfilEgresoTabs = () => {
   return (
     <div>
       <div className="flex border-b mb-4">
-        <button onClick={() => setTab(0)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Genéricas</button>
-        <button onClick={() => setTab(1)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Específicas</button>
-        <button onClick={() => setTab(2)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Competencias de Formación y Unidad</button>
+        <button type="button" onClick={() => setTab(0)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Genéricas</button>
+        <button type="button" onClick={() => setTab(1)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Específicas</button>
+        <button type="button" onClick={() => setTab(2)} className={`px-4 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-blue-500 text-blue-700 font-bold bg-white' : 'border-transparent text-gray-500'} focus:outline-none`}>Competencias de Formación y Unidad</button>
       </div>
       <div className="flex flex-col md:flex-row gap-4">
         {/* Genéricas */}
@@ -392,7 +392,7 @@ const ComiteCurricular = () => {
                 <select className="w-full border rounded px-2 py-1 mb-2">
                   <option>Seleccione...</option>
                 </select>
-                <button className="border rounded bg-gray-200 px-3 py-1 text-sm">Guardar</button>
+                <button type="button" className="border rounded bg-gray-200 px-3 py-1 text-sm">Guardar</button>
               </td>
             </tr>
             <tr className="align-top">
@@ -449,15 +449,15 @@ const PerfilAcademicoModal = ({ open, onClose, onAdd, titulo }) => {
       <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in">
         <div className="flex items-center justify-between border-b px-4 py-2">
           <span className="font-semibold">{titulo}</span>
-          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+          <button type="button" className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
         </div>
         <div className="p-4">
           <label className="block font-semibold mb-1">Perfil:</label>
           <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" value={perfil} onChange={e => setPerfil(e.target.value)} />
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
-          <button className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
-          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd(perfil); setPerfil(""); onClose(); }}>Agregar</button>
+          <button type="button" className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
+          <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd(perfil); setPerfil(""); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -488,19 +488,19 @@ const PerfilDocenteTabs = () => {
         titulo={modalType === 0 ? 'Perfil Académico...' : modalType === 1 ? 'Perfil Profesional...' : 'Perfil Docente...'}
       />
       <div className="flex border-b mb-4">
-        <button onClick={() => setTab(0)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Académicos</button>
-        <button onClick={() => setTab(1)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Profesionales</button>
-        <button onClick={() => setTab(2)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Docentes</button>
+        <button type="button" onClick={() => setTab(0)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 0 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Académicos</button>
+        <button type="button" onClick={() => setTab(1)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 1 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Profesionales</button>
+        <button type="button" onClick={() => setTab(2)} className={`px-8 py-2 -mb-px border-b-2 ${tab === 2 ? 'border-gray-400 text-black bg-white font-semibold' : 'border-transparent text-blue-700'} focus:outline-none`}>Docentes</button>
       </div>
       <div className="mt-4">
         {tab === 0 && (
           <>
-            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(0); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(0); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesAcademicos.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
                   <span>{perfil}</span>
-                  <button
+                  <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
                     onClick={() => setPerfilesAcademicos(perfilesAcademicos.filter((_, i) => i !== idx))}
                     title="Eliminar"
@@ -514,12 +514,12 @@ const PerfilDocenteTabs = () => {
         )}
         {tab === 1 && (
           <>
-            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(1); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(1); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesProfesionales.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
                   <span>{perfil}</span>
-                  <button
+                  <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
                     onClick={() => setPerfilesProfesionales(perfilesProfesionales.filter((_, i) => i !== idx))}
                     title="Eliminar"
@@ -533,12 +533,12 @@ const PerfilDocenteTabs = () => {
         )}
         {tab === 2 && (
           <>
-            <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(2); setModalOpen(true); }}>Nuevo perfil...</button>
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-4 hover:bg-blue-50 hover:border-blue-800" onClick={() => { setModalType(2); setModalOpen(true); }}>Nuevo perfil...</button>
             <div className="space-y-2">
               {perfilesDocentes.map((perfil, idx) => (
                 <div key={idx} className="border rounded p-2 bg-white text-gray-800 text-sm flex items-center justify-between">
                   <span>{perfil}</span>
-                  <button
+                  <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
                     onClick={() => setPerfilesDocentes(perfilesDocentes.filter((_, i) => i !== idx))}
                     title="Eliminar"
@@ -697,7 +697,7 @@ const NuevoTemaModal = ({ open, onClose, onAdd, numero }) => {
       <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
         <div className="flex items-center justify-between border-b px-4 py-2">
           <span className="font-semibold">Nuevo tema...</span>
-          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+          <button type="button" className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
         </div>
         <div className="p-4">
           <div className="flex gap-4 items-center">
@@ -712,8 +712,8 @@ const NuevoTemaModal = ({ open, onClose, onAdd, numero }) => {
           </div>
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
-          <button className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
-          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, tema }); setTema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+          <button type="button" className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
+          <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, tema }); setTema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -730,7 +730,7 @@ const NuevoSubtemaModal = ({ open, onClose, onAdd, numero }) => {
       <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
         <div className="flex items-center justify-between border-b px-4 py-2">
           <span className="font-semibold">Nuevo subtema...</span>
-          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+          <button type="button" className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
         </div>
         <div className="p-4">
           <div className="flex gap-4 items-center">
@@ -745,8 +745,8 @@ const NuevoSubtemaModal = ({ open, onClose, onAdd, numero }) => {
           </div>
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
-          <button className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
-          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, subtema }); setSubtema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
+          <button type="button" className="border rounded px-4 py-1 bg-white" onClick={onClose}>Cerrar</button>
+          <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ num, subtema }); setSubtema(""); setNum(numero || 1); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
@@ -806,21 +806,21 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
       </div>
       {/* Tabs */}
       <div className="border-b flex text-sm bg-white pl-8">
-        <button
+        <button type="button"
           className={`px-6 py-2 border-b-2 bg-white ${activeTab === 0 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
           style={{ backgroundColor: 'white' }}
           onClick={() => setActiveTab(0)}
         >
           Información
         </button>
-        <button
+        <button type="button"
           className={`px-6 py-2 border-b-2 bg-white ${activeTab === 1 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
           style={{ backgroundColor: 'white' }}
           onClick={() => setActiveTab(1)}
         >
           Temas, Actividades y Bibliografía
         </button>
-        <button
+        <button type="button"
           className={`px-6 py-2 border-b-2 bg-white ${activeTab === 2 ? 'border-blue-500 font-semibold text-blue-900' : 'border-transparent text-blue-800 hover:border-blue-400 hover:text-blue-900'}`}
           style={{ backgroundColor: 'white' }}
           onClick={() => setActiveTab(2)}
@@ -864,21 +864,21 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
         <div className="p-4 flex">
           {/* Subtabs verticales */}
           <div className="flex flex-col border rounded mr-4 min-w-[160px] bg-white pl-4">
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 0 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 0 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(0)}
             >
               Temas
             </button>
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 1 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 1 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(1)}
             >
               Actividades
             </button>
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left bg-white ${activeSubTab === 2 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 2 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(2)}
@@ -906,8 +906,8 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
               ejemplos={bibliosEjemplo}
             />
             <div className="flex justify-between items-center mb-2">
-              {activeSubTab === 0 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalTemaOpen(true)}>Nuevo tema...</button>}
-              {activeSubTab === 2 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalBiblioOpen(true)}>Nueva bibliografía...</button>}
+              {activeSubTab === 0 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalTemaOpen(true)}>Nuevo tema...</button>}
+              {activeSubTab === 2 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalBiblioOpen(true)}>Nueva bibliografía...</button>}
             </div>
             {/* Placeholder de contenido */}
             {activeSubTab === 0 && temas.length === 0 && (
@@ -924,11 +924,11 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
                         <td className="border px-2 py-1 w-10 text-center align-middle text-black">{t.num}</td>
                         <td className="border px-2 py-1 align-middle text-black">{t.tema}</td>
                         <td className="border px-2 py-1 align-middle w-1 whitespace-nowrap">
-                          <button className="text-gray-400 hover:text-red-600 text-base px-2" title="Eliminar" onClick={() => setTemas(temas.filter((_, idx) => idx !== i))}>×</button>
+                          <button type="button" className="text-gray-400 hover:text-red-600 text-base px-2" title="Eliminar" onClick={() => setTemas(temas.filter((_, idx) => idx !== i))}>×</button>
                         </td>
                         <td className="border px-2 py-1 align-middle w-1 whitespace-nowrap">
-                          <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mr-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalSubtemaOpen(i)}>Agregar Subtema</button>
-                          <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800" onClick={() => setMostrarSubtemas(mostrarSubtemas === i ? null : i)}>Mostrar subtemas</button>
+                          <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mr-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalSubtemaOpen(i)}>Agregar Subtema</button>
+                          <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800" onClick={() => setMostrarSubtemas(mostrarSubtemas === i ? null : i)}>Mostrar subtemas</button>
                         </td>
                       </tr>
                       {mostrarSubtemas === i && subtemasByTema[i] && (
@@ -939,7 +939,7 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
                                 {subtemasByTema[i].map((s, j) => (
                                   <li key={j} className="flex items-center justify-between text-black">
                                     <span>{s.num}. {s.subtema}</span>
-                                    <button className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleEliminarSubtema(i, j)}>×</button>
+                                    <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleEliminarSubtema(i, j)}>×</button>
                                   </li>
                                 ))}
                               </ul>
@@ -954,7 +954,7 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
             )}
             {activeSubTab === 1 && (
               <div>
-                <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalActividadOpen(true)}>Nueva actividad...</button>
+                <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs mb-2 hover:bg-blue-50 hover:border-blue-800" onClick={() => setModalActividadOpen(true)}>Nueva actividad...</button>
                 <table className="w-full border text-black text-sm bg-white">
                   <thead>
                     <tr>
@@ -993,7 +993,7 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
                     {biblios.map((b, i) => (
                       <li key={i} className="flex items-center justify-between px-3 py-2 text-black">
                         <span>{b}</span>
-                        <button className="text-gray-400 hover:text-red-600 ml-2" onClick={() => setBiblios(biblios.filter((_, idx) => idx !== i))}>×</button>
+                        <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => setBiblios(biblios.filter((_, idx) => idx !== i))}>×</button>
                       </li>
                     ))}
                   </ul>
@@ -1007,28 +1007,28 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
         <div className="p-4 flex">
           {/* Subtabs verticales para Evaluación, Ambientes y Materiales */}
           <div className="flex flex-col border rounded mr-4 min-w-[220px] bg-white pl-4">
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 0 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 0 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(0)}
             >
               Criterios
             </button>
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 1 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 1 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(1)}
             >
               Evidencias
             </button>
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left border-b bg-white ${activeSubTab === 2 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 2 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(2)}
             >
               Ambiente de trabajo o aprendizaje
             </button>
-            <button
+            <button type="button"
               className={`px-4 py-2 text-left bg-white ${activeSubTab === 3 ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-700'}`}
               style={{ backgroundColor: activeSubTab === 3 ? '#EFF6FF' : 'white' }}
               onClick={() => setActiveSubTab(3)}
@@ -1038,10 +1038,10 @@ const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
           </div>
           <div className="flex-1">
             <div className="flex justify-between items-center mb-2">
-              {activeSubTab === 0 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo criterio</button>}
-              {activeSubTab === 1 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nueva evidencia</button>}
-              {activeSubTab === 2 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo ambiente</button>}
-              {activeSubTab === 3 && <button className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo material</button>}
+              {activeSubTab === 0 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo criterio</button>}
+              {activeSubTab === 1 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nueva evidencia</button>}
+              {activeSubTab === 2 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo ambiente</button>}
+              {activeSubTab === 3 && <button type="button" className="border border-blue-700 text-blue-700 bg-white px-2 py-1 rounded text-xs hover:bg-blue-50 hover:border-blue-800">Nuevo material</button>}
             </div>
             {/* Placeholder de contenido */}
             <div className="border rounded bg-gray-50 p-4 text-gray-500 text-sm">Seleccione una opción del menú lateral.</div>
@@ -1067,18 +1067,18 @@ const ProcesarPua = () => {
   return (
     <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100">
       {/* Header + Sidebar pegados */}
-      <div className="flex w-full">
-        <div className="flex flex-col">
-          <header className="bg-white border-b flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300">
-  <div className="flex items-center gap-2">
-    <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
-    <div className="ml-2 hidden md:block">
-      <div className="text-xs text-gray-700 leading-tight">
-        Programas de Unidad<br />de Aprendizaje
-      </div>
-    </div>
-  </div>
-</header>
+        <div className="flex w-full">
+          <div className="flex flex-col">
+            <header className="bg-white border-b flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300">
+          <div className="flex items-center gap-2">
+            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
+            <div className="ml-2 hidden md:block">
+              <div className="text-xs text-gray-700 leading-tight">
+                Programas de Unidad<br />de Aprendizaje
+              </div>
+            </div>
+          </div>
+        </header>
 
           <SidebarProcesarPua
             estadisticasOpen={estadisticasOpen}
@@ -1089,7 +1089,7 @@ const ProcesarPua = () => {
           />
         </div>
         {/* Main Content, scrollable only here */}
-        <main className="flex-1 flex flex-col items-center py-8 overflow-y-auto ml-16 md:ml-64 transition-all duration-300 h-[calc(100vh)]" style={{ maxHeight: '100vh' }}>
+        <main className="flex-1 flex flex-col items-center justify-start pt-28 pb-8 overflow-y-auto ml-16 md:ml-20 transition-all duration-300 h-[calc(100vh)] scrollbar-thin scrollbar-thumb-gray-300" style={{ maxHeight: '100vh' }}>
           <div className="w-full max-w-4xl mx-auto">
             <div className="text-center text-lg font-semibold text-gray-700 mb-4">
               Bienvenido M. en C. Guadalupe Manuel Estrada Segovia
@@ -1123,7 +1123,7 @@ const ProcesarPua = () => {
             </div>
             {/* Renderizar pestañas de subcompetencias */}
             {(subcompetencias.length > 0) && (
-              <div className="flex flex-col gap-4 mt-6">
+              <div className="flex flex-col gap-4 mt-6 w-full items-center">
                 {subcompetencias.map((nombre, idx) => (
                   <SubcompetenciaPanel
                     key={idx}
@@ -1134,7 +1134,7 @@ const ProcesarPua = () => {
                 ))}
               </div>
             )}
-            <div className="flex justify-end gap-2 mt-8">
+            <div className="flex justify-end gap-2 mt-8 w-full">
               <button
                 type="button"
                 className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded hover:bg-blue-50 hover:border-blue-800"
@@ -1152,14 +1152,7 @@ const ProcesarPua = () => {
           </div>
         </main>
       </div>
-      {/* Footer */}
-      <footer className="bg-gray-600/90 text-white py-4 flex flex-col items-center mt-auto shadow-glass">
-        <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
-        <div className="text-center text-sm">
-          Facultad de Ingeniería<br />
-          Laboratorio de Diseño de Aplicaciones Móviles
-        </div>
-      </footer>
+      {/* Footer eliminado */}
     </div>
   );
 };
@@ -1173,7 +1166,7 @@ const NuevaBibliografiaModal = ({ open, onClose, onAdd, ejemplos }) => {
       <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
         <div className="flex items-center justify-between border-b px-4 py-2">
           <span className="font-semibold">Nueva bibliografía...</span>
-          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+          <button type="button" className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
         </div>
         <div className="p-4">
           <div className="flex gap-2 items-center">
@@ -1183,11 +1176,11 @@ const NuevaBibliografiaModal = ({ open, onClose, onAdd, ejemplos }) => {
                 <option key={i} value={ej}>{ej}</option>
               ))}
             </select>
-            <button className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { if(selected) { onAdd(selected); setSelected(""); onClose(); } }}>➤</button>
+            <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { if(selected) { onAdd(selected); setSelected(""); onClose(); } }}>➤</button>
           </div>
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
-          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+          <button type="button" className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
         </div>
       </div>
     </div>
@@ -1204,7 +1197,7 @@ const NuevoActividadModal = ({ open, onClose, onAdd }) => {
       <div className="bg-white rounded shadow-lg w-full max-w-md relative animate-fade-in text-black">
         <div className="flex items-center justify-between border-b px-4 py-2">
           <span className="font-semibold">Nueva actividad...</span>
-          <button className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
+          <button type="button" className="text-gray-400 hover:text-red-600 text-xl" onClick={onClose}>×</button>
         </div>
         <div className="p-4">
           <div className="flex flex-col gap-4">
@@ -1219,8 +1212,8 @@ const NuevoActividadModal = ({ open, onClose, onAdd }) => {
           </div>
         </div>
         <div className="flex justify-end gap-2 border-t px-4 py-2">
-          <button className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
-          <button className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ alumno, docente }); setAlumno(""); setDocente(""); onClose(); }}>Agregar</button>
+          <button type="button" className="border rounded px-4 py-1 bg-white text-black" onClick={onClose}>Cerrar</button>
+          <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-1 hover:bg-blue-50 hover:border-blue-800" onClick={() => { onAdd({ alumno, docente }); setAlumno(""); setDocente(""); onClose(); }}>Agregar</button>
         </div>
       </div>
     </div>
