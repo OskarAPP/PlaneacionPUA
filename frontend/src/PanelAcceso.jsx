@@ -270,10 +270,10 @@ const PanelAcceso = () => {
                     <a href="/PanelAcceso" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Inicio</a>
                   </li>
                   <li>
-                    <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
+                    <a href="perfil" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
                   </li>
                   <li>
-                    <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Contraseña</a>
+                    <a href="perfil" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Contraseña</a>
                   </li>
                   <li>
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Configuración</a>
@@ -333,7 +333,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Perfil</span>
                         </div>
                       </a>
-                      <a href="#" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
+                      <a href="/docentes" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
