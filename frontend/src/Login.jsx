@@ -24,6 +24,10 @@ function Login() {
       if (response.ok && data.user) {
         // Autenticación exitosa
         localStorage.setItem('user', JSON.stringify(data.user));
+        // Guardar id_acceso para el perfil
+        if (data.user.id_acceso) {
+          localStorage.setItem('id_acceso', data.user.id_acceso);
+        }
         navigate('/panelacceso');
       } else {
         setError(data.message || 'Credenciales incorrectas');

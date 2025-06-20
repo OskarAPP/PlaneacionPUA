@@ -12,6 +12,7 @@ const PerfilUsuario = () => {
     setEstadisticasOpen(false);
     setCuentaOpen(false);
   };
+
   // Datos de demostración
   const usuario = {
     nombre: "Sami Rahman",
@@ -23,6 +24,7 @@ const PerfilUsuario = () => {
     foto: fotoPerfil,
     lastLogin: "Last login: 17 Aug 2018 14:54 (Kendall in DC, New York, US)",
   };
+
   const bills = [
     { nombre: "Phone bill", pagado: true },
     { nombre: "Intranet bill", pagado: false },
@@ -31,30 +33,63 @@ const PerfilUsuario = () => {
   ];
 
   const handleFotoClick = () => {
-    fileInputRef.current.click();
+    if (!subiendo) fileInputRef.current.click();
   };
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
+
     setSubiendo(true);
+
+    const id_acceso = localStorage.getItem("id_acceso");
+
+    if (!id_acceso) {
+      alert("No se encontró el id_acceso en localStorage");
+      setSubiendo(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("imagen", file);
-    // Obtener id_acceso del localStorage
-    const id_acceso = localStorage.getItem('id_acceso');
     formData.append("id_acceso", id_acceso);
+
     try {
+      console.log("Enviando imagen al servidor...");
       const response = await fetch("http://localhost:8000/api/imagenes", {
         method: "POST",
         body: formData,
       });
-      if (!response.ok) throw new Error("Error al subir la imagen");
-      const data = await response.json();
+
+      console.log("Respuesta recibida:", {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers),
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      let data;
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+        console.log("JSON recibido:", data);
+      } else {
+        console.warn("La respuesta no es JSON.");
+        data = { success: true, message: "Imagen subida correctamente" };
+      }
+
+      // Mostrar previsualización local
       const reader = new FileReader();
       reader.onload = (ev) => setFotoPerfil(ev.target.result);
+      reader.onerror = (err) => console.error("Error leyendo archivo:", err);
       reader.readAsDataURL(file);
+
       alert("Imagen subida correctamente");
+
     } catch (err) {
+      console.error("Error al subir la imagen:", err);
       alert("Error al subir la imagen");
     } finally {
       setSubiendo(false);
@@ -166,23 +201,25 @@ const PerfilUsuario = () => {
           </ul>
         </div>
       </aside>
+
       {/* MAIN DASHBOARD */}
       <div className="flex-1 min-h-screen flex flex-col bg-white ml-16 md:ml-40">
         {/* Header */}
         <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between px-12 py-6 bg-white border-b shadow-md">
-        <div>
+          <div>
             <div className="text-2xl font-semibold text-gray-800">My finance dashboard</div>
             <div className="text-sm text-gray-400 mt-1">Welcome to xPay payment portal</div>
-        </div>
-        <div className="flex items-center gap-4">
+          </div>
+          <div className="flex items-center gap-4">
             <img src={usuario.foto} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" alt="avatar" />
             <span className="text-gray-700 font-medium">Hello Sami</span>
             <i className="fa fa-chevron-down text-gray-400" />
-        </div>
+          </div>
         </header>
+
         {/* Dashboard Content */}
         <main className="flex-1 flex flex-col items-start justify-start bg-white px-0 pt-32 pb-16 w-full relative">
-        <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-40 mt-0">
+          <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-40 mt-0">
             {/* Profile Card */}
             <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-100" style={{minWidth: 320}}>
               <div className="relative mb-4">
