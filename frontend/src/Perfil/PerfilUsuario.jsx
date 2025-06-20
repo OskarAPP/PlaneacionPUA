@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import defaultAvatar from "../Imagenes/60aniversario.png";
 
 const PerfilUsuario = () => {
@@ -7,6 +7,18 @@ const PerfilUsuario = () => {
   const [cuentaOpen, setCuentaOpen] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState(defaultAvatar);
   const [subiendo, setSubiendo] = useState(false);
+
+  // Cargar imagen de perfil al montar el componente
+  useEffect(() => {
+    const id_acceso = localStorage.getItem("id_acceso");
+    if (id_acceso) {
+      fetch(`http://localhost:8000/api/perfil-imagen/${id_acceso}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.url) setFotoPerfil(data.url);
+        });
+    }
+  }, []);
 
   const handleSidebarMouseLeave = () => {
     setEstadisticasOpen(false);

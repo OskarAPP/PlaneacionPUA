@@ -22,3 +22,4 @@ Route::post('/facultades', [FacultadController::class, 'store']);
 Route::delete('/facultades/{id}', [FacultadController::class, 'destroy']);
 Route::post('/imagenes', [ImagenController::class, 'store']);
 Route::get('/imagenes/{id}', [ImagenController::class, 'show']);
+Route::get('/perfil-imagen/{id_acceso}', [ImagenController::class, 'getByAcceso']);

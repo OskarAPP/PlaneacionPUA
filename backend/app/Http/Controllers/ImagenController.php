@@ -45,4 +45,20 @@ class ImagenController extends Controller
             'Content-Type' => $imagen->tipo,
         ]);
     }
+
+    // Obtener la última imagen de perfil por id_acceso
+    public function getByAcceso($id_acceso)
+    {
+        $imagen = Imagen::where('id_acceso', $id_acceso)->latest()->first();
+        if (!$imagen) {
+            return response()->json(['mensaje' => 'No hay imagen de perfil'], 404);
+        }
+        return response()->json([
+            'id' => $imagen->id,
+            'url' => asset('storage/' . $imagen->ruta),
+            'nombre' => $imagen->nombre,
+            'tipo' => $imagen->tipo,
+            'tamano' => $imagen->tamano,
+        ]);
+    }
 }
