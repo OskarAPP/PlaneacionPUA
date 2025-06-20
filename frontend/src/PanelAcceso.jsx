@@ -7,6 +7,7 @@ const PanelAcceso = () => {
   const [cuentaOpen, setCuentaOpen] = useState(false);
   const [docente, setDocente] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const dropdownRef = useRef(null);
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
@@ -80,6 +81,18 @@ const PanelAcceso = () => {
     }
   }, []);
 
+  // Cargar imagen de perfil al montar el componente
+  useEffect(() => {
+    const id_acceso = localStorage.getItem("id_acceso");
+    if (id_acceso) {
+      fetch(`http://localhost:8000/api/perfil-imagen/${id_acceso}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.url) setFotoPerfil(data.url);
+        });
+    }
+  }, []);
+
   // Función para determinar gradientes según tipo
   const getGradientClass = (type) => {
     switch(type) {
@@ -127,19 +140,19 @@ const PanelAcceso = () => {
             <div className="flex items-center">
               <div className="relative group">
                 <div className="flex items-center ms-3">
-                  <button
-                    type="button"
-                    className="flex text-sm bg-gray-800 rounded-full focus:ring-4 
-                               focus:ring-gray-300 dark:focus:ring-gray-600"
-                    aria-expanded="false"
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" 
-                      alt="user photo"
-                    />
-                  </button>
+              <button
+                type="button"
+                className="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 items-center justify-center"
+                aria-expanded="false"
+                style={{ padding: 0 }}
+              >
+                <span className="sr-only">Open user menu</span>
+                <img
+                  className="w-16 h-16 rounded-full object-cover transition-all duration-300 hover:scale-110"
+                  src={fotoPerfil || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
+                  alt="user photo"
+                />
+              </button>
                 </div>
                 {/* Dropdown de usuario */}
                 <div
