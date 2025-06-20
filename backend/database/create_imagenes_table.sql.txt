@@ -1,0 +1,10 @@
+-- Script SQL para la tabla imagenes
+CREATE TABLE imagenes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    ruta VARCHAR(255) NOT NULL,
+    tipo VARCHAR(100) NOT NULL,
+    tamano BIGINT UNSIGNED NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
