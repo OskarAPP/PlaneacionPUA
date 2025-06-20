@@ -149,7 +149,7 @@ const PanelAcceso = () => {
                   <ul className="py-2" role="none">
                     <li>
                       <a
-                        href="/perfil"
+                        href="/perfilusuario"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         role="menuitem"
                       >
@@ -270,10 +270,10 @@ const PanelAcceso = () => {
                     <a href="/PanelAcceso" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Inicio</a>
                   </li>
                   <li>
-                    <a href="perfil" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
+                    <a href="Perfilusuario" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
                   </li>
                   <li>
-                    <a href="perfil" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Contraseña</a>
+                    <a href="Perfilusuario" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Contraseña</a>
                   </li>
                   <li>
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Configuración</a>

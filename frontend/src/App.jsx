@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import PanelAcceso from './PanelAcceso';
 import Docentes from './Docentes/Docentes';
 import ProcesarPua from "./ProcesarPua";
@@ -22,6 +22,7 @@ import PerfilUsuario from './Perfil/PerfilUsuario';
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/panelacceso" element={<PanelAcceso />} />
       <Route path="/docentes" element={<Docentes />} />
@@ -40,7 +41,7 @@ function App() {
       <Route path="/competenciase" element={<CompetenciasE />} />
       <Route path="/registrocompee" element={<RegistroCompeE />} />
       <Route path="/facultades" element={<FacultadesRegistradas />} />
-      <Route path="/perfil" element={<PerfilUsuario />} />
+      <Route path="/perfilusuario" element={<PerfilUsuario />} />
     </Routes>
   );
 }
