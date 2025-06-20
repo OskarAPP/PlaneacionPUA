@@ -16,5 +16,6 @@ class Imagen extends Model
         'ruta',
         'tipo',
         'tamano',
+        'id_acceso',
     ];
 }

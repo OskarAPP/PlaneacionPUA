@@ -40,15 +40,16 @@ const PerfilUsuario = () => {
     setSubiendo(true);
     const formData = new FormData();
     formData.append("imagen", file);
+    // Obtener id_acceso del localStorage
+    const id_acceso = localStorage.getItem('id_acceso');
+    formData.append("id_acceso", id_acceso);
     try {
       const response = await fetch("http://localhost:8000/api/imagenes", {
         method: "POST",
         body: formData,
       });
       if (!response.ok) throw new Error("Error al subir la imagen");
-      // Opcional: podrías guardar el id de la imagen en el usuario
       const data = await response.json();
-      // Mostrar la imagen seleccionada como preview
       const reader = new FileReader();
       reader.onload = (ev) => setFotoPerfil(ev.target.result);
       reader.readAsDataURL(file);
@@ -260,7 +261,7 @@ const PerfilUsuario = () => {
           <div className="absolute right-0 bottom-0 z-0 pointer-events-none select-none">
             <svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="paint0_linear" x1="0" y1="0" x2="320" y2="180" gradientUnits="userSpace">
+                <linearGradient id="paint0_linear" x1="0" y1="0" x2="320" y2="180" gradientUnits="userSpaceOnUse">
                   <stop offset="0%" stopColor="#FBBF24" />
                   <stop offset="100%" stopColor="#F59E0B" />
                 </linearGradient>

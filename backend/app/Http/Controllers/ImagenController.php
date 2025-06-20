@@ -13,6 +13,7 @@ class ImagenController extends Controller
     {
         $request->validate([
             'imagen' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:5120', // 5MB aprox
+            'id_acceso' => 'required|exists:acceso,id_acceso',
         ]);
 
         $file = $request->file('imagen');
@@ -26,6 +27,7 @@ class ImagenController extends Controller
             'ruta' => $ruta,
             'tipo' => $tipo,
             'tamano' => $tamano,
+            'id_acceso' => $request->id_acceso,
         ]);
 
         return response()->json(['id' => $imagen->id, 'mensaje' => 'Imagen guardada'], 201);
