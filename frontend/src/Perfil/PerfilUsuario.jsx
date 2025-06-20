@@ -5,6 +5,9 @@ const PerfilUsuario = () => {
   const fileInputRef = useRef(null);
   const [estadisticasOpen, setEstadisticasOpen] = useState(false);
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [fotoPerfil, setFotoPerfil] = useState(defaultAvatar);
+  const [subiendo, setSubiendo] = useState(false);
+
   const handleSidebarMouseLeave = () => {
     setEstadisticasOpen(false);
     setCuentaOpen(false);
@@ -17,7 +20,7 @@ const PerfilUsuario = () => {
     titulo: "M. en C.",
     correo: "Samirahman007@gmail.com",
     telefono: "+1-856-559-965-1236",
-    foto: defaultAvatar,
+    foto: fotoPerfil,
     lastLogin: "Last login: 17 Aug 2018 14:54 (Kendall in DC, New York, US)",
   };
   const bills = [
@@ -29,6 +32,32 @@ const PerfilUsuario = () => {
 
   const handleFotoClick = () => {
     fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSubiendo(true);
+    const formData = new FormData();
+    formData.append("imagen", file);
+    try {
+      const response = await fetch("http://localhost:8000/api/imagenes", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("Error al subir la imagen");
+      // Opcional: podrías guardar el id de la imagen en el usuario
+      const data = await response.json();
+      // Mostrar la imagen seleccionada como preview
+      const reader = new FileReader();
+      reader.onload = (ev) => setFotoPerfil(ev.target.result);
+      reader.readAsDataURL(file);
+      alert("Imagen subida correctamente");
+    } catch (err) {
+      alert("Error al subir la imagen");
+    } finally {
+      setSubiendo(false);
+    }
   };
 
   return (
@@ -168,6 +197,8 @@ const PerfilUsuario = () => {
                   accept="image/*"
                   ref={fileInputRef}
                   className="hidden"
+                  onChange={handleFileChange}
+                  disabled={subiendo}
                 />
                 <span className="absolute bottom-2 right-2 bg-orange-500 text-white rounded-full p-1 cursor-pointer text-xs border-2 border-white" onClick={handleFotoClick} title="Editar foto">
                   <i className="fa fa-pencil" />
