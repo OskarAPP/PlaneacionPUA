@@ -119,7 +119,7 @@ const PerfilUsuario = () => {
                     <a href="/PanelAcceso" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Inicio</a>
                   </li>
                   <li>
-                    <a href="/perfil" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
+                    <a href="/perfilusuario" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Perfil</a>
                   </li>
                   <li>
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Contraseña</a>
