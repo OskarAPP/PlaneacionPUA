@@ -217,10 +217,18 @@ const PerfilUsuario = () => {
       {/* MAIN DASHBOARD */}
       <div className="flex-1 min-h-screen flex flex-col bg-white ml-16 md:ml-40">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between px-12 py-6 bg-white border-b shadow-md">
+        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-6 bg-white border-b shadow-md">
           <div>
-            <div className="text-2xl font-semibold text-gray-800">My finance dashboard</div>
-            <div className="text-sm text-gray-400 mt-1">Welcome to xPay payment portal</div>
+            <a href="../PanelAcceso" className="flex items-center ms-4">
+              <img
+                src="../src/imagenes/60aniversario.png"
+                className="h-12 me-2"
+                alt="FDI"
+              />
+              <span className="self-center text-xl font-semibold whitespace-nowrap">
+                Programas de Unidad<br />de Aprendizaje
+              </span>
+            </a>
           </div>
           <div className="flex items-center gap-4">
             <img src={usuario.foto} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" alt="avatar" />

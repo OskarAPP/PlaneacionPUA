@@ -126,10 +126,10 @@ const PanelAcceso = () => {
         <div className="w-full px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
-              <a href="../Dashboard" className="flex ms-2 md:me-24">
+              <a href="../Dashboard" className="flex items-center ms-4">
                 <img
                   src="../src/imagenes/60aniversario.png"
-                  className="h-8 me-3"
+                  className="h-12 me-3"
                   alt="FDI"
                 />
                 <span className="self-center text-xl font-semibold whitespace-nowrap">
