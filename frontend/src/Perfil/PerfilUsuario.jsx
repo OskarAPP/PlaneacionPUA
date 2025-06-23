@@ -7,6 +7,7 @@ const PerfilUsuario = () => {
   const [cuentaOpen, setCuentaOpen] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState(defaultAvatar);
   const [subiendo, setSubiendo] = useState(false);
+  const [docente, setDocente] = useState(null);
 
   // Cargar imagen de perfil al montar el componente
   useEffect(() => {
@@ -16,6 +17,18 @@ const PerfilUsuario = () => {
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.url) setFotoPerfil(data.url);
+        });
+    }
+  }, []);
+
+  // Cargar datos del docente desde la API
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id_docente) {
+      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) setDocente(data.docente);
         });
     }
   }, []);
@@ -108,11 +121,19 @@ const PerfilUsuario = () => {
     }
   };
 
+  // Componente Row reutilizable
+  const Row = ({ label, value }) => (
+    <div className="flex items-center gap-4 mb-3">
+      <span className="w-32 font-medium text-gray-600">{label}:</span>
+      <span className="text-gray-800">{value}</span>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen min-w-screen w-full h-full bg-white flex flex-row">
+    <div className="min-h-screen min-w-screen w-full h-full bg-gray-50 dark:bg-gray-900 flex flex-row">
       {/* SIDEBAR */}
       <aside 
-        className={`fixed left-0 top-[104px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-xl overflow-hidden`}
+        className={`fixed left-0 top-[104px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden`}
         aria-label="Sidebar"
         onMouseLeave={handleSidebarMouseLeave}
       >
@@ -215,9 +236,9 @@ const PerfilUsuario = () => {
       </aside>
 
       {/* MAIN DASHBOARD */}
-      <div className="flex-1 min-h-screen flex flex-col bg-white ml-16 md:ml-40">
+      <div className="flex-1 min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 ml-16 md:ml-40">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-6 bg-white border-b shadow-md">
+        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-6 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-md">
           <div>
             <a href="../PanelAcceso" className="flex items-center ms-4">
               <img
@@ -225,28 +246,28 @@ const PerfilUsuario = () => {
                 className="h-12 me-2"
                 alt="FDI"
               />
-              <span className="self-center text-xl font-semibold whitespace-nowrap">
+              <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                 Programas de Unidad<br />de Aprendizaje
               </span>
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <img src={usuario.foto} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" alt="avatar" />
-            <span className="text-gray-700 font-medium">Hello Sami</span>
-            <i className="fa fa-chevron-down text-gray-400" />
+            <img src={fotoPerfil} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-800" alt="avatar" />
+            <span className="text-gray-700 dark:text-gray-200 font-medium">{docente?.nombre || 'Usuario'}</span>
+            <i className="fa fa-chevron-down text-gray-400 dark:text-gray-300" />
           </div>
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 flex flex-col items-start justify-start bg-white px-0 pt-32 pb-16 w-full relative">
+        <main className="flex-1 flex flex-col items-start justify-start bg-gray-50 dark:bg-gray-900 px-0 pt-32 pb-16 w-full relative">
           <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-40 mt-0">
             {/* Profile Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-100" style={{minWidth: 320}}>
+            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-blue-900/30" style={{minWidth: 320}}>
               <div className="relative mb-4">
                 <img
-                  src={usuario.foto}
+                  src={fotoPerfil}
                   alt="Foto de perfil"
-                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 shadow"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-blue-900 shadow"
                   onClick={handleFotoClick}
                   style={{ cursor: 'pointer' }}
                 />
@@ -258,73 +279,66 @@ const PerfilUsuario = () => {
                   onChange={handleFileChange}
                   disabled={subiendo}
                 />
-                <span className="absolute bottom-2 right-2 bg-orange-500 text-white rounded-full p-1 cursor-pointer text-xs border-2 border-white" onClick={handleFotoClick} title="Editar foto">
+                <span className="absolute bottom-2 right-2 bg-orange-500 text-white rounded-full p-1 cursor-pointer text-xs border-2 border-white dark:border-gray-900" onClick={handleFotoClick} title="Editar foto">
                   <i className="fa fa-pencil" />
                 </span>
               </div>
               <div className="w-full text-left">
-                <div className="font-semibold text-lg text-gray-800 mb-1">My profile</div>
-                <div className="text-xs text-gray-400 mb-2">{usuario.lastLogin}</div>
-                <div className="border-b border-gray-200 mb-2" />
-                <div className="text-base text-gray-700 font-medium mb-1">{usuario.nombre}</div>
-                <div className="text-sm text-gray-500 mb-1">{usuario.telefono}</div>
-                <div className="text-sm text-gray-500 mb-1">{usuario.correo}</div>
+                <div className="font-semibold text-lg text-gray-800 dark:text-white mb-1">{docente?.nombre || 'Usuario'}</div>
+                <div className="text-xs text-gray-400 dark:text-gray-300 mb-2">{docente?.correo || 'Sin correo'}</div>
+                <div className="border-b border-gray-200 dark:border-gray-700 mb-2" />
+                <div className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">{docente?.prefijo || 'Sin título'}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">{docente?.apellido_paterno || ''} {docente?.apellido_materno || ''}</div>
+                {/* Puedes agregar más datos aquí si lo deseas */}
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xs text-orange-500">SMS alerts activation</span>
                   <span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
                 </div>
-                <button className="mt-4 w-full bg-orange-500 text-white rounded-lg py-2 font-semibold shadow hover:bg-orange-600 transition">Save</button>
+                <button className="mt-4 w-full bg-orange-500 text-white rounded-lg py-2 font-semibold shadow hover:bg-orange-600 transition">Guardar</button>
               </div>
             </div>
             {/* xPay accounts */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100" style={{minWidth: 320}}>
+            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-purple-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800">My xPay accounts</div>
-                <button className="bg-gray-100 rounded px-3 py-1 text-gray-500 text-sm flex items-center gap-1"><i className="fa fa-pencil" /> Edit</button>
+                <div className="font-semibold text-lg text-gray-800 dark:text-white">DATOS ACADEMICOS</div>
+                <button className="bg-gray-100 dark:bg-gray-800 rounded px-3 py-1 text-gray-500 dark:text-gray-300 text-sm flex items-center gap-1"><i className="fa fa-pencil" /> Edit</button>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Active account</span>
-                  <span className="text-gray-500 text-sm">8640 5698 8020 4256</span>
+                  <span className="text-gray-700 dark:text-gray-200">Unidad academica</span>
+                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
                   <button className="bg-red-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Block Account</button>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Blocked account</span>
-                  <span className="text-gray-500 text-sm">8640 5698 8020 4256</span>
+                  <span className="text-gray-700 dark:text-gray-200">Cargo</span>
+                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
+                  <button className="bg-green-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Unlock account</button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700 dark:text-gray-200">Accesos</span>
+                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
                   <button className="bg-green-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Unlock account</button>
                 </div>
               </div>
             </div>
             {/* My bills */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100" style={{minWidth: 320}}>
+            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-yellow-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800">My bills</div>
-                <button className="bg-gray-100 rounded px-3 py-1 text-gray-500 text-sm flex items-center gap-1"><i className="fa fa-filter" /> Filter by</button>
+                <div className="font-semibold text-lg text-gray-800 dark:text-white">My bills</div>
+                <button className="bg-gray-100 dark:bg-gray-800 rounded px-3 py-1 text-gray-500 dark:text-gray-300 text-sm flex items-center gap-1"><i className="fa fa-filter" /> Filter by</button>
               </div>
               <div className="flex flex-col gap-3">
                 {bills.map((bill, idx) => (
                   <div key={idx} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className={`w-3 h-3 rounded-full ${bill.pagado ? 'bg-green-500' : 'bg-pink-500'}`}></span>
-                      <span className="text-gray-700">{bill.nombre}</span>
+                      <span className="text-gray-700 dark:text-gray-200">{bill.nombre}</span>
                     </div>
-                    <span className={`rounded px-3 py-1 text-xs font-semibold ml-2 ${bill.pagado ? 'bg-green-100 text-green-700' : 'bg-pink-100 text-pink-700'}`}>{bill.pagado ? 'Bill paid' : 'Not paid'}</span>
+                    <span className={`rounded px-3 py-1 text-xs font-semibold ml-2 ${bill.pagado ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300'}`}>{bill.pagado ? 'Bill paid' : 'Not paid'}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-          {/* Fondo decorativo inferior derecho */}
-          <div className="absolute right-0 bottom-0 z-0 pointer-events-none select-none">
-            <svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="paint0_linear" x1="0" y1="0" x2="320" y2="180" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#FBBF24" />
-                  <stop offset="100%" stopColor="#F59E0B" />
-                </linearGradient>
-              </defs>
-              <path d="M0 90L40 70C80 50 160 -10 240 10C320 30 400 90 440 130L480 170L0 180V90Z" fill="url(#paint0_linear)" />
-            </svg>
           </div>
         </main>
       </div>
