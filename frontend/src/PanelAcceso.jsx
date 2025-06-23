@@ -12,22 +12,6 @@ const PanelAcceso = () => {
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
 
-  // Asegura fondo claro en body y html
-  useEffect(() => {
-    const prevBodyBg = document.body.style.backgroundColor;
-    const prevHtmlBg = document.documentElement.style.backgroundColor;
-    document.body.style.backgroundColor = '#f9fafb'; // Tailwind bg-gray-50
-    document.documentElement.style.backgroundColor = '#f9fafb';
-    document.body.style.minHeight = '100vh';
-    document.documentElement.style.minHeight = '100vh';
-    return () => {
-      document.body.style.backgroundColor = prevBodyBg;
-      document.documentElement.style.backgroundColor = prevHtmlBg;
-      document.body.style.minHeight = '';
-      document.documentElement.style.minHeight = '';
-    };
-  }, []);
-
   // Saludo dinámico
   useEffect(() => {
     const hour = new Date().getHours();
@@ -118,11 +102,11 @@ const PanelAcceso = () => {
     setCuentaOpen(false);
   };
 
-  // Ajuste: envuelve todo el contenido en un div que cubre toda la pantalla y aplica fondo claro
+  // Ajuste: envuelve todo el contenido en un div que cubre toda la pantalla y aplica fondo claro/oscuro
   return (
-    <div className="bg-gray-50 min-h-screen w-full">
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 w-full bg-white border-b border-gray-200 z-30">
+      <nav className="fixed top-0 left-0 right-0 w-full bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 z-30">
         <div className="w-full px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
@@ -132,7 +116,7 @@ const PanelAcceso = () => {
                   className="h-12 me-3"
                   alt="FDI"
                 />
-                <span className="self-center text-xl font-semibold whitespace-nowrap">
+                <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                   Programas de Unidad<br />de Aprendizaje
                 </span>
               </a>
@@ -140,30 +124,29 @@ const PanelAcceso = () => {
             <div className="flex items-center">
               <div className="relative group">
                 <div className="flex items-center ms-3">
-              <button
-                type="button"
-                className="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 items-center justify-center"
-                aria-expanded="false"
-                style={{ padding: 0 }}
-              >
-                <span className="sr-only">Open user menu</span>
-                <img
-                  className="w-16 h-16 rounded-full object-cover transition-all duration-300 hover:scale-110"
-                  src={fotoPerfil || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
-                  alt="user photo"
-                />
-              </button>
+                  <button
+                    type="button"
+                    className="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 items-center justify-center bg-transparent"
+                    aria-expanded="false"
+                    style={{ padding: 0 }}
+                  >
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="w-16 h-16 rounded-full object-cover transition-all duration-300 hover:scale-110 border-2 border-white dark:border-gray-800"
+                      src={fotoPerfil || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
+                      alt="user photo"
+                    />
+                  </button>
                 </div>
                 {/* Dropdown de usuario */}
                 <div
-                  className="absolute right-0 top-10 z-50 w-40 text-base list-none bg-white 
-                             divide-gray-100 rounded-lg shadow-lg hidden group-hover:block"
+                  className="absolute right-0 top-10 z-50 w-40 text-base list-none bg-white dark:bg-gray-900 divide-gray-100 dark:divide-gray-800 rounded-lg shadow-lg hidden group-hover:block border border-gray-200 dark:border-gray-700"
                 >
                   <ul className="py-2" role="none">
                     <li>
                       <a
                         href="perfilusuario"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                         role="menuitem"
                       >
                         <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -175,7 +158,7 @@ const PanelAcceso = () => {
                     <li>
                       <a
                         href="/logout"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       >
                         <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
                           <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h11M4 8l3 3m-3-3l3-3m-7 7h7a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H3"/>
@@ -193,7 +176,7 @@ const PanelAcceso = () => {
 
       {/* SIDEBAR */}
       <aside 
-        className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-hidden${sidebarOpen ? ' w-64' : ''}`}
+        className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-lg overflow-hidden${sidebarOpen ? ' w-64' : ''}`}
         aria-label="Sidebar"
         onMouseLeave={handleSidebarMouseLeave}
       >
@@ -302,27 +285,27 @@ const PanelAcceso = () => {
       </aside>
 
       {/* CONTENEDOR PRINCIPAL */}
-      <div className="p-4 sm:ml-16 sm:mt-[78px]">
-        <div className="p-4 border-2 border-gray-200 rounded-lg min-h-screen relative">
+      <div className="p-4 sm:ml-16 sm:mt-[78px] min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="p-4 border-2 border-gray-200 dark:border-gray-800 rounded-lg min-h-[calc(100vh-120px)] relative bg-gray-50 dark:bg-gray-900">
           {/* Fecha actual en la esquina superior derecha, en tarjeta blanca */}
           <div className="absolute right-6 top-6">
-            <div className="bg-white rounded-lg shadow px-4 py-2 text-sm text-gray-700 font-semibold select-none border border-gray-200">
+            <div className="bg-white rounded-lg shadow px-4 py-2 text-sm text-gray-700 dark:bg-gray-900 dark:text-white font-semibold select-none border border-gray-200 dark:border-gray-700">
               {fechaActual.charAt(0).toUpperCase() + fechaActual.slice(1)}
             </div>
           </div>
           {/* Contenido original de PanelAcceso */}
           <div className="space-y-6">
             {/* Tarjeta de Bienvenida */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg overflow-hidden text-white mb-2">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700 rounded-xl shadow-lg overflow-hidden text-white mb-2">
               <div className="p-6">
                 <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
                 <p className="text-2xl font-bold mb-6">{greeting}, <span className="text-2xl font-extrabold">{docente?.nombre || "Usuario"}</span></p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">       
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg dark:bg-gray-800/30">
                     <h3 className="font-extrabold text-2xl text-white mb-3">Accesos Rápidos</h3>
                     <div className="grid grid-cols-2 gap-3">
-                      <a href="/procesarpua" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
+                      <a href="/procesarpua" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -330,7 +313,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Crear PUA</span>
                         </div>
                       </a>
-                      <a href="/puaversion" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
+                      <a href="/puaversion" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -338,7 +321,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Consultar PUA</span>
                         </div>
                       </a>
-                      <a href="#" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
+                      <a href="#" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -346,7 +329,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Perfil</span>
                         </div>
                       </a>
-                      <a href="/docentes" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
+                      <a href="/docentes" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -357,14 +340,14 @@ const PanelAcceso = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full dark:bg-gray-800/30">
                     <h3 className="font-extrabold text-2xl text-white mb-3">Notificaciones Nuevas</h3>
-                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px]">
+                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] dark:bg-gray-900/80">
                       {/* Notificaciones de muestra */}
                       <div className="flex items-start gap-2">
                         <span className="inline-block w-2 h-2 mt-2 rounded-full bg-blue-500"></span>
                         <div>
-                          <span className="font-semibold text-gray-800">Nueva materia registrada</span>
+                          <span className="font-semibold text-blue-700">Nueva materia registrada</span>
                           <div className="text-gray-600 text-sm">Se ha agregado la materia "Matemáticas Discretas".</div>
                           <div className="text-xs text-gray-400">Hace 2 horas</div>
                         </div>
@@ -372,7 +355,7 @@ const PanelAcceso = () => {
                       <div className="flex items-start gap-2">
                         <span className="inline-block w-2 h-2 mt-2 rounded-full bg-green-500"></span>
                         <div>
-                          <span className="font-semibold text-gray-800">Docente asignado</span>
+                          <span className="font-semibold text-blue-700">Docente asignado</span>
                           <div className="text-gray-600 text-sm">El docente Juan Pérez fue asignado a "Ingeniería".</div>
                           <div className="text-xs text-gray-400">Hace 1 día</div>
                         </div>
@@ -380,7 +363,7 @@ const PanelAcceso = () => {
                       <div className="flex items-start gap-2">
                         <span className="inline-block w-2 h-2 mt-2 rounded-full bg-yellow-500"></span>
                         <div>
-                          <span className="font-semibold text-gray-800">Actualización de PUA</span>
+                          <span className="font-semibold text-blue-700">Actualización de PUA</span>
                           <div className="text-gray-600 text-sm">El PUA de "Programación" fue actualizado.</div>
                           <div className="text-xs text-gray-400">Hace 3 días</div>
                         </div>
@@ -395,7 +378,7 @@ const PanelAcceso = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-full">
               {/* Tarjeta PUA */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('pua')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
+                className={`bg-gradient-to-br ${getGradientClass('pua')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-blue-900 dark:to-blue-700`}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 <div className="p-6">
@@ -414,7 +397,7 @@ const PanelAcceso = () => {
 
               {/* Tarjeta Estadísticas */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('estadisticas')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
+                className={`bg-gradient-to-br ${getGradientClass('estadisticas')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-purple-900 dark:to-purple-700`}
                 onClick={() => setEstadisticasOpen(!estadisticasOpen)}
               >
                 <div className="p-6">
@@ -433,7 +416,7 @@ const PanelAcceso = () => {
 
               {/* Tarjeta Mi Cuenta */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('cuenta')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
+                className={`bg-gradient-to-br ${getGradientClass('cuenta')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-green-900 dark:to-green-700`}
                 onClick={() => setCuentaOpen(!cuentaOpen)}
               >
                 <div className="p-6">
@@ -454,8 +437,8 @@ const PanelAcceso = () => {
             {/* Sección de Datos Personales y Académicos */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {/* Datos Personales */}
-              <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800">
+              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700">
                   <h2 className="text-lg font-semibold text-white">Datos Personales</h2>
                 </div>
                 <div className="p-4">
@@ -470,8 +453,8 @@ const PanelAcceso = () => {
               </div>
 
               {/* Datos Académicos */}
-              <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800">
+              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700">
                   <h2 className="text-lg font-semibold text-white">Datos Académicos</h2>
                 </div>
                 <div className="p-4">
@@ -495,7 +478,7 @@ const PanelAcceso = () => {
           </div>
 
           {/* Footer */}
-          <footer className="bg-white rounded-xl shadow p-4 text-center mt-8">
+          <footer className="bg-white dark:bg-gray-950 rounded-xl shadow p-4 text-center mt-8 dark:text-gray-200">
             <div className="flex items-center justify-center gap-4 mb-2">
               <img src="../src/imagenes/60aniversario.png" alt="Logo UAC" className="w-10 h-10 object-contain" />
               <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-10 h-10 object-contain" />
