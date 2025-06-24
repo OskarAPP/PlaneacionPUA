@@ -4,7 +4,7 @@ import React, { useState } from "react";
 function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, setCuentaOpen, handleSidebarMouseLeave}) {
   return (
     <aside 
-      className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-hidden`}
+      className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden`}
       aria-label="Sidebar"
       onMouseLeave={handleSidebarMouseLeave}
     >
@@ -14,11 +14,12 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li>
             <a 
               href="/procesarpua" 
-              className="flex items-center p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group"
+              className="flex items-center p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group"
             >
               <span className="min-w-[20px] flex justify-center items-center">
-                <svg className="w-5 h-5 text-blue-500 transition duration-75 group-hover:text-blue-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 3a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V7.828a2 2 0 00-.586-1.414l-4.828-4.828A2 2 0 0013.172 1H7zm0 0v2a2 2 0 002 2h6a2 2 0 002-2V3m-8 8h8m-8 4h8" />
+                <svg className="w-5 h-5 text-blue-500 transition duration-75 group-hover:text-blue-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 0C4.612 0 0 5.336 0 7v3c0 1.664 4.612 7 10 7s10-5.336 10-7V7c0-1.664-4.612-7-10-7zm0 16c-3.796 0-7-1.794-7-3v-2.394C4.394 12.12 7.2 13 10 13s5.606-.88 7-2.394V13c0 1.206-3.204 3-7 3z"/>
+                  <path d="M10 10c2.796 0 5-1.196 5-2s-2.204-2-5-2-5 1.196-5 2 2.204 2 5 2z"/>
                 </svg>
               </span>
               <span className="ms-3 whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 text-base">Crear PUA</span>
@@ -27,7 +28,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li>
             <a 
               href="/puaversion" 
-              className="flex items-center p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group"
+              className="flex items-center p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group"
             >
               <span className="min-w-[20px] flex justify-center items-center">
                 <svg className="w-5 h-5 text-blue-500 transition duration-75 group-hover:text-blue-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -42,7 +43,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li className="relative">
             <button type="button"
               onClick={() => setEstadisticasOpen(!estadisticasOpen)}
-              className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
+              className="flex items-center w-full p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
             >
               <span className="min-w-[20px] flex justify-center items-center">
@@ -71,7 +72,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li className="relative">
             <button type="button"
               onClick={() => setCuentaOpen(!cuentaOpen)}
-              className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
+              className="flex items-center w-full p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
             >
               <span className="min-w-[20px] flex justify-center items-center">
