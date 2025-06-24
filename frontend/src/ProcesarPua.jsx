@@ -1065,15 +1065,15 @@ const ProcesarPua = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header + Sidebar pegados */}
         <div className="flex w-full">
           <div className="flex flex-col">
-            <header className="bg-white border-b flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300">
+            <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300 text-gray-700 dark:text-gray-100">
           <div className="flex items-center gap-2">
             <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
             <div className="ml-2 hidden md:block">
-              <div className="text-xs text-gray-700 leading-tight">
+              <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight">
                 Programas de Unidad<br />de Aprendizaje
               </div>
             </div>
@@ -1089,9 +1089,9 @@ const ProcesarPua = () => {
           />
         </div>
         {/* Main Content, scrollable only here */}
-        <main className="flex-1 flex flex-col items-center justify-start pt-28 pb-8 overflow-y-auto ml-16 md:ml-20 transition-all duration-300 h-[calc(100vh)] scrollbar-thin scrollbar-thumb-gray-300" style={{ maxHeight: '100vh' }}>
+        <main className="flex-1 flex flex-col items-center justify-start pt-28 pb-8 overflow-y-auto ml-16 md:ml-20 transition-all duration-300 h-[calc(100vh)] scrollbar-thin scrollbar-thumb-gray-300 w-full">
           <div className="w-full max-w-4xl mx-auto">
-            <div className="text-center text-lg font-semibold text-gray-700 mb-4">
+            <div className="text-center text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">
               Bienvenido M. en C. Guadalupe Manuel Estrada Segovia
             </div>
             <div className="bg-white border rounded-xl shadow p-6 mb-8">
@@ -1099,19 +1099,19 @@ const ProcesarPua = () => {
               <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
-                  <select className="w-full border rounded px-3 py-2">
+                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
                     <option>Enfermería</option>
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
-                  <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
-                  <select className="w-full border rounded px-3 py-2">
+                   <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
+                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
                     <option>Seleccione una carrera...</option>
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Materia:</label>
-                  <select className="w-full border rounded px-3 py-2">
+                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
                     <option>Seleccione una materia...</option>
                   </select>
                 </div>
@@ -1137,15 +1137,15 @@ const ProcesarPua = () => {
             <div className="flex justify-end gap-2 mt-8 w-full">
               <button
                 type="button"
-                className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded hover:bg-blue-50 hover:border-blue-800"
+                className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500"
                 onClick={handleAgregarSubcompetencia}
               >
                 Generar subcompetencia...
               </button>
-              <button type="button" className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800">
+              <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
                 <span className="fa fa-print" /> Imprimir
               </button>
-              <button type="button" className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800">
+              <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
                 <span className="fa fa-check" /> Finalizar
               </button>
             </div>
