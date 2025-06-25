@@ -149,7 +149,7 @@ const RegistroAcademias = () => {
             </button>
             {dropdownOpen['facultad'] && (
               <div className="ml-4 mt-2 space-y-2">
-                <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
+                <a href="registrofacultad" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
               </div>
             )}
           </div>
