@@ -55,9 +55,9 @@ const PanelAcceso = () => {
 
   // Cargar datos del docente
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.id_docente) {
-      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+    const id_docente = localStorage.getItem("id_docente");
+    if (id_docente) {
+      fetch(`http://localhost:8000/api/docente/${id_docente}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setDocente(data.docente);
@@ -299,7 +299,7 @@ const PanelAcceso = () => {
             <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700 rounded-xl shadow-lg overflow-hidden text-white mb-2">
               <div className="p-6">
                 <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
-                <p className="text-2xl font-bold mb-6">{greeting}, <span className="text-2xl font-extrabold">{docente?.nombre || "Usuario"}</span></p>
+                <p className="text-2xl font-bold mb-6">{greeting}, <span className="text-2xl font-extrabold">{docente ? `${docente.nombre} ${docente.apellido_paterno}` : "Usuario"}</span></p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">       
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg dark:bg-gray-800/30">

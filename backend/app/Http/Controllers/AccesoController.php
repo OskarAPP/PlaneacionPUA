@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Acceso;
 use App\Models\Rol;
+use App\Models\Docente;
 
 class AccesoController extends Controller
 {
@@ -18,13 +19,16 @@ class AccesoController extends Controller
 
         if ($acceso && $request->password === $acceso->password_hash) {
             $rol = Rol::find($acceso->rol_id);
+            // Buscar el docente relacionado a este acceso
+            $docente = Docente::where('acceso_id', $acceso->acceso_id)->first();
             return response()->json([
                 'success' => true,
                 'user' => [
                     'acceso_id' => $acceso->acceso_id,
                     'correo' => $acceso->correo,
                     'rol_id' => $acceso->rol_id,
-                    'rol_nombre' => $rol ? $rol->nombre : null
+                    'rol_nombre' => $rol ? $rol->nombre : null,
+                    'id_docente' => $docente ? $docente->docente_id : null
                 ]
             ]);
         } else {

@@ -24,9 +24,13 @@ function Login() {
       if (response.ok && data.user) {
         // Autenticación exitosa
         localStorage.setItem('user', JSON.stringify(data.user));
-        // Guardar id_acceso para el perfil
-        if (data.user.id_acceso) {
-          localStorage.setItem('id_acceso', data.user.id_acceso);
+        // Guardar id_docente para PanelAcceso
+        if (data.user.id_docente) {
+          localStorage.setItem('id_docente', data.user.id_docente);
+        }
+        // Guardar acceso_id para el perfil
+        if (data.user.acceso_id) {
+          localStorage.setItem('id_acceso', data.user.acceso_id);
         }
         navigate('/panelacceso');
       } else {
