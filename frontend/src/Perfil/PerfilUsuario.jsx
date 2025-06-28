@@ -11,9 +11,9 @@ const PerfilUsuario = () => {
 
   // Cargar imagen de perfil al montar el componente
   useEffect(() => {
-    const id_acceso = localStorage.getItem("id_acceso");
-    if (id_acceso) {
-      fetch(`http://localhost:8000/api/perfil-imagen/${id_acceso}`)
+    const acceso_id = localStorage.getItem("id_acceso");
+    if (acceso_id) {
+      fetch(`http://localhost:8000/api/perfil-imagen/${acceso_id}`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.url) setFotoPerfil(data.url);
@@ -67,9 +67,9 @@ const PerfilUsuario = () => {
 
     setSubiendo(true);
 
-    const id_acceso = localStorage.getItem("id_acceso");
+    const acceso_id = localStorage.getItem("id_acceso");
 
-    if (!id_acceso) {
+    if (!acceso_id) {
       alert("No se encontró el id_acceso en localStorage");
       setSubiendo(false);
       return;
@@ -77,39 +77,22 @@ const PerfilUsuario = () => {
 
     const formData = new FormData();
     formData.append("imagen", file);
-    formData.append("id_acceso", id_acceso);
+    formData.append("acceso_id", acceso_id);
 
     try {
-      console.log("Enviando imagen al servidor...");
       const response = await fetch("http://localhost:8000/api/imagenes", {
         method: "POST",
         body: formData,
       });
 
-      console.log("Respuesta recibida:", {
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers),
-      });
-
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-      let data;
-      const contentType = response.headers.get("content-type");
-
-      if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
-        console.log("JSON recibido:", data);
-      } else {
-        console.warn("La respuesta no es JSON.");
-        data = { success: true, message: "Imagen subida correctamente" };
-      }
-
-      // Mostrar previsualización local
-      const reader = new FileReader();
-      reader.onload = (ev) => setFotoPerfil(ev.target.result);
-      reader.onerror = (err) => console.error("Error leyendo archivo:", err);
-      reader.readAsDataURL(file);
+      // Refrescar la imagen de perfil desde el backend
+      fetch(`http://localhost:8000/api/perfil-imagen/${acceso_id}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.url) setFotoPerfil(data.url);
+        });
 
       alert("Imagen subida correctamente");
 

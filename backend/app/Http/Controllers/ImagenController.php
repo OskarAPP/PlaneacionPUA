@@ -13,52 +13,43 @@ class ImagenController extends Controller
     {
         $request->validate([
             'imagen' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:5120', // 5MB aprox
-            'id_acceso' => 'required|exists:acceso,id_acceso',
+            'acceso_id' => 'required|exists:acceso,acceso_id',
         ]);
 
         $file = $request->file('imagen');
-        $nombre = $file->getClientOriginalName();
-        $tipo = $file->getClientMimeType();
-        $tamano = $file->getSize();
         $ruta = $file->store('imagenes', 'public');
 
         $imagen = Imagen::create([
-            'nombre' => $nombre,
-            'ruta' => $ruta,
-            'tipo' => $tipo,
-            'tamano' => $tamano,
-            'id_acceso' => $request->id_acceso,
+            'acceso_id' => $request->acceso_id,
+            'ruta_imagen' => $ruta,
+            // fecha_subida se autogenera
         ]);
 
-        return response()->json(['id' => $imagen->id, 'mensaje' => 'Imagen guardada'], 201);
+        return response()->json(['imagen_id' => $imagen->imagen_id, 'mensaje' => 'Imagen guardada'], 201);
     }
 
-    // Leer imagen
+    // Leer imagen por ID
     public function show($id)
     {
         $imagen = Imagen::findOrFail($id);
-        $path = storage_path('app/public/' . $imagen->ruta);
+        $path = storage_path('app/public/' . $imagen->ruta_imagen);
         if (!file_exists($path)) {
             return response()->json(['mensaje' => 'Imagen no encontrada'], 404);
         }
-        return response()->file($path, [
-            'Content-Type' => $imagen->tipo,
-        ]);
+        return response()->file($path);
     }
 
-    // Obtener la última imagen de perfil por id_acceso
-    public function getByAcceso($id_acceso)
+    // Obtener la última imagen de perfil por acceso_id
+    public function getByAcceso($acceso_id)
     {
-        $imagen = Imagen::where('id_acceso', $id_acceso)->latest()->first();
+        $imagen = Imagen::where('acceso_id', $acceso_id)->latest('fecha_subida')->first();
         if (!$imagen) {
             return response()->json(['mensaje' => 'No hay imagen de perfil'], 404);
         }
         return response()->json([
-            'id' => $imagen->id,
-            'url' => asset('storage/' . $imagen->ruta),
-            'nombre' => $imagen->nombre,
-            'tipo' => $imagen->tipo,
-            'tamano' => $imagen->tamano,
+            'imagen_id' => $imagen->imagen_id,
+            'url' => asset('storage/' . $imagen->ruta_imagen),
+            'fecha_subida' => $imagen->fecha_subida,
         ]);
     }
 }

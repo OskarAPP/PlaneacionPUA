@@ -10,12 +10,12 @@ class Imagen extends Model
     use HasFactory;
 
     protected $table = 'imagenes';
+    protected $primaryKey = 'imagen_id';
+    public $timestamps = false;
 
     protected $fillable = [
-        'nombre',
-        'ruta',
-        'tipo',
-        'tamano',
-        'id_acceso',
+        'acceso_id',
+        'ruta_imagen',
+        'fecha_subida',
     ];
 }
