@@ -287,7 +287,7 @@ const PerfilUsuario = () => {
                 <div className="font-semibold text-lg text-gray-800 dark:text-white mb-1">{docente?.nombre || 'Usuario'}</div>
                 <div className="text-xs text-gray-400 dark:text-gray-300 mb-2">{docente?.correo || 'Sin correo'}</div>
                 <div className="border-b border-gray-200 dark:border-gray-700 mb-2" />
-                <div className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">{docente?.prefijo || 'Sin título'}</div>
+                <div className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">{docente?.titulo || 'Sin título'}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">{docente?.apellido_paterno || ''} {docente?.apellido_materno || ''}</div>
                 {/* Puedes agregar más datos aquí si lo deseas */}
                 <div className="flex items-center gap-2 mt-2">
