@@ -9,6 +9,6 @@ class Docente extends Model
     protected $primaryKey = 'id_docente';
     public $timestamps = false;
     protected $fillable = [
-        'prefijo', 'nombre', 'apellido_paterno', 'apellido_materno', 'correo'
+        'nombre', 'apellido_paterno', 'apellido_materno', 'facultad_id', 'titulo', 'cargo_id', 'acceso_id'
     ];
 }
