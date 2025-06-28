@@ -51,17 +51,41 @@ const RegistroDocentes = () => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Nuevos estados para selects
+  const [facultades, setFacultades] = useState([]);
+  const [cargos, setCargos] = useState([]);
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/facultades')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setFacultades(data);
+      });
+    // Conexión directa a la tabla Cargo
+    fetch('http://localhost:8000/api/cargos')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setCargos(data);
+      });
+    fetch('http://localhost:8000/api/roles')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRoles(data);
+      });
+  }, []);
+
   // Form state
   const [form, setForm] = useState({
-    nombres: '',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
-    facultad: '',
+    nombre: '',
+    apellido_paterno: '',
+    apellido_materno: '',
+    facultad_id: '',
+    titulo: '',
+    cargo_id: '',
     correo: '',
     contrasena: '',
-    prefijo: '',
-    tipoAcceso: '',
-    rol: ''
+    rol_id: ''
   });
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
@@ -77,60 +101,50 @@ const RegistroDocentes = () => {
     setError("");
     setLoading(true);
     // Validación mínima
-    if (!form.nombres || !form.apellidoPaterno || !form.correo || !form.contrasena) {
+    if (!form.nombre || !form.apellido_paterno || !form.correo || !form.contrasena || !form.facultad_id || !form.cargo_id || !form.rol_id) {
       setError("Por favor, completa los campos obligatorios.");
       setLoading(false);
       return;
     }
-    const payload = {
-      nombres: form.nombres,
-      apellidop: form.apellidoPaterno,
-      apellidom: form.apellidoMaterno,
-      facultad: form.facultad, // id_facultad
-      correo: form.correo,
-      contraseña: form.contrasena,
-      prefijo: form.prefijo,
-      tipo_acceso: form.tipoAcceso,
-      rol: form.rol
-    };
+    // Enviar todo en un solo request a /api/personal
     try {
       const res = await fetch('http://localhost:8000/api/personal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          nombre: form.nombre,
+          apellido_paterno: form.apellido_paterno,
+          apellido_materno: form.apellido_materno,
+          facultad_id: form.facultad_id,
+          titulo: form.titulo,
+          cargo_id: form.cargo_id,
+          correo: form.correo,
+          contrasena: form.contrasena,
+          rol_id: form.rol_id
+        })
       });
       const data = await res.json();
       if (res.ok && data.success) {
         setMensaje('Docente registrado exitosamente.');
         setForm({
-          nombres: '',
-          apellidoPaterno: '',
-          apellidoMaterno: '',
-          facultad: '',
+          nombre: '',
+          apellido_paterno: '',
+          apellido_materno: '',
+          facultad_id: '',
+          titulo: '',
+          cargo_id: '',
           correo: '',
           contrasena: '',
-          prefijo: '',
-          tipoAcceso: '',
-          rol: ''
+          rol_id: ''
         });
       } else {
         setError(data.message || 'Error al registrar docente.');
       }
     } catch (err) {
-      setError('Error de conexión con el servidor.');
+      setError('Error de conexión al registrar docente.');
     }
     setLoading(false);
   };
-
-  // Facultades para el select
-  const [facultades, setFacultades] = useState([]);
-  useEffect(() => {
-    fetch('http://localhost:8000/api/facultades')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setFacultades(data);
-      });
-  }, []);
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -288,24 +302,24 @@ const RegistroDocentes = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Nombre(s): <span className="text-red-500">*</span></label>
-                  <input type="text" name="nombres" value={form.nombres} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required />
+                  <input type="text" name="nombre" value={form.nombre} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required />
                 </div>
                 <div>
                   <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Apellido Paterno: <span className="text-red-500">*</span></label>
-                  <input type="text" name="apellidoPaterno" value={form.apellidoPaterno} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required />
+                  <input type="text" name="apellido_paterno" value={form.apellido_paterno} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required />
                 </div>
                 <div>
                   <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Apellido Materno:</label>
-                  <input type="text" name="apellidoMaterno" value={form.apellidoMaterno} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" />
+                  <input type="text" name="apellido_materno" value={form.apellido_materno} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad:</label>
-                  <select name="facultad" value={form.facultad} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
+                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad: <span className="text-red-500">*</span></label>
+                  <select name="facultad_id" value={form.facultad_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required>
                     <option value="">Seleccione facultad...</option>
                     {facultades.map(fac => (
-                      <option key={fac.id_facultad} value={fac.id_facultad}>{fac.facultad}</option>
+                      <option key={fac.facultad_id} value={fac.facultad_id}>{fac.nombre}</option>
                     ))}
                   </select>
                 </div>
@@ -320,23 +334,25 @@ const RegistroDocentes = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Prefijo:</label>
-                  <input type="text" name="prefijo" value={form.prefijo} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" />
+                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Titulo:</label>
+                  <input type="text" name="titulo" value={form.titulo} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Tipo de Acceso:</label>
-                  <select name="tipoAcceso" value={form.tipoAcceso} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
-                    <option value="Docente">Docente</option>
-                    <option value="Administrador">Administrador</option>
+                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Cargo: <span className="text-red-500">*</span></label>
+                  <select name="cargo_id" value={form.cargo_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required>
+                    <option value="">Seleccione cargo...</option>
+                    {cargos.map(cargo => (
+                      <option key={cargo.cargo_id} value={cargo.cargo_id}>{cargo.nombre}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Rol:</label>
-                  <select name="rol" value={form.rol} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
-                    <option value="">Seleccione cargo...</option>
-                    <option value="Profesor">Profesor</option>
-                    <option value="Coordinador">Coordinador</option>
-                    <option value="Jefe de Departamento">Jefe de Departamento</option>
+                  <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Rol: <span className="text-red-500">*</span></label>
+                  <select name="rol_id" value={form.rol_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required>
+                    <option value="">Seleccione rol...</option>
+                    {roles.map(rol => (
+                      <option key={rol.rol_id} value={rol.rol_id}>{rol.nombre}</option>
+                    ))}
                   </select>
                 </div>
               </div>

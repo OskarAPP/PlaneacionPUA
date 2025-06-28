@@ -297,7 +297,7 @@ const PerfilUsuario = () => {
                 <button className="mt-4 w-full bg-orange-500 text-white rounded-lg py-2 font-semibold shadow hover:bg-orange-600 transition">Guardar</button>
               </div>
             </div>
-            {/* xPay accounts */}
+            {/* Datos Academicos Tarjeta */}
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-purple-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
                 <div className="font-semibold text-lg text-gray-800 dark:text-white">DATOS ACADEMICOS</div>
@@ -306,18 +306,15 @@ const PerfilUsuario = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-700 dark:text-gray-200">Unidad academica</span>
-                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
-                  <button className="bg-red-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Block Account</button>
+                  {/* Insertar los datos desde la base de datos */}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-700 dark:text-gray-200">Cargo</span>
-                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
-                  <button className="bg-green-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Unlock account</button>
+                  {/* Insertar los datos desde la base de datos */}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-700 dark:text-gray-200">Accesos</span>
-                  <span className="text-gray-500 dark:text-gray-300 text-sm">8640 5698 8020 4256</span>
-                  <button className="bg-green-500 text-white rounded px-3 py-1 text-xs font-semibold ml-2">Unlock account</button>
+                  {/* Insertar los datos desde la base de datos */}
                 </div>
               </div>
             </div>

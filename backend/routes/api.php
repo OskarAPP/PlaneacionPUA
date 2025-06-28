@@ -8,6 +8,8 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\ImagenController;
+use App\Http\Controllers\CargoController;
+use App\Http\Controllers\RolController;
 
 // Mueve el endpoint de login a la API
 Route::post('/login', [AccesoController::class, 'login']);
@@ -23,3 +25,6 @@ Route::delete('/facultades/{id}', [FacultadController::class, 'destroy']);
 Route::post('/imagenes', [ImagenController::class, 'store']);
 Route::get('/imagenes/{id}', [ImagenController::class, 'show']);
 Route::get('/perfil-imagen/{id_acceso}', [ImagenController::class, 'getByAcceso']);
+Route::get('/cargos', [CargoController::class, 'index']);
+Route::get('/roles', [RolController::class, 'index']);
+Route::post('/accesos', [AccesoController::class, 'store']);

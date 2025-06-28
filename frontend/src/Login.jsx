@@ -18,7 +18,7 @@ function Login() {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ correo: email, pass: password }),
+        body: JSON.stringify({ correo: email, password: password }),
       });
       const data = await response.json();
       if (response.ok && data.user) {

@@ -1,0 +1,126 @@
+// DBML Schema for Universidad PUA Database
+// This file describes tables, columns, types, and relationships in DBML format
+
+Table Facultad {
+  facultad_id int [pk, increment]
+  nombre      varchar(100) [not null, unique]
+}
+
+Table Area {
+  area_id     int [pk, increment]
+  nombre      varchar(100) [not null, unique]
+}
+
+Table PlanEstudio {
+  plan_estudio_id int [pk, increment]
+  nombre          varchar(50)  [not null]
+  descripcion     text
+}
+
+Table Academia {
+  academia_id int [pk, increment]
+  nombre      varchar(100)      [not null]
+  facultad_id int               [not null, ref: > Facultad.facultad_id]
+  Indexes {
+    (nombre, facultad_id) [unique]
+  }
+}
+
+Table Cargo {
+  cargo_id int [pk, increment]
+  nombre   varchar(100) [not null, unique]
+}
+
+Table TipoMateria {
+  tipo_materia_id int [pk, increment]
+  descripcion     varchar(100) [not null, unique]
+}
+
+Table Nucleo {
+  nucleo_id   int [pk, increment]
+  descripcion varchar(100) [not null, unique]
+}
+
+Table Rol {
+  rol_id int [pk, increment]
+  nombre varchar(50) [not null, unique]
+}
+
+Table Acceso {
+  acceso_id     int    [pk, increment]
+  correo        varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  rol_id        int          [not null, ref: > Rol.rol_id]
+}
+
+Table Docente {
+  docente_id       int    [pk, increment]
+  nombre           varchar(100) [not null]
+  apellido_paterno varchar(100) [not null]
+  apellido_materno varchar(100) [not null]
+  facultad_id      int    [not null, ref: > Facultad.facultad_id]
+  titulo           varchar(100)
+  cargo_id         int    [not null, ref: > Cargo.cargo_id]
+  acceso_id        int    [not null, ref: > Acceso.acceso_id, on delete: cascade]
+}
+
+Table Carrera {
+  carrera_id      int    [pk, increment]
+  nombre          varchar(100) [not null]
+  facultad_id     int    [not null, ref: > Facultad.facultad_id]
+  plan_estudio_id int    [not null, ref: > PlanEstudio.plan_estudio_id]
+  Indexes {
+    (nombre, facultad_id) [unique]
+  }
+}
+
+Table Materia {
+  materia_id       int    [pk, increment]
+  nombre           varchar(100) [not null]
+  facultad_id      int    [not null, ref: > Facultad.facultad_id]
+  carrera_id       int    [not null, ref: > Carrera.carrera_id]
+  area_id          int    [not null, ref: > Area.area_id]
+  nucleo_id        int    [not null, ref: > Nucleo.nucleo_id]
+  tipo_materia_id  int    [not null, ref: > TipoMateria.tipo_materia_id]
+  creditos_totales int    [not null]
+  horas_totales    int    [not null]
+  horas_teoricas   int    [not null]
+  horas_practicas  int    [not null]
+  art57            boolean [not null, default: false]
+  academia_id      int    [not null, ref: > Academia.academia_id]
+  Indexes {
+    (nombre, carrera_id) [unique]
+  }
+}
+
+Table CompetenciaGenerica {
+  competencia_gen_id int    [pk, increment]
+  nombre             varchar(150) [not null, unique]
+}
+
+Table CompetenciaEspecifica {
+  competencia_esp_id int    [pk, increment]
+  nombre             varchar(150) [not null]
+  facultad_id        int    [not null, ref: > Facultad.facultad_id]
+  carrera_id         int    [not null, ref: > Carrera.carrera_id]
+  Indexes {
+    (nombre, carrera_id) [unique]
+  }
+}
+
+// Relationships
+Ref: Academia.facultad_id > Facultad.facultad_id
+Ref: Docente.facultad_id > Facultad.facultad_id
+Ref: Docente.cargo_id > Cargo.cargo_id
+Ref: Docente.acceso_id > Acceso.acceso_id
+Ref: Carrera.facultad_id > Facultad.facultad_id
+Ref: Carrera.plan_estudio_id > PlanEstudio.plan_estudio_id
+Ref: Materia.facultad_id > Facultad.facultad_id
+Ref: Materia.carrera_id > Carrera.carrera_id
+Ref: Materia.area_id > Area.area_id
+Ref: Materia.nucleo_id > Nucleo.nucleo_id
+Ref: Materia.tipo_materia_id > TipoMateria.tipo_materia_id
+Ref: Materia.academia_id > Academia.academia_id
+Ref: Acceso.rol_id > Rol.rol_id
+Ref: CompetenciaEspecifica.facultad_id > Facultad.facultad_id
+Ref: CompetenciaEspecifica.carrera_id > Carrera.carrera_id

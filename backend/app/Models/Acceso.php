@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 class Acceso extends Model
 {
     protected $table = 'acceso';
-    protected $primaryKey = 'id_acceso';
+    protected $primaryKey = 'acceso_id';
     public $timestamps = false;
     protected $fillable = [
-        'id_docente', 'correo', 'pass', 'rol', 'estado'
+        'correo', 'password_hash', 'rol_id'
     ];
 }

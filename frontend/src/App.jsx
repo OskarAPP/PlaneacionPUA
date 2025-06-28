@@ -18,6 +18,8 @@ import CompetenciasE from './CompetenciasEspe/CompetenciasE';
 import RegistroCompeE from './CompetenciasEspe/RegistroCompeE';
 import FacultadesRegistradas from './Facultad/Facultades';
 import PerfilUsuario from './Perfil/PerfilUsuario';
+import Area from './Area/Area';
+import RegistroAreas from './Area/RegistroAreas';
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
       <Route path="/registrocompee" element={<RegistroCompeE />} />
       <Route path="/facultades" element={<FacultadesRegistradas />} />
       <Route path="/perfilusuario" element={<PerfilUsuario />} />
+      <Route path="/area" element={<Area />} />
+      <Route path="/registroareas" element={<RegistroAreas />} />
     </Routes>
   );
 }
