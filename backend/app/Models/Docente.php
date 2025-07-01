@@ -11,4 +11,14 @@ class Docente extends Model
     protected $fillable = [
         'nombre', 'apellido_paterno', 'apellido_materno', 'facultad_id', 'titulo', 'cargo_id', 'acceso_id'
     ];
+
+    public function facultad()
+    {
+        return $this->belongsTo(Facultad::class, 'facultad_id', 'facultad_id');
+    }
+
+    public function facultades()
+    {
+        return $this->belongsToMany(Facultad::class, 'docentefacultad', 'docente_id', 'facultad_id');
+    }
 }

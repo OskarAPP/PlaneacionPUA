@@ -268,7 +268,7 @@ const Docentes = () => {
                 <thead>
                   <tr className="border-b bg-blue-50 dark:bg-gray-900">
                     <th className="px-3 py-2 font-bold">#</th>
-                    <th className="px-3 py-2 font-bold">Prefijo</th>
+                    <th className="px-3 py-2 font-bold">Titulo</th>
                     <th className="px-3 py-2 font-bold">Nombre(s)</th>
                     <th className="px-3 py-2 font-bold">Apellido Paterno</th>
                     <th className="px-3 py-2 font-bold">Apellido Materno</th>
@@ -279,14 +279,14 @@ const Docentes = () => {
                 <tbody className="text-blue-900 dark:text-blue-200">
                   {/* Aquí irían los datos de los docentes */}
                   {filteredDocentes.map((docente, idx) => (
-                    <tr key={docente.id_docente} className="border-b hover:bg-blue-50 dark:hover:bg-gray-700">
+                    <tr key={docente.docente_id} className="border-b hover:bg-blue-50 dark:hover:bg-gray-700">
                       <td className="px-3 py-2">{idx + 1}</td>
-                      <td className="px-3 py-2">{docente.prefijo}</td>
+                      <td className="px-3 py-2">{docente.titulo}</td>
                       <td className="px-3 py-2">{docente.nombre}</td>
                       <td className="px-3 py-2">{docente.apellido_paterno}</td>
                       <td className="px-3 py-2">{docente.apellido_materno}</td>
                       <td className="px-3 py-2">{docente.correo}</td>
-                      <td className="px-3 py-2 text-gray-400 italic dark:text-gray-500">(Sin facultad)</td>
+                      <td className="px-3 py-2">{Array.isArray(docente.facultades) && docente.facultades.length > 0 ? docente.facultades.join(', ') : '(Sin facultad)'}</td>
                     </tr>
                   ))}
                 </tbody>
