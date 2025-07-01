@@ -43,6 +43,9 @@ class PersonalController extends Controller
             'acceso_id' => $acceso->acceso_id
         ]);
 
+        // 3. Registrar relación en la tabla pivote docentefacultad
+        $docente->facultades()->attach($validated['facultad_id']);
+
         return response()->json([
             'success' => true,
             'acceso_id' => $acceso->acceso_id,
