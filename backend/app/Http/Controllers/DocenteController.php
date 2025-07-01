@@ -65,4 +65,31 @@ class DocenteController extends Controller
             'docentes' => $docentes
         ]);
     }
+
+    // Asociar una facultad a un docente (tabla pivote docentefacultad)
+    public function agregarFacultad(Request $request, $docente_id)
+    {
+        $request->validate([
+            'facultad_id' => 'required|integer|exists:facultad,facultad_id',
+        ]);
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        // Evitar duplicados
+        if ($docente->facultades()->where('facultad.facultad_id', $request->facultad_id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El docente ya está asociado a esa facultad.'
+            ], 409);
+        }
+        $docente->facultades()->attach($request->facultad_id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Facultad agregada correctamente.'
+        ]);
+    }
 }

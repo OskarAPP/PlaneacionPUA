@@ -15,11 +15,17 @@ const Docentes = () => {
 
   // Estado para los docentes
   const [docentesData, setDocentesData] = useState([]);
+  const [facultades, setFacultades] = useState([]);
 
   // Estado para el término de búsqueda
   const [searchTerm, setSearchTerm] = useState("");
   // Estado para el orden
   const [sortOrder, setSortOrder] = useState("az");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDocente, setSelectedDocente] = useState(null);
+  const [selectedFacultad, setSelectedFacultad] = useState("");
+  const [modalError, setModalError] = useState("");
+  const [modalLoading, setModalLoading] = useState(false);
 
   // Obtener docentes desde la API
   useEffect(() => {
@@ -27,6 +33,15 @@ const Docentes = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success) setDocentesData(data.docentes);
+      });
+  }, []);
+
+  // Obtener facultades para el modal
+  useEffect(() => {
+    fetch('http://localhost:8000/api/facultades')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setFacultades(data);
       });
   }, []);
 
@@ -86,6 +101,56 @@ const Docentes = () => {
   // Alternar dropdowns
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Abrir modal para agregar facultad
+  const handleOpenModal = (docente) => {
+    setSelectedDocente(docente);
+    setSelectedFacultad("");
+    setModalError("");
+    setModalOpen(true);
+  };
+
+  // Cerrar modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedDocente(null);
+    setSelectedFacultad("");
+    setModalError("");
+  };
+
+  // Registrar facultad al docente
+  const handleRegistrarFacultad = async () => {
+    if (!selectedFacultad) {
+      setModalError("Selecciona una facultad.");
+      return;
+    }
+    setModalLoading(true);
+    setModalError("");
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/facultades`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ facultad_id: selectedFacultad })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Actualizar facultades en la tabla (recargar docentes)
+        fetch('http://localhost:8000/api/docentes')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setDocentesData(data.docentes);
+          });
+        handleCloseModal();
+      } else if (data.message) {
+        setModalError(data.message);
+      } else {
+        setModalError("No se pudo registrar la facultad.");
+      }
+    } catch (err) {
+      setModalError("Error de conexión.");
+    }
+    setModalLoading(false);
   };
 
   return (
@@ -286,12 +351,52 @@ const Docentes = () => {
                       <td className="px-3 py-2">{docente.apellido_paterno}</td>
                       <td className="px-3 py-2">{docente.apellido_materno}</td>
                       <td className="px-3 py-2">{docente.correo}</td>
-                      <td className="px-3 py-2">{Array.isArray(docente.facultades) && docente.facultades.length > 0 ? docente.facultades.join(', ') : '(Sin facultad)'}</td>
+                      <td className="px-3 py-2">
+                        {Array.isArray(docente.facultades) && docente.facultades.length > 0 ? docente.facultades.join(', ') : '(Sin facultad)'}
+                        <button
+                          className="ml-2 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs"
+                          onClick={() => handleOpenModal(docente)}
+                        >
+                          Agregar facultad
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            {/* Modal para agregar facultad */}
+            {modalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseModal}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar facultad</h2>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      value={selectedFacultad}
+                      onChange={e => setSelectedFacultad(e.target.value)}
+                    >
+                      <option value="">Seleccione facultad...</option>
+                      {facultades.map(fac => (
+                        <option key={fac.facultad_id} value={fac.facultad_id}>{fac.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {modalError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{modalError}</div>}
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-blue-700 text-white font-semibold px-6 py-2 rounded hover:bg-blue-800 transition-colors disabled:opacity-60"
+                      onClick={handleRegistrarFacultad}
+                      disabled={modalLoading}
+                    >
+                      {modalLoading ? 'Registrando...' : 'Registrar'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </main>
         {/* Footer */}
