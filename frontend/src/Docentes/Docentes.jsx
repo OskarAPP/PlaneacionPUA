@@ -29,6 +29,8 @@ const Docentes = () => {
   const [viewFacModalOpen, setViewFacModalOpen] = useState(false);
   const [facultadesDocente, setFacultadesDocente] = useState([]);
   const [docenteNombreModal, setDocenteNombreModal] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState({});
+  const [deleteError, setDeleteError] = useState("");
 
   // Obtener docentes desde la API
   useEffect(() => {
@@ -158,6 +160,7 @@ const Docentes = () => {
 
   // Abrir modal para ver facultades del docente
   const handleOpenViewFacModal = (docente) => {
+    setSelectedDocente(docente); // <--- CORRECCIÓN: establecer el docente seleccionado
     setFacultadesDocente(Array.isArray(docente.facultades) ? docente.facultades : []);
     setDocenteNombreModal(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
     setViewFacModalOpen(true);
@@ -167,6 +170,50 @@ const Docentes = () => {
     setViewFacModalOpen(false);
     setFacultadesDocente([]);
     setDocenteNombreModal("");
+  };
+
+  // Eliminar facultad del docente
+  const handleEliminarFacultad = async (facultadNombre, idx) => {
+    if (!selectedDocente) {
+      return;
+    }
+    setDeleteLoading(prev => ({ ...prev, [idx]: true }));
+    setDeleteError("");
+    // Buscar el facultad_id por nombre (ya que en docentesData solo hay nombres)
+    const facObj = facultades.find(f => f.nombre === facultadNombre);
+    if (!facObj) {
+      setDeleteError("No se encontró el ID de la facultad.");
+      setDeleteLoading(prev => ({ ...prev, [idx]: false }));
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/facultades/${facObj.facultad_id}`, {
+        method: 'DELETE',
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        setDeleteError('Respuesta inesperada del servidor.');
+        setDeleteLoading(prev => ({ ...prev, [idx]: false }));
+        return;
+      }
+      if (res.ok && data.success) {
+        setFacultadesDocente(prev => prev.filter((_, i) => i !== idx));
+        fetch('http://localhost:8000/api/docentes')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setDocentesData(data.docentes);
+          });
+      } else if (data.message) {
+        setDeleteError(data.message);
+      } else {
+        setDeleteError("No se pudo eliminar la facultad.");
+      }
+    } catch (err) {
+      setDeleteError("Error de conexión.");
+    }
+    setDeleteLoading(prev => ({ ...prev, [idx]: false }));
   };
 
   return (
@@ -427,12 +474,23 @@ const Docentes = () => {
                   <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
                     {facultadesDocente.length > 0 ? (
                       facultadesDocente.map((fac, idx) => (
-                        <li key={idx}>{fac}</li>
+                        <li key={idx} className="flex items-center justify-between group">
+                          <span>{fac}</span>
+                          <button
+                            className="ml-2 text-red-600 hover:text-red-800 font-bold text-lg px-2 disabled:opacity-50"
+                            title="Eliminar facultad"
+                            onClick={() => handleEliminarFacultad(fac, idx)}
+                            disabled={deleteLoading[idx]}
+                          >
+                            ×
+                          </button>
+                        </li>
                       ))
                     ) : (
                       <li>(Sin facultad)</li>
                     )}
                   </ul>
+                  {deleteError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{deleteError}</div>}
                   <div className="flex justify-end mt-4">
                     <button
                       className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"

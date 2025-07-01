@@ -17,7 +17,7 @@ class PersonalController extends Controller
             'nombre' => 'required|string',
             'apellido_paterno' => 'required|string',
             'apellido_materno' => 'nullable|string',
-            'facultad_id' => 'required|integer',
+            'facultad_id' => 'required|integer', // Solo para la relación pivote
             'titulo' => 'nullable|string',
             'cargo_id' => 'required|integer',
             'correo' => 'required|email|unique:acceso,correo',
@@ -32,12 +32,11 @@ class PersonalController extends Controller
             'rol_id' => $validated['rol_id'],
         ]);
 
-        // 2. Crear docente
+        // 2. Crear docente (sin facultad_id)
         $docente = Docente::create([
             'nombre' => $validated['nombre'],
             'apellido_paterno' => $validated['apellido_paterno'],
             'apellido_materno' => $validated['apellido_materno'] ?? null,
-            'facultad_id' => $validated['facultad_id'],
             'titulo' => $validated['titulo'] ?? null,
             'cargo_id' => $validated['cargo_id'],
             'acceso_id' => $acceso->acceso_id
@@ -49,7 +48,7 @@ class PersonalController extends Controller
         return response()->json([
             'success' => true,
             'acceso_id' => $acceso->acceso_id,
-            'docente_id' => $docente->id_docente,
+            'docente_id' => $docente->id_docente ?? $docente->docente_id,
             'docente' => $docente
         ], 201);
     }

@@ -92,4 +92,27 @@ class DocenteController extends Controller
             'message' => 'Facultad agregada correctamente.'
         ]);
     }
+
+    // Eliminar una facultad de un docente (tabla pivote docentefacultad)
+    public function eliminarFacultad($docente_id, $facultad_id)
+    {
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        if (!$docente->facultades()->where('facultad.facultad_id', $facultad_id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El docente no está asociado a esa facultad.'
+            ], 404);
+        }
+        $docente->facultades()->detach($facultad_id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Facultad eliminada correctamente.'
+        ]);
+    }
 }
