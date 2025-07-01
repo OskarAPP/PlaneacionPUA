@@ -41,6 +41,76 @@ const Docentes = () => {
   const [selectedFacultadCarrera, setSelectedFacultadCarrera] = useState("");
 
   // Estado para modal de ver carreras
+  // Estado para modal de agregar materia
+  const [addMateriaModalOpen, setAddMateriaModalOpen] = useState(false);
+  const [carrerasDocenteMateria, setCarrerasDocenteMateria] = useState([]); // Carreras del docente para el modal materia
+  const [selectedCarreraMateria, setSelectedCarreraMateria] = useState("");
+  const [materiasCarrera, setMateriasCarrera] = useState([]); // Materias disponibles para la carrera seleccionada
+  const [selectedMateria, setSelectedMateria] = useState("");
+  const [materiaModalError, setMateriaModalError] = useState("");
+  const [materiaModalLoading, setMateriaModalLoading] = useState(false);
+
+  // Abrir modal para agregar materia
+  const handleOpenAddMateriaModal = (docente) => {
+    setSelectedDocente(docente);
+    setSelectedCarreraMateria("");
+    setSelectedMateria("");
+    setMateriaModalError("");
+    setMateriasCarrera([]);
+    // Obtener carreras del docente (con id y nombre)
+    let carreras = [];
+    if (Array.isArray(docente.carreras_full)) {
+      carreras = docente.carreras_full;
+    } else if (Array.isArray(docente.carreras)) {
+      // Si solo hay nombres, buscar en todas las carreras globales
+      carreras = [];
+      if (Array.isArray(docente.facultades)) {
+        const facIds = facultades.filter(f => docente.facultades.includes(f.nombre)).map(f => f.facultad_id);
+        for (const facId of facIds) {
+          // Buscar carreras de la facultad
+          // NOTA: Esto es asíncrono, pero para el modal solo mostramos las que ya tiene el docente
+        }
+      }
+    }
+    setCarrerasDocenteMateria(carreras);
+    setAddMateriaModalOpen(true);
+  };
+
+  // Cuando se selecciona una carrera en el modal de materia, cargar materias
+  useEffect(() => {
+    if (!selectedCarreraMateria) {
+      setMateriasCarrera([]);
+      return;
+    }
+    setMateriaModalError("");
+    setMateriasCarrera([]);
+    fetch(`http://localhost:8000/api/materias/carrera/${selectedCarreraMateria}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setMateriasCarrera(data);
+        } else {
+          setMateriasCarrera([]);
+          setMateriaModalError("No se pudieron obtener las materias.");
+        }
+      })
+      .catch(() => {
+        setMateriasCarrera([]);
+        setMateriaModalError("Error de conexión al obtener materias.");
+      });
+  }, [selectedCarreraMateria]);
+
+  // Cerrar modal de materia
+  const handleCloseAddMateriaModal = () => {
+    setAddMateriaModalOpen(false);
+    setSelectedCarreraMateria("");
+    setSelectedMateria("");
+    setMateriaModalError("");
+    setMateriasCarrera([]);
+    setCarrerasDocenteMateria([]);
+  };
+
+  // (La lógica para registrar la materia se implementará después)
   const [viewCarrerasModalOpen, setViewCarrerasModalOpen] = useState(false);
   const [carrerasDocente, setCarrerasDocente] = useState([]);
   const [docenteNombreCarreraModal, setDocenteNombreCarreraModal] = useState("");
@@ -660,10 +730,59 @@ const Docentes = () => {
                           </button>
                           <button
                             className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
-                            // onClick={() => handleOpenAddMateriaModal(docente)}
+                            onClick={() => handleOpenAddMateriaModal(docente)}
                           >
                             Agregar Materia
                           </button>
+            {/* Modal para agregar materia */}
+            {addMateriaModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseAddMateriaModal}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar materia</h2>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Carrera:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 mb-2"
+                      value={selectedCarreraMateria}
+                      onChange={e => {
+                        setSelectedCarreraMateria(e.target.value);
+                        setSelectedMateria("");
+                      }}
+                    >
+                      <option value="">Seleccione carrera...</option>
+                      {carrerasDocenteMateria.map(carr => (
+                        <option key={carr.carrera_id} value={carr.carrera_id}>{carr.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Materia:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      value={selectedMateria}
+                      onChange={e => setSelectedMateria(e.target.value)}
+                      disabled={!selectedCarreraMateria || materiasCarrera.length === 0}
+                    >
+                      <option value="">Seleccione materia...</option>
+                      {materiasCarrera.map(mat => (
+                        <option key={mat.materia_id} value={mat.materia_id}>{mat.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {materiaModalError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{materiaModalError}</div>}
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-blue-700 text-white font-semibold px-6 py-2 rounded hover:bg-blue-800 transition-colors disabled:opacity-60"
+                      // onClick={handleRegistrarMateria}
+                      disabled={materiaModalLoading || !selectedCarreraMateria || materiasCarrera.length === 0}
+                    >
+                      {materiaModalLoading ? 'Registrando...' : 'Registrar'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
                         </div>
                       </td>
                     </tr>
