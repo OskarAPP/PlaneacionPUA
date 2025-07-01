@@ -21,4 +21,9 @@ class Docente extends Model
     {
         return $this->belongsToMany(Facultad::class, 'docentefacultad', 'docente_id', 'facultad_id');
     }
+
+    public function carreras()
+    {
+        return $this->belongsToMany(\App\Models\Carrera::class, 'docentecarrera', 'docente_id', 'carrera_id');
+    }
 }

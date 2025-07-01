@@ -10,6 +10,7 @@ use App\Http\Controllers\FacultadController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\CarreraController;
 
 // Mueve el endpoint de login a la API
 Route::post('/login', [AccesoController::class, 'login']);
@@ -30,3 +31,8 @@ Route::get('/roles', [RolController::class, 'index']);
 Route::post('/accesos', [AccesoController::class, 'store']);
 Route::post('/docentes/{docente_id}/facultades', [DocenteController::class, 'agregarFacultad']);
 Route::delete('/docentes/{docente_id}/facultades/{facultad_id}', [DocenteController::class, 'eliminarFacultad']);
+Route::get('/carreras/facultad/{facultad_id}', [CarreraController::class, 'getByFacultad']);
+Route::post('/docentes/{docente_id}/carreras', [DocenteController::class, 'agregarCarrera']);
+
+// Eliminar carrera de un docente (relación muchos a muchos)
+Route::delete('/docentes/{docente_id}/carreras/{carrera_id}', [DocenteController::class, 'eliminarCarrera']);

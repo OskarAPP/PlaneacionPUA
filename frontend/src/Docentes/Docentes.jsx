@@ -31,6 +31,21 @@ const Docentes = () => {
   const [docenteNombreModal, setDocenteNombreModal] = useState("");
   const [deleteLoading, setDeleteLoading] = useState({});
   const [deleteError, setDeleteError] = useState("");
+  // Estado para modal de carrera
+  const [addCarreraModalOpen, setAddCarreraModalOpen] = useState(false);
+  const [carrerasFacultad, setCarrerasFacultad] = useState([]);
+  const [selectedCarrera, setSelectedCarrera] = useState("");
+  const [carreraModalError, setCarreraModalError] = useState("");
+  const [carreraModalLoading, setCarreraModalLoading] = useState(false);
+  const [facultadesDocenteCarrera, setFacultadesDocenteCarrera] = useState([]); // Facultades del docente para el modal carrera
+  const [selectedFacultadCarrera, setSelectedFacultadCarrera] = useState("");
+
+  // Estado para modal de ver carreras
+  const [viewCarrerasModalOpen, setViewCarrerasModalOpen] = useState(false);
+  const [carrerasDocente, setCarrerasDocente] = useState([]);
+  const [docenteNombreCarreraModal, setDocenteNombreCarreraModal] = useState("");
+  const [carreraDeleteLoading, setCarreraDeleteLoading] = useState({});
+  const [carreraDeleteError, setCarreraDeleteError] = useState("");
 
   // Obtener docentes desde la API
   useEffect(() => {
@@ -214,6 +229,193 @@ const Docentes = () => {
       setDeleteError("Error de conexión.");
     }
     setDeleteLoading(prev => ({ ...prev, [idx]: false }));
+  };
+
+  // Abrir modal para agregar carrera
+  const handleOpenAddCarreraModal = (docente) => {
+    setSelectedDocente(docente);
+    setSelectedCarrera("");
+    setCarreraModalError("");
+    setCarrerasFacultad([]);
+    setSelectedFacultadCarrera("");
+    // Buscar todas las facultades del docente (por nombre) y obtener sus IDs
+    let facs = [];
+    if (Array.isArray(docente.facultades) && docente.facultades.length > 0) {
+      facs = facultades.filter(f => docente.facultades.includes(f.nombre));
+    }
+    setFacultadesDocenteCarrera(facs);
+    setAddCarreraModalOpen(true);
+  };
+
+  // Cuando se selecciona una facultad en el modal de carrera, cargar carreras
+  useEffect(() => {
+    if (!selectedFacultadCarrera) {
+      setCarrerasFacultad([]);
+      return;
+    }
+    setCarreraModalError("");
+    setCarrerasFacultad([]);
+    fetch(`http://localhost:8000/api/carreras/facultad/${selectedFacultadCarrera}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setCarrerasFacultad(data);
+        } else {
+          setCarrerasFacultad([]);
+          setCarreraModalError("No se pudieron obtener las carreras.");
+        }
+      })
+      .catch(() => {
+        setCarrerasFacultad([]);
+        setCarreraModalError("Error de conexión al obtener carreras.");
+      });
+  }, [selectedFacultadCarrera]);
+
+  // Cerrar modal de carrera
+  const handleCloseAddCarreraModal = () => {
+    setAddCarreraModalOpen(false);
+    setSelectedCarrera("");
+    setCarreraModalError("");
+    setCarrerasFacultad([]);
+    setFacultadesDocenteCarrera([]);
+    setSelectedFacultadCarrera("");
+  };
+
+  // Registrar carrera al docente
+  const handleRegistrarCarrera = async () => {
+    if (!selectedFacultadCarrera) {
+      setCarreraModalError("Selecciona una facultad.");
+      return;
+    }
+    if (!selectedCarrera) {
+      setCarreraModalError("Selecciona una carrera.");
+      return;
+    }
+    setCarreraModalLoading(true);
+    setCarreraModalError("");
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/carreras`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carrera_id: selectedCarrera })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Actualizar docentes
+        fetch('http://localhost:8000/api/docentes')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setDocentesData(data.docentes);
+          });
+        handleCloseAddCarreraModal();
+      } else if (data.message) {
+        setCarreraModalError(data.message);
+      } else {
+        setCarreraModalError("No se pudo registrar la carrera.");
+      }
+    } catch (err) {
+      setCarreraModalError("Error de conexión.");
+    }
+    setCarreraModalLoading(false);
+  };
+
+  // Abrir modal para ver carreras del docente
+  // Ahora intentamos obtener los IDs de carrera incluso si solo hay nombres
+  const handleOpenViewCarreras = async (docente) => {
+    setSelectedDocente(docente);
+    if (Array.isArray(docente.carreras_full)) {
+      setCarrerasDocente(docente.carreras_full);
+    } else if (Array.isArray(docente.carreras)) {
+      // Si solo hay nombres, obtener todas las carreras de la(s) facultad(es) del docente y mapear
+      let carrerasAll = [];
+      if (Array.isArray(docente.facultades)) {
+        // Buscar los IDs de las facultades
+        const facIds = facultades.filter(f => docente.facultades.includes(f.nombre)).map(f => f.facultad_id);
+        // Obtener todas las carreras de esas facultades
+        for (const facId of facIds) {
+          try {
+            const res = await fetch(`http://localhost:8000/api/carreras/facultad/${facId}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              carrerasAll = carrerasAll.concat(data);
+            }
+          } catch (e) {}
+        }
+      }
+      // Mapear nombres a objetos con ID
+      const mapped = docente.carreras.map(nombre => {
+        const found = carrerasAll.find(c => c.nombre === nombre);
+        return found ? { ...found } : { nombre };
+      });
+      setCarrerasDocente(mapped);
+    } else {
+      setCarrerasDocente([]);
+    }
+    setDocenteNombreCarreraModal(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
+    setCarreraDeleteError("");
+    setViewCarrerasModalOpen(true);
+  };
+  // Cerrar modal de ver carreras
+  const handleCloseViewCarreras = () => {
+    setViewCarrerasModalOpen(false);
+    setCarrerasDocente([]);
+    setDocenteNombreCarreraModal("");
+    setCarreraDeleteError("");
+  };
+
+  // Eliminar carrera del docente
+  // Ahora recibe el objeto carrera (o al menos { carrera_id, nombre })
+  const handleEliminarCarrera = async (carreraObj, idx) => {
+    if (!selectedDocente) return;
+    setCarreraDeleteLoading(prev => ({ ...prev, [idx]: true }));
+    setCarreraDeleteError("");
+    // Buscar el carrera_id de forma robusta
+    let carreraId = null;
+    if (carreraObj && carreraObj.carrera_id) {
+      carreraId = carreraObj.carrera_id;
+    } else if (typeof carreraObj === 'object' && carreraObj.nombre) {
+      // Buscar en carrerasFacultad si está disponible
+      const found = carrerasFacultad.find(c => c.nombre === carreraObj.nombre);
+      if (found) carreraId = found.carrera_id;
+    } else if (typeof carreraObj === 'string') {
+      // Fallback: buscar por nombre en carrerasFacultad
+      const found = carrerasFacultad.find(c => c.nombre === carreraObj);
+      if (found) carreraId = found.carrera_id;
+    }
+    if (!carreraId) {
+      setCarreraDeleteError("No se encontró el ID de la carrera.");
+      setCarreraDeleteLoading(prev => ({ ...prev, [idx]: false }));
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/carreras/${carreraId}`, {
+        method: 'DELETE',
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        setCarreraDeleteError('Respuesta inesperada del servidor.');
+        setCarreraDeleteLoading(prev => ({ ...prev, [idx]: false }));
+        return;
+      }
+      if (res.ok && data.success) {
+        setCarrerasDocente(prev => prev.filter((_, i) => i !== idx));
+        // Actualizar docentes global
+        fetch('http://localhost:8000/api/docentes')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setDocentesData(data.docentes);
+          });
+      } else if (data.message) {
+        setCarreraDeleteError(data.message);
+      } else {
+        setCarreraDeleteError("No se pudo eliminar la carrera.");
+      }
+    } catch (err) {
+      setCarreraDeleteError("Error de conexión.");
+    }
+    setCarreraDeleteLoading(prev => ({ ...prev, [idx]: false }));
   };
 
   return (
@@ -436,13 +638,13 @@ const Docentes = () => {
                         <div className="flex flex-col gap-1 sm:flex-row sm:gap-2">
                           <button
                             className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs w-full sm:w-auto"
-                            // onClick={() => handleOpenViewCarreras(docente)}
+                            onClick={() => handleOpenViewCarreras(docente)}
                           >
                             Ver Carreras
                           </button>
                           <button
                             className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
-                            // onClick={() => handleOpenAddCarreraModal(docente)}
+                            onClick={() => handleOpenAddCarreraModal(docente)}
                           >
                             Agregar Carrera
                           </button>
@@ -501,6 +703,55 @@ const Docentes = () => {
                 </div>
               </div>
             )}
+            {/* Modal para agregar carrera */}
+            {addCarreraModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseAddCarreraModal}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar carrera</h2>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 mb-2"
+                      value={selectedFacultadCarrera}
+                      onChange={e => {
+                        setSelectedFacultadCarrera(e.target.value);
+                        setSelectedCarrera("");
+                      }}
+                    >
+                      <option value="">Seleccione facultad...</option>
+                      {facultadesDocenteCarrera.map(fac => (
+                        <option key={fac.facultad_id} value={fac.facultad_id}>{fac.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Carrera:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      value={selectedCarrera}
+                      onChange={e => setSelectedCarrera(e.target.value)}
+                      disabled={!selectedFacultadCarrera || carrerasFacultad.length === 0}
+                    >
+                      <option value="">Seleccione carrera...</option>
+                      {carrerasFacultad.map(carr => (
+                        <option key={carr.carrera_id} value={carr.carrera_id}>{carr.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {carreraModalError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{carreraModalError}</div>}
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-blue-700 text-white font-semibold px-6 py-2 rounded hover:bg-blue-800 transition-colors disabled:opacity-60"
+                      onClick={handleRegistrarCarrera}
+                      disabled={carreraModalLoading || !selectedFacultadCarrera || carrerasFacultad.length === 0}
+                    >
+                      {carreraModalLoading ? 'Registrando...' : 'Registrar'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Modal para ver facultades del docente */}
             {viewFacModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -531,6 +782,43 @@ const Docentes = () => {
                     <button
                       className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
                       onClick={handleCloseViewFacModal}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Modal para ver carreras del docente */}
+            {viewCarrerasModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewCarreras}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Carreras de {docenteNombreCarreraModal}</h2>
+                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                    {carrerasDocente.length > 0 ? (
+                      carrerasDocente.map((carr, idx) => (
+                        <li key={idx} className="flex items-center justify-between group">
+                          <span>{carr.nombre || carr}</span>
+                          <button
+                            className="ml-2 text-red-600 hover:text-red-800 font-bold text-lg px-2 disabled:opacity-50"
+                            title="Eliminar carrera"
+                            onClick={() => handleEliminarCarrera(carr, idx)}
+                            disabled={carreraDeleteLoading[idx]}
+                          >
+                            ×
+                          </button>
+                        </li>
+                      ))
+                    ) : (
+                      <li>(Sin carrera)</li>
+                    )}
+                  </ul>
+                  {carreraDeleteError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{carreraDeleteError}</div>}
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
+                      onClick={handleCloseViewCarreras}
                     >
                       Cerrar
                     </button>

@@ -41,7 +41,7 @@ class DocenteController extends Controller
     // Obtener todos los docentes (con todas las facultades)
     public function index()
     {
-        $docentes = Docente::with('facultades')
+        $docentes = Docente::with(['facultades', 'carreras'])
             ->get()
             ->map(function($docente) {
                 // Buscar el correo en la tabla acceso
@@ -58,6 +58,7 @@ class DocenteController extends Controller
                     'apellido_materno' => $docente->apellido_materno,
                     'correo' => $correo,
                     'facultades' => $docente->facultades->pluck('nombre')->toArray(),
+                    'carreras' => $docente->carreras->pluck('nombre')->toArray(),
                 ];
             });
         return response()->json([
@@ -113,6 +114,56 @@ class DocenteController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Facultad eliminada correctamente.'
+        ]);
+    }
+
+    // Asociar una carrera a un docente (tabla pivote docentecarrera)
+    public function agregarCarrera(Request $request, $docente_id)
+    {
+        $request->validate([
+            'carrera_id' => 'required|integer|exists:carrera,carrera_id',
+        ]);
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        // Evitar duplicados
+        if ($docente->carreras()->where('carrera.carrera_id', $request->carrera_id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El docente ya está asociado a esa carrera.'
+            ], 409);
+        }
+        $docente->carreras()->attach($request->carrera_id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Carrera agregada correctamente.'
+        ]);
+    }
+
+    // Eliminar una carrera de un docente (tabla pivote docentecarrera)
+    public function eliminarCarrera($docente_id, $carrera_id)
+    {
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        if (!$docente->carreras()->where('carrera.carrera_id', $carrera_id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El docente no está asociado a esa carrera.'
+            ], 404);
+        }
+        $docente->carreras()->detach($carrera_id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Carrera eliminada correctamente.'
         ]);
     }
 }
