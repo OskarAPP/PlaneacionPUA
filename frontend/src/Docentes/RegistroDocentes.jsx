@@ -106,6 +106,12 @@ const RegistroDocentes = () => {
       setLoading(false);
       return;
     }
+    // Validar dominio de correo
+    if (!/^[^@\s]+@uacam\.mx$/.test(form.correo)) {
+      setError("El correo debe ser institucional y terminar en @uacam.mx");
+      setLoading(false);
+      return;
+    }
     // Enviar todo en un solo request a /api/personal
     try {
       const res = await fetch('http://localhost:8000/api/personal', {
@@ -137,8 +143,25 @@ const RegistroDocentes = () => {
           contrasena: '',
           rol_id: ''
         });
+      } else if (data.errors) {
+        // Mensajes explícitos para cada campo
+        if (data.errors.nombre) setError('Nombre: ' + data.errors.nombre[0]);
+        else if (data.errors.apellido_paterno) setError('Apellido paterno: ' + data.errors.apellido_paterno[0]);
+        else if (data.errors.apellido_materno) setError('Apellido materno: ' + data.errors.apellido_materno[0]);
+        else if (data.errors.facultad_id) setError('Facultad: ' + data.errors.facultad_id[0]);
+        else if (data.errors.titulo) setError('Título: ' + data.errors.titulo[0]);
+        else if (data.errors.cargo_id) setError('Cargo: ' + data.errors.cargo_id[0]);
+        else if (data.errors.correo && data.errors.correo[0].includes('unique')) setError('El correo ya está registrado.');
+        else if (data.errors.correo) setError('Correo: ' + data.errors.correo[0]);
+        else if (data.errors.contrasena) setError('Contraseña: ' + data.errors.contrasena[0]);
+        else if (data.errors.rol_id) setError('Rol: ' + data.errors.rol_id[0]);
+        else setError('Error en los datos.');
+      } else if (data.message && data.message.toLowerCase().includes('correo')) {
+        setError(data.message);
+      } else if (data.message) {
+        setError(data.message);
       } else {
-        setError(data.message || 'Error al registrar docente.');
+        setError('Ocurrió un error desconocido al registrar docente.');
       }
     } catch (err) {
       setError('Error de conexión al registrar docente.');
