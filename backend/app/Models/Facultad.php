@@ -8,9 +8,9 @@ class Facultad extends Model
 {
     use HasFactory;
     protected $table = 'facultad';
-    protected $primaryKey = 'facultad_id';
+    protected $primaryKey = 'id_facultad';
     public $timestamps = false;
     protected $fillable = [
-        'nombre',
+        'facultad',
     ];
 }
