@@ -402,6 +402,8 @@ const Docentes = () => {
                     <th className="px-3 py-2 font-bold">Apellido Materno</th>
                     <th className="px-3 py-2 font-bold">Correo</th>
                     <th className="px-3 py-2 font-bold">Facultad</th>
+                    <th className="px-3 py-2 font-bold">Carrera</th>
+                    <th className="px-3 py-2 font-bold">Materias</th>
                   </tr>
                 </thead>
                 <tbody className="text-blue-900 dark:text-blue-200">
@@ -415,18 +417,52 @@ const Docentes = () => {
                       <td className="px-3 py-2">{docente.apellido_materno}</td>
                       <td className="px-3 py-2">{docente.correo}</td>
                       <td className="px-3 py-2">
-                        <button
-                          className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
-                          onClick={() => handleOpenViewFacModal(docente)}
-                        >
-                          Ver Facultades
-                        </button>
-                        <button
-                          className="ml-2 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs"
-                          onClick={() => handleOpenModal(docente)}
-                        >
-                          Agregar facultad
-                        </button>
+                        <div className="flex flex-col gap-1 sm:flex-row sm:gap-2">
+                          <button
+                            className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs w-full sm:w-auto"
+                            onClick={() => handleOpenViewFacModal(docente)}
+                          >
+                            Ver Facultades
+                          </button>
+                          <button
+                            className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
+                            onClick={() => handleOpenModal(docente)}
+                          >
+                            Agregar facultad
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:gap-2">
+                          <button
+                            className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs w-full sm:w-auto"
+                            // onClick={() => handleOpenViewCarreras(docente)}
+                          >
+                            Ver Carreras
+                          </button>
+                          <button
+                            className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
+                            // onClick={() => handleOpenAddCarreraModal(docente)}
+                          >
+                            Agregar Carrera
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:gap-2">
+                          <button
+                            className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs w-full sm:w-auto"
+                            // onClick={() => handleOpenViewMaterias(docente)}
+                          >
+                            Ver Materias
+                          </button>
+                          <button
+                            className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
+                            // onClick={() => handleOpenAddMateriaModal(docente)}
+                          >
+                            Agregar Materia
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
