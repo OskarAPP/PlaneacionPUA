@@ -26,6 +26,9 @@ const Docentes = () => {
   const [selectedFacultad, setSelectedFacultad] = useState("");
   const [modalError, setModalError] = useState("");
   const [modalLoading, setModalLoading] = useState(false);
+  const [viewFacModalOpen, setViewFacModalOpen] = useState(false);
+  const [facultadesDocente, setFacultadesDocente] = useState([]);
+  const [docenteNombreModal, setDocenteNombreModal] = useState("");
 
   // Obtener docentes desde la API
   useEffect(() => {
@@ -151,6 +154,19 @@ const Docentes = () => {
       setModalError("Error de conexión.");
     }
     setModalLoading(false);
+  };
+
+  // Abrir modal para ver facultades del docente
+  const handleOpenViewFacModal = (docente) => {
+    setFacultadesDocente(Array.isArray(docente.facultades) ? docente.facultades : []);
+    setDocenteNombreModal(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
+    setViewFacModalOpen(true);
+  };
+  // Cerrar modal de ver facultades
+  const handleCloseViewFacModal = () => {
+    setViewFacModalOpen(false);
+    setFacultadesDocente([]);
+    setDocenteNombreModal("");
   };
 
   return (
@@ -352,7 +368,12 @@ const Docentes = () => {
                       <td className="px-3 py-2">{docente.apellido_materno}</td>
                       <td className="px-3 py-2">{docente.correo}</td>
                       <td className="px-3 py-2">
-                        {Array.isArray(docente.facultades) && docente.facultades.length > 0 ? docente.facultades.join(', ') : '(Sin facultad)'}
+                        <button
+                          className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                          onClick={() => handleOpenViewFacModal(docente)}
+                        >
+                          Ver Facultades
+                        </button>
                         <button
                           className="ml-2 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs"
                           onClick={() => handleOpenModal(docente)}
@@ -392,6 +413,32 @@ const Docentes = () => {
                       disabled={modalLoading}
                     >
                       {modalLoading ? 'Registrando...' : 'Registrar'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Modal para ver facultades del docente */}
+            {viewFacModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewFacModal}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Facultades de {docenteNombreModal}</h2>
+                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                    {facultadesDocente.length > 0 ? (
+                      facultadesDocente.map((fac, idx) => (
+                        <li key={idx}>{fac}</li>
+                      ))
+                    ) : (
+                      <li>(Sin facultad)</li>
+                    )}
+                  </ul>
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
+                      onClick={handleCloseViewFacModal}
+                    >
+                      Cerrar
                     </button>
                   </div>
                 </div>
