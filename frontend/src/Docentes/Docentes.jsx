@@ -51,28 +51,29 @@ const Docentes = () => {
   const [materiaModalLoading, setMateriaModalLoading] = useState(false);
 
   // Abrir modal para agregar materia
-  const handleOpenAddMateriaModal = (docente) => {
+  const handleOpenAddMateriaModal = async (docente) => {
     setSelectedDocente(docente);
     setSelectedCarreraMateria("");
     setSelectedMateria("");
     setMateriaModalError("");
     setMateriasCarrera([]);
-    // Obtener carreras del docente (con id y nombre)
-    let carreras = [];
-    if (Array.isArray(docente.carreras_full)) {
-      carreras = docente.carreras_full;
-    } else if (Array.isArray(docente.carreras)) {
-      // Si solo hay nombres, buscar en todas las carreras globales
-      carreras = [];
-      if (Array.isArray(docente.facultades)) {
-        const facIds = facultades.filter(f => docente.facultades.includes(f.nombre)).map(f => f.facultad_id);
-        for (const facId of facIds) {
-          // Buscar carreras de la facultad
-          // NOTA: Esto es asíncrono, pero para el modal solo mostramos las que ya tiene el docente
-        }
+    setCarrerasDocenteMateria([]);
+    try {
+      // Consultar carreras del docente desde el nuevo endpoint backend
+      const res = await fetch(`http://localhost:8000/api/docentes/${docente.docente_id}/carreras`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setCarrerasDocenteMateria(data);
+      } else if (data.carreras && Array.isArray(data.carreras)) {
+        setCarrerasDocenteMateria(data.carreras);
+      } else {
+        setCarrerasDocenteMateria([]);
+        setMateriaModalError("No se pudieron obtener las carreras del docente.");
       }
+    } catch (e) {
+      setCarrerasDocenteMateria([]);
+      setMateriaModalError("Error de conexión al obtener carreras del docente.");
     }
-    setCarrerasDocenteMateria(carreras);
     setAddMateriaModalOpen(true);
   };
 
@@ -110,7 +111,43 @@ const Docentes = () => {
     setCarrerasDocenteMateria([]);
   };
 
-  // (La lógica para registrar la materia se implementará después)
+  // Registrar materia al docente
+  const handleRegistrarMateria = async () => {
+    if (!selectedCarreraMateria) {
+      setMateriaModalError("Selecciona una carrera.");
+      return;
+    }
+    if (!selectedMateria) {
+      setMateriaModalError("Selecciona una materia.");
+      return;
+    }
+    setMateriaModalLoading(true);
+    setMateriaModalError("");
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/materias`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ materia_id: selectedMateria })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Actualizar docentes (para reflejar materias asignadas si el backend lo retorna)
+        fetch('http://localhost:8000/api/docentes')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) setDocentesData(data.docentes);
+          });
+        handleCloseAddMateriaModal();
+      } else if (data.message) {
+        setMateriaModalError(data.message);
+      } else {
+        setMateriaModalError("No se pudo registrar la materia.");
+      }
+    } catch (err) {
+      setMateriaModalError("Error de conexión.");
+    }
+    setMateriaModalLoading(false);
+  };
   const [viewCarrerasModalOpen, setViewCarrerasModalOpen] = useState(false);
   const [carrerasDocente, setCarrerasDocente] = useState([]);
   const [docenteNombreCarreraModal, setDocenteNombreCarreraModal] = useState("");
@@ -724,10 +761,11 @@ const Docentes = () => {
                         <div className="flex flex-col gap-1 sm:flex-row sm:gap-2">
                           <button
                             className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs w-full sm:w-auto"
-                            // onClick={() => handleOpenViewMaterias(docente)}
+                            onClick={() => handleOpenViewMaterias(docente)}
                           >
                             Ver Materias
                           </button>
+
                           <button
                             className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs w-full sm:w-auto"
                             onClick={() => handleOpenAddMateriaModal(docente)}
@@ -774,7 +812,7 @@ const Docentes = () => {
                   <div className="flex justify-end">
                     <button
                       className="bg-blue-700 text-white font-semibold px-6 py-2 rounded hover:bg-blue-800 transition-colors disabled:opacity-60"
-                      // onClick={handleRegistrarMateria}
+                      onClick={handleRegistrarMateria}
                       disabled={materiaModalLoading || !selectedCarreraMateria || materiasCarrera.length === 0}
                     >
                       {materiaModalLoading ? 'Registrando...' : 'Registrar'}

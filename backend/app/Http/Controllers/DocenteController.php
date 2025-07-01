@@ -7,6 +7,21 @@ use App\Models\Acceso;
 
 class DocenteController extends Controller
 {
+    // Obtener todas las carreras asociadas a un docente (id y nombre)
+    public function carrerasPorDocente($docente_id)
+    {
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        // Obtener carreras asociadas (id y nombre)
+        $carreras = $docente->carreras()->select('carrera.carrera_id', 'carrera.nombre')->get();
+        return response()->json($carreras);
+    }
+// ...existing code...
     // Obtener datos del docente por id_docente
     public function show($id_docente)
     {
