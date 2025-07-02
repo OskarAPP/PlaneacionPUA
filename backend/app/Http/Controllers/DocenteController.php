@@ -237,4 +237,15 @@ class DocenteController extends Controller
             'message' => 'Materia eliminada correctamente del docente.'
         ]);
     }
+
+    // Obtener materias asignadas a un docente
+    public function materiasPorDocente($docente_id)
+    {
+        $materias = \DB::table('docentemateria')
+            ->join('materia', 'docentemateria.materia_id', '=', 'materia.materia_id')
+            ->where('docentemateria.docente_id', $docente_id)
+            ->select('materia.materia_id', 'materia.nombre')
+            ->get();
+        return response()->json($materias);
+    }
 }

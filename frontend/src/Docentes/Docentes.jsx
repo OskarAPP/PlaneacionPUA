@@ -50,6 +50,12 @@ const Docentes = () => {
   const [materiaModalError, setMateriaModalError] = useState("");
   const [materiaModalLoading, setMateriaModalLoading] = useState(false);
 
+  // Estado para modal de ver materias
+  const [viewMateriasModalOpen, setViewMateriasModalOpen] = useState(false);
+  const [materiasDocente, setMateriasDocente] = useState([]);
+  const [materiasDocenteNombre, setMateriasDocenteNombre] = useState("");
+  const [materiasDocenteError, setMateriasDocenteError] = useState("");
+
   // Abrir modal para agregar materia
   const handleOpenAddMateriaModal = async (docente) => {
     setSelectedDocente(docente);
@@ -525,6 +531,38 @@ const Docentes = () => {
     setCarreraDeleteLoading(prev => ({ ...prev, [idx]: false }));
   };
 
+  // Abrir modal para ver materias del docente
+  const handleOpenViewMaterias = async (docente) => {
+    setSelectedDocente(docente);
+    setMateriasDocente([]);
+    setMateriasDocenteError("");
+    setMateriasDocenteNombre(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${docente.docente_id}/materias`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setMateriasDocente(data);
+      } else if (data.materias && Array.isArray(data.materias)) {
+        setMateriasDocente(data.materias);
+      } else {
+        setMateriasDocente([]);
+        setMateriasDocenteError("No se pudieron obtener las materias del docente.");
+      }
+    } catch (e) {
+      setMateriasDocente([]);
+      setMateriasDocenteError("Error de conexión al obtener materias del docente.");
+    }
+    setViewMateriasModalOpen(true);
+  };
+
+  // Cerrar modal de ver materias
+  const handleCloseViewMaterias = () => {
+    setViewMateriasModalOpen(false);
+    setMateriasDocente([]);
+    setMateriasDocenteNombre("");
+    setMateriasDocenteError("");
+  };
+
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
@@ -772,6 +810,13 @@ const Docentes = () => {
                           >
                             Agregar Materia
                           </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             {/* Modal para agregar materia */}
             {addMateriaModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -821,13 +866,6 @@ const Docentes = () => {
                 </div>
               </div>
             )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
             {/* Modal para agregar facultad */}
             {modalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -976,6 +1014,33 @@ const Docentes = () => {
                     <button
                       className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
                       onClick={handleCloseViewCarreras}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Modal para ver materias del docente */}
+            {viewMateriasModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewMaterias}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Materias de {materiasDocenteNombre}</h2>
+                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                    {materiasDocente.length > 0 ? (
+                      materiasDocente.map((mat, idx) => (
+                        <li key={idx}>{mat.nombre}</li>
+                      ))
+                    ) : (
+                      <li>(Sin materias registradas)</li>
+                    )}
+                  </ul>
+                  {materiasDocenteError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{materiasDocenteError}</div>}
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
+                      onClick={handleCloseViewMaterias}
                     >
                       Cerrar
                     </button>
