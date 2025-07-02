@@ -21,7 +21,7 @@ class DocenteController extends Controller
         $carreras = $docente->carreras()->select('carrera.carrera_id', 'carrera.nombre')->get();
         return response()->json($carreras);
     }
-// ...existing code...
+
     // Obtener datos del docente por id_docente
     public function show($id_docente)
     {
@@ -179,6 +179,62 @@ class DocenteController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Carrera eliminada correctamente.'
+        ]);
+    }
+
+    // Asociar una materia a un docente (tabla pivote docentemateria)
+    public function agregarMateria(Request $request, $docente_id)
+    {
+        $request->validate([
+            'materia_id' => 'required|integer|exists:materia,materia_id',
+        ]);
+        // Verificar si ya existe la relación
+        $existe = \App\Models\DocenteMateria::where('docente_id', $docente_id)
+            ->where('materia_id', $request->materia_id)
+            ->exists();
+        if ($existe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La materia ya está asignada a este docente.'
+            ], 409);
+        }
+        $relacion = \App\Models\DocenteMateria::create([
+            'docente_id' => $docente_id,
+            'materia_id' => $request->materia_id
+        ]);
+        return response()->json([
+            'success' => true,
+            'relacion' => $relacion
+        ]);
+    }
+
+    // Eliminar una materia de un docente (tabla pivote docentemateria)
+    public function eliminarMateria($docente_id, $materia_id)
+    {
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Docente no encontrado.'
+            ], 404);
+        }
+        // Verificar si existe la relación
+        $existe = \App\Models\DocenteMateria::where('docente_id', $docente_id)
+            ->where('materia_id', $materia_id)
+            ->exists();
+        if (!$existe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La materia no está asignada a este docente.'
+            ], 404);
+        }
+        // Eliminar la relación
+        \App\Models\DocenteMateria::where('docente_id', $docente_id)
+            ->where('materia_id', $materia_id)
+            ->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Materia eliminada correctamente del docente.'
         ]);
     }
 }
