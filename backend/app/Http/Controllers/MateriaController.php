@@ -50,4 +50,10 @@ class MateriaController extends Controller
         $materia->delete();
         return response()->json(['success' => true, 'message' => 'Materia eliminada correctamente']);
     }
+
+    // Obtener materias por carrera (usando carrera_id)
+    public function getMateriasPorCarrera($carrera_id)
+    {
+        return Materia::where('carrera_id', $carrera_id)->get(['materia_id', 'nombre']);
+    }
 }

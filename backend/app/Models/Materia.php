@@ -5,11 +5,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Materia extends Model
 {
-    protected $table = 'materias';
-    protected $primaryKey = 'id';
+    protected $table = 'materia';
+    protected $primaryKey = 'materia_id';
     public $timestamps = false;
     protected $fillable = [
-        'materia', 'facultad', 'carrera', 'area', 'nucleo', 'tipo', 'art57', 'academia',
-        'horas_practicas', 'horas_teoricas', 'horas_totales', 'creditos_totales'
+        'materia_id',
+        'nombre',
+        'facultad_id',
+        'carrera_id',
+        'area_id',
+        'nucleo_id',
+        'tipo_materia_id',
+        'creditos_totales',
+        'horas_totales',
+        'horas_teoricas',
+        'horas_practicas',
+        'art57',
+        'academia_id'
     ];
 }

@@ -39,3 +39,4 @@ Route::post('/docentes/{docente_id}/carreras', [DocenteController::class, 'agreg
 
 // Eliminar carrera de un docente (relación muchos a muchos)
 Route::delete('/docentes/{docente_id}/carreras/{carrera_id}', [DocenteController::class, 'eliminarCarrera']);
+Route::get('/materias/carrera/{carrera_id}', [MateriaController::class, 'getMateriasPorCarrera']);
