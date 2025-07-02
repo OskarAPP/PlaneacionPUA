@@ -211,31 +211,15 @@ class DocenteController extends Controller
     // Eliminar una materia de un docente (tabla pivote docentemateria)
     public function eliminarMateria($docente_id, $materia_id)
     {
-        $docente = Docente::find($docente_id);
-        if (!$docente) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Docente no encontrado.'
-            ], 404);
-        }
-        // Verificar si existe la relación
-        $existe = \App\Models\DocenteMateria::where('docente_id', $docente_id)
-            ->where('materia_id', $materia_id)
-            ->exists();
-        if (!$existe) {
-            return response()->json([
-                'success' => false,
-                'message' => 'La materia no está asignada a este docente.'
-            ], 404);
-        }
-        // Eliminar la relación
-        \App\Models\DocenteMateria::where('docente_id', $docente_id)
+        $deleted = \DB::table('docentemateria')
+            ->where('docente_id', $docente_id)
             ->where('materia_id', $materia_id)
             ->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Materia eliminada correctamente del docente.'
-        ]);
+        if ($deleted) {
+            return response()->json(['success' => true, 'message' => 'Materia eliminada correctamente']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'No se encontró la relación docente-materia'], 404);
+        }
     }
 
     // Obtener materias asignadas a un docente

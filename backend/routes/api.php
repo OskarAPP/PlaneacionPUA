@@ -42,3 +42,4 @@ Route::delete('/docentes/{docente_id}/carreras/{carrera_id}', [DocenteController
 Route::get('/materias/carrera/{carrera_id}', [MateriaController::class, 'getMateriasPorCarrera']);
 Route::post('/docentes/{docente_id}/materias', [DocenteController::class, 'agregarMateria']);
 Route::get('/docentes/{docente_id}/materias', [DocenteController::class, 'materiasPorDocente']);
+Route::delete('/docentes/{docente_id}/materias/{materia_id}', [DocenteController::class, 'eliminarMateria']);

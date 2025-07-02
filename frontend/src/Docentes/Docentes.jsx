@@ -531,6 +531,38 @@ const Docentes = () => {
     setCarreraDeleteLoading(prev => ({ ...prev, [idx]: false }));
   };
 
+  // Eliminar materia del docente
+  const [materiaDeleteLoading, setMateriaDeleteLoading] = useState({});
+  const [materiaDeleteError, setMateriaDeleteError] = useState("");
+  const handleEliminarMateria = async (materiaObj, idx) => {
+    if (!selectedDocente) return;
+    setMateriaDeleteLoading(prev => ({ ...prev, [idx]: true }));
+    setMateriaDeleteError("");
+    try {
+      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/materias/${materiaObj.materia_id}`, {
+        method: 'DELETE',
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        setMateriaDeleteError('Respuesta inesperada del servidor.');
+        setMateriaDeleteLoading(prev => ({ ...prev, [idx]: false }));
+        return;
+      }
+      if (res.ok && data.success) {
+        setMateriasDocente(prev => prev.filter((_, i) => i !== idx));
+      } else if (data.message) {
+        setMateriaDeleteError(data.message);
+      } else {
+        setMateriaDeleteError("No se pudo eliminar la materia.");
+      }
+    } catch (err) {
+      setMateriaDeleteError("Error de conexión.");
+    }
+    setMateriaDeleteLoading(prev => ({ ...prev, [idx]: false }));
+  };
+
   // Abrir modal para ver materias del docente
   const handleOpenViewMaterias = async (docente) => {
     setSelectedDocente(docente);
@@ -1030,13 +1062,24 @@ const Docentes = () => {
                   <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
                     {materiasDocente.length > 0 ? (
                       materiasDocente.map((mat, idx) => (
-                        <li key={idx}>{mat.nombre}</li>
+                        <li key={idx} className="flex items-center justify-between group">
+                          <span>{mat.nombre}</span>
+                          <button
+                            className="ml-2 text-red-600 hover:text-red-800 font-bold text-lg px-2 disabled:opacity-50"
+                            title="Eliminar materia"
+                            onClick={() => handleEliminarMateria(mat, idx)}
+                            disabled={materiaDeleteLoading[idx]}
+                          >
+                            ×
+                          </button>
+                        </li>
                       ))
                     ) : (
                       <li>(Sin materias registradas)</li>
                     )}
                   </ul>
                   {materiasDocenteError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{materiasDocenteError}</div>}
+                  {materiaDeleteError && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-2 text-center text-sm">{materiaDeleteError}</div>}
                   <div className="flex justify-end mt-4">
                     <button
                       className="bg-gray-400 text-white font-semibold px-6 py-2 rounded hover:bg-gray-500 transition-colors"
