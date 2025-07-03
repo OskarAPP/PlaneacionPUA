@@ -32,14 +32,15 @@ class PersonalController extends Controller
             'rol_id' => $validated['rol_id'],
         ]);
 
-        // 2. Crear docente (sin facultad_id)
+        // 2. Crear docente (con facultad_id)
         $docente = Docente::create([
             'nombre' => $validated['nombre'],
             'apellido_paterno' => $validated['apellido_paterno'],
             'apellido_materno' => $validated['apellido_materno'] ?? null,
             'titulo' => $validated['titulo'] ?? null,
             'cargo_id' => $validated['cargo_id'],
-            'acceso_id' => $acceso->acceso_id
+            'acceso_id' => $acceso->acceso_id,
+            'facultad_id' => $validated['facultad_id']
         ]);
 
         // 3. Registrar relación en la tabla pivote docentefacultad
@@ -48,7 +49,7 @@ class PersonalController extends Controller
         return response()->json([
             'success' => true,
             'acceso_id' => $acceso->acceso_id,
-            'docente_id' => $docente->id_docente ?? $docente->docente_id,
+            'docente_id' => $docente->docente_id,
             'docente' => $docente
         ], 201);
     }
