@@ -38,12 +38,12 @@ const FacultadesRegistradas = () => {
 
   // Filtrado y ordenamiento
   const filteredFacultades = facultades
-    .filter(f => f.facultad.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(f => (f.nombre || "").toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => {
       if (sortOrder === "az") {
-        return a.facultad.localeCompare(b.facultad);
+        return (a.nombre || "").localeCompare(b.nombre || "");
       } else {
-        return b.facultad.localeCompare(a.facultad);
+        return (b.nombre || "").localeCompare(a.nombre || "");
       }
     });
 
@@ -274,10 +274,10 @@ const FacultadesRegistradas = () => {
                   </thead>
                   <tbody className="text-blue-900 dark:text-blue-200">
                     {filteredFacultades.map((facultad, idx) => (
-                      <tr key={facultad.id_facultad} className="border-b hover:bg-blue-50 dark:border-gray-700 dark:hover:bg-gray-900">
+                      <tr key={facultad.facultad_id} className="border-b hover:bg-blue-50 dark:border-gray-700 dark:hover:bg-gray-900">
                         <td className="px-3 py-2">{idx + 1}</td>
-                        <td className="px-3 py-2">{facultad.id_facultad}</td>
-                        <td className="px-3 py-2">{facultad.facultad}</td>
+                        <td className="px-3 py-2">{facultad.facultad_id}</td>
+                        <td className="px-3 py-2">{facultad.nombre}</td>
                       </tr>
                     ))}
                   </tbody>
