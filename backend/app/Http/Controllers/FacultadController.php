@@ -17,7 +17,7 @@ class FacultadController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'facultad' => 'required|string|unique:facultad,facultad',
+            'nombre' => 'required|string|unique:facultad,nombre',
         ]);
         $facultad = Facultad::create($validated);
         return response()->json([

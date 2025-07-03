@@ -74,7 +74,7 @@ const RegistroFacultad = () => {
       const res = await fetch("http://localhost:8000/api/facultades", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ facultad: form.nombre })
+        body: JSON.stringify({ nombre: form.nombre })
       });
       const data = await res.json();
       if (res.ok && data.success) {
