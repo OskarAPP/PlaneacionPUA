@@ -33,6 +33,10 @@ Route::post('/docentes/{docente_id}/facultades', [DocenteController::class, 'agr
 Route::delete('/docentes/{docente_id}/facultades/{facultad_id}', [DocenteController::class, 'eliminarFacultad']);
 Route::get('/carreras', [CarreraController::class, 'index']);
 Route::get('/carreras/facultad/{facultad_id}', [CarreraController::class, 'getByFacultad']);
+Route::post('/carreras', [CarreraController::class, 'store']);
+
+// PlanEstudio endpoints
+Route::post('/planestudio', [\App\Http\Controllers\PlanEstudioController::class, 'store']);
 
 // Obtener carreras asociadas a un docente (para el modal de materias)
 Route::get('/docentes/{docente_id}/carreras', [DocenteController::class, 'carrerasPorDocente']);

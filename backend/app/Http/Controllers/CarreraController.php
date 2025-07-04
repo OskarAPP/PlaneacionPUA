@@ -19,4 +19,19 @@ class CarreraController extends Controller
         $carreras = Carrera::with(['facultad', 'planEstudio'])->where('facultad_id', $facultad_id)->get();
         return response()->json($carreras);
     }
+
+    // Registrar una nueva carrera
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'facultad_id' => 'required|integer|exists:facultad,facultad_id',
+            'plan_estudio_id' => 'required|integer|exists:planestudio,plan_estudio_id',
+        ]);
+        $carrera = Carrera::create($validated);
+        return response()->json([
+            'success' => true,
+            'carrera' => $carrera
+        ]);
+    }
 }
