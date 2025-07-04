@@ -47,6 +47,39 @@ const Carreras = () => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Estado para carreras
+  const [carreras, setCarreras] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("az");
+
+  useEffect(() => {
+    const fetchCarreras = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/carreras");
+        if (!res.ok) throw new Error("Error al obtener carreras");
+        const data = await res.json();
+        setCarreras(data);
+      } catch (err) {
+        setError("No se pudieron cargar las carreras");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCarreras();
+  }, []);
+
+  const filteredCarreras = carreras
+    .filter(c => (c.nombre || "").toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => {
+      if (sortOrder === "az") {
+        return (a.nombre || "").localeCompare(b.nombre || "");
+      } else {
+        return (b.nombre || "").localeCompare(a.nombre || "");
+      }
+    });
+
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
@@ -211,14 +244,16 @@ const Carreras = () => {
                     type="text"
                     className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
                     placeholder="Nombre de la Carrera"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
               <div className="flex-1">
                 <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
-                  <option>A a Z</option>
-                  <option>Z a A</option>
+                <select className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+                  <option value="az">A a Z</option>
+                  <option value="za">Z a A</option>
                 </select>
               </div>
             </div>
@@ -235,7 +270,22 @@ const Carreras = () => {
                   </tr>
                 </thead>
                 <tbody className="text-blue-900 dark:text-blue-200">
-                  {/* Aquí irían los datos de las carreras */}
+                  {loading ? (
+                    <tr><td colSpan="4" className="text-center py-4 text-blue-700 dark:text-blue-300">Cargando...</td></tr>
+                  ) : error ? (
+                    <tr><td colSpan="4" className="text-center py-4 text-red-600 dark:text-red-400">{error}</td></tr>
+                  ) : filteredCarreras.length === 0 ? (
+                    <tr><td colSpan="4" className="text-center py-4">No hay carreras registradas.</td></tr>
+                  ) : (
+                    filteredCarreras.map((carrera, idx) => (
+                      <tr key={carrera.carrera_id} className="border-b hover:bg-blue-50 dark:border-gray-700 dark:hover:bg-gray-900">
+                        <td className="px-3 py-2">{idx + 1}</td>
+                        <td className="px-3 py-2">{carrera.nombre}</td>
+                        <td className="px-3 py-2">{carrera.facultad ? carrera.facultad.nombre : '-'}</td>
+                        <td className="px-3 py-2">{carrera.plan_estudio ? carrera.plan_estudio.descripcion : '-'}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

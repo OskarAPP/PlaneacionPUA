@@ -31,6 +31,7 @@ Route::get('/roles', [RolController::class, 'index']);
 Route::post('/accesos', [AccesoController::class, 'store']);
 Route::post('/docentes/{docente_id}/facultades', [DocenteController::class, 'agregarFacultad']);
 Route::delete('/docentes/{docente_id}/facultades/{facultad_id}', [DocenteController::class, 'eliminarFacultad']);
+Route::get('/carreras', [CarreraController::class, 'index']);
 Route::get('/carreras/facultad/{facultad_id}', [CarreraController::class, 'getByFacultad']);
 
 // Obtener carreras asociadas a un docente (para el modal de materias)

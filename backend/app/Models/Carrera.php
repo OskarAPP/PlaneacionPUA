@@ -18,4 +18,9 @@ class Carrera extends Model
     {
         return $this->belongsTo(Facultad::class, 'facultad_id', 'facultad_id');
     }
+
+    public function planEstudio()
+    {
+        return $this->belongsTo(\App\Models\PlanEstudio::class, 'plan_estudio_id', 'plan_estudio_id');
+    }
 }
