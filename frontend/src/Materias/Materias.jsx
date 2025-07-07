@@ -68,7 +68,12 @@ const Materias = () => {
         method: "DELETE",
       });
       if (res.ok) {
-        setMaterias((prev) => prev.filter((m) => m.id !== id));
+        // Refrescar la lista desde el backend para asegurar que la materia se eliminó en la base de datos
+        const materiasRes = await fetch("http://localhost:8000/api/materias");
+        const materiasData = await materiasRes.json();
+        if (Array.isArray(materiasData.materias)) setMaterias(materiasData.materias);
+        else if (Array.isArray(materiasData)) setMaterias(materiasData);
+        else setMaterias([]);
       } else {
         alert("Error al eliminar la materia.");
       }
@@ -282,9 +287,9 @@ const Materias = () => {
                       <tr><td colSpan={12} className="text-center py-4 text-gray-400 dark:text-gray-500">No hay materias registradas.</td></tr>
                     ) : (
                       filteredMaterias.map((materia, idx) => (
-                        <tr key={materia.id || idx} className="hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">
+                        <tr key={materia.materia_id || idx} className="hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 font-semibold">
-                            <button className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 focus:outline-none" title="Eliminar" onClick={() => handleDelete(materia.id)}>
+                            <button className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 focus:outline-none" title="Eliminar" onClick={() => handleDelete(materia.materia_id)}>
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                               </svg>
