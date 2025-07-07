@@ -44,19 +44,34 @@ class MateriaController extends Controller
     {
         $validated = $request->validate([
             'materia' => 'required|string',
-            'facultad' => 'required|string',
-            'carrera' => 'required|string',
-            'area' => 'required|string',
-            'nucleo' => 'required|string',
-            'tipo' => 'required|string',
+            'facultad' => 'required|integer',
+            'carrera' => 'required|integer',
+            'area' => 'required|integer',
+            'nucleo' => 'required|integer',
+            'tipo' => 'required|integer',
             'art57' => 'required|string',
-            'academia' => 'required|string',
+            'academia' => 'required|integer',
             'horas_practicas' => 'required|integer',
             'horas_teoricas' => 'required|integer',
             'horas_totales' => 'required|integer',
             'creditos_totales' => 'required|integer',
         ]);
-        $materia = Materia::create($validated);
+
+        $materia = Materia::create([
+            'nombre' => $validated['materia'],
+            'facultad_id' => $validated['facultad'],
+            'carrera_id' => $validated['carrera'],
+            'area_id' => $validated['area'],
+            'nucleo_id' => $validated['nucleo'],
+            'tipo_materia_id' => $validated['tipo'],
+            'art57' => $validated['art57'],
+            'academia_id' => $validated['academia'],
+            'horas_practicas' => $validated['horas_practicas'],
+            'horas_teoricas' => $validated['horas_teoricas'],
+            'horas_totales' => $validated['horas_totales'],
+            'creditos_totales' => $validated['creditos_totales'],
+        ]);
+
         return response()->json([
             'success' => true,
             'materia' => $materia

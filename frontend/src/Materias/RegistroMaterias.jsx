@@ -1,6 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const RegistroMaterias = () => {
+  // Opciones dinámicas
+  const [facultades, setFacultades] = useState([]);
+  const [carreras, setCarreras] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [nucleos, setNucleos] = useState([]);
+  const [tipos, setTipos] = useState([]);
+  const [academias, setAcademias] = useState([]);
+
+  // Cargar opciones desde la API
+  useEffect(() => {
+    fetch('http://localhost:8000/api/facultades').then(r=>r.json()).then(setFacultades);
+    fetch('http://localhost:8000/api/carreras').then(r=>r.json()).then(setCarreras);
+    fetch('http://localhost:8000/api/areas').then(r=>r.json()).then(setAreas);
+    fetch('http://localhost:8000/api/nucleos').then(r=>r.json()).then(setNucleos);
+    fetch('http://localhost:8000/api/tipomaterias').then(r=>r.json()).then(setTipos);
+    fetch('http://localhost:8000/api/academias').then(r=>r.json()).then(setAcademias);
+  }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
@@ -272,43 +289,45 @@ const RegistroMaterias = () => {
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Facultad:</label>
                   <select name="facultad" value={form.facultad} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
                     <option value="">Seleccione facultad...</option>
-                    <option value="Ingeniería">Ingeniería</option>
-                    <option value="Ciencias">Ciencias</option>
-                    <option value="Humanidades">Humanidades</option>
+                    {facultades.map(f => (
+                      <option key={f.facultad_id} value={f.facultad_id}>{f.nombre}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Carrera:</label>
                   <select name="carrera" value={form.carrera} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
                     <option value="">Seleccione una carrera...</option>
-                    <option value="Sistemas">Sistemas</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Civil">Civil</option>
+                    {carreras.map(c => (
+                      <option key={c.carrera_id} value={c.carrera_id}>{c.nombre}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Área:</label>
                   <select name="area" value={form.area} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
-                    <option value="">Seleccione area...</option>
-                    <option value="Ciencias Básicas">Ciencias Básicas</option>
-                    <option value="Ingeniería">Ingeniería</option>
+                    <option value="">Seleccione área...</option>
+                    {areas.map(a => (
+                      <option key={a.area_id} value={a.area_id}>{a.nombre || a.descripcion}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Núcleo:</label>
                   <select name="nucleo" value={form.nucleo} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
-                    <option value="">Seleccione nucleo...</option>
-                    <option value="Común">Común</option>
-                    <option value="Básico">Básico</option>
-                    <option value="Especializado">Especializado</option>
+                    <option value="">Seleccione núcleo...</option>
+                    {nucleos.map(n => (
+                      <option key={n.nucleo_id} value={n.nucleo_id}>{n.descripcion || n.nombre}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Tipo:</label>
                   <select name="tipo" value={form.tipo} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
                     <option value="">Seleccione tipo...</option>
-                    <option value="Obligatoria">Obligatoria</option>
-                    <option value="Optativa">Optativa</option>
+                    {tipos.map(t => (
+                      <option key={t.tipo_materia_id} value={t.tipo_materia_id}>{t.descripcion || t.nombre}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -338,9 +357,9 @@ const RegistroMaterias = () => {
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Academia:</label>
                   <select name="academia" value={form.academia} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
                     <option value="">Seleccione academia...</option>
-                    <option value="Matemáticas">Matemáticas</option>
-                    <option value="Física">Física</option>
-                    <option value="Química">Química</option>
+                    {academias.map(a => (
+                      <option key={a.academia_id} value={a.academia_id}>{a.nombre}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -385,6 +404,6 @@ const RegistroMaterias = () => {
       `}</style>
     </div>
   );
-};
+}
 
 export default RegistroMaterias;
