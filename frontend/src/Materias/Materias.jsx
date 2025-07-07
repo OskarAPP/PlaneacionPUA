@@ -50,8 +50,9 @@ const Materias = () => {
     fetch("http://localhost:8000/api/materias")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setMaterias(data);
-        else if (Array.isArray(data.materias)) setMaterias(data.materias);
+        if (Array.isArray(data.materias)) setMaterias(data.materias);
+        else if (Array.isArray(data)) setMaterias(data);
+        else setMaterias([]);
       })
       .catch(() => setMaterias([]));
   }, []);
@@ -77,11 +78,11 @@ const Materias = () => {
   };
 
   const filteredMaterias = materias.filter((m) =>
-    m.materia && m.materia.toLowerCase().includes(search.toLowerCase())
+    (m.nombre || '').toLowerCase().includes(search.toLowerCase())
   ).sort((a, b) => {
-    if (!a.materia || !b.materia) return 0;
-    if (sortOrder === "az") return a.materia.localeCompare(b.materia, 'es', { sensitivity: 'base' });
-    else return b.materia.localeCompare(a.materia, 'es', { sensitivity: 'base' });
+    if (!a.nombre || !b.nombre) return 0;
+    if (sortOrder === "az") return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+    else return b.nombre.localeCompare(a.nombre, 'es', { sensitivity: 'base' });
   });
 
   return (
@@ -290,14 +291,14 @@ const Materias = () => {
                             </button>
                           </td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 font-semibold">{idx + 1}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 dark:text-blue-200 font-bold">{materia.materia}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 dark:text-blue-200 font-bold">{materia.nombre}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.facultad_nombre || (materia.facultad && materia.facultad.nombre) || '-'}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.carrera_nombre || (materia.carrera && materia.carrera.nombre) || '-'}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.area}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.nucleo}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.tipo}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.area_nombre || '-'}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.nucleo_nombre || '-'}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.tipo_materia_nombre || '-'}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.art57}</td>
-                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.academia}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.academia_nombre || '-'}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">{materia.horas_practicas}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">{materia.horas_teoricas}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 text-center">{materia.horas_totales}</td>

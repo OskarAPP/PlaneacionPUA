@@ -9,10 +9,33 @@ class MateriaController extends Controller
     // Obtener todas las materias
     public function index()
     {
-        $materias = Materia::all();
+        $materias = Materia::with(['facultad', 'carrera', 'area', 'nucleo', 'tipoMateria', 'academia'])->get();
+        $result = $materias->map(function($m) {
+            return [
+                'materia_id' => $m->materia_id,
+                'nombre' => $m->nombre,
+                'facultad_id' => $m->facultad_id,
+                'facultad_nombre' => $m->facultad ? $m->facultad->nombre : null,
+                'carrera_id' => $m->carrera_id,
+                'carrera_nombre' => $m->carrera ? $m->carrera->nombre : null,
+                'area_id' => $m->area_id,
+                'area_nombre' => $m->area ? ($m->area->nombre ?? $m->area->descripcion ?? null) : null,
+                'nucleo_id' => $m->nucleo_id,
+                'nucleo_nombre' => $m->nucleo ? ($m->nucleo->descripcion ?? $m->nucleo->nombre ?? null) : null,
+                'tipo_materia_id' => $m->tipo_materia_id,
+                'tipo_materia_nombre' => $m->tipoMateria ? ($m->tipoMateria->descripcion ?? $m->tipoMateria->nombre ?? null) : null,
+                'creditos_totales' => $m->creditos_totales,
+                'horas_totales' => $m->horas_totales,
+                'horas_teoricas' => $m->horas_teoricas,
+                'horas_practicas' => $m->horas_practicas,
+                'art57' => $m->art57,
+                'academia_id' => $m->academia_id,
+                'academia_nombre' => $m->academia ? $m->academia->nombre : null,
+            ];
+        });
         return response()->json([
             'success' => true,
-            'materias' => $materias
+            'materias' => $result
         ]);
     }
 
