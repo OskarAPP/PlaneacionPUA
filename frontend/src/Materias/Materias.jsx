@@ -263,6 +263,8 @@ const Materias = () => {
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase"></th>
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">#</th>
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Materia</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Facultad</th>
+                      <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Carrera</th>
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Área</th>
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Núcleo</th>
                       <th className="px-2 py-2 text-center text-xs font-bold text-gray-700 dark:text-gray-200 uppercase">Tipo</th>
@@ -289,6 +291,8 @@ const Materias = () => {
                           </td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200 font-semibold">{idx + 1}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm text-blue-800 dark:text-blue-200 font-bold">{materia.materia}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.facultad_nombre || (materia.facultad && materia.facultad.nombre) || '-'}</td>
+                          <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.carrera_nombre || (materia.carrera && materia.carrera.nombre) || '-'}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.area}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.nucleo}</td>
                           <td className="px-2 py-2 whitespace-nowrap text-sm">{materia.tipo}</td>
