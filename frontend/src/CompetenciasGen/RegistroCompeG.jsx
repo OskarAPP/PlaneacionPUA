@@ -205,10 +205,32 @@ const RegistroCompeG = () => {
           <div className="w-full max-w-5xl">
             <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Competencia Genérica</div>
             <div className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
-              <form className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+              <form className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center" onSubmit={async (e) => {
+                e.preventDefault();
+                const nombre = e.target.elements['nombre'].value.trim();
+                if (!nombre) {
+                  alert('El nombre de la competencia es obligatorio.');
+                  return;
+                }
+                try {
+                  const res = await fetch('http://localhost:8000/api/competenciasgenericas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre })
+                  });
+                  if (res.ok) {
+                    alert('Competencia registrada correctamente.');
+                    e.target.reset();
+                  } else {
+                    alert('Error al registrar la competencia.');
+                  }
+                } catch {
+                  alert('Error de conexión con el servidor.');
+                }
+              }}>
                 <div className="md:col-span-2">
                   <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Competencia Genérica:</label>
-                  <input type="text" className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <input name="nombre" type="text" className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
                 </div>
                 <div className="flex items-end h-full">
                   <button type="submit" className="w-full bg-[#3578b3] hover:bg-[#285a8c] text-white font-semibold rounded px-4 py-2 transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">Registrar</button>

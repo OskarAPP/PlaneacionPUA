@@ -7,6 +7,16 @@ use App\Models\CompetenciaGenerica;
 
 class CompetenciaGenericaController extends Controller
 {
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+        $competencia = new CompetenciaGenerica();
+        $competencia->nombre = $request->nombre;
+        $competencia->save();
+        return response()->json(['message' => 'Competencia registrada correctamente', 'competencia' => $competencia], 201);
+    }
     public function index()
     {
         $competencias = CompetenciaGenerica::all(['competencia_gen_id', 'nombre']);
