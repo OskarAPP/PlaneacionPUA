@@ -291,7 +291,6 @@ const PerfilUsuario = () => {
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-purple-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
                 <div className="font-semibold text-lg text-gray-800 dark:text-white">DATOS ACADEMICOS</div>
-                <button className="bg-gray-100 dark:bg-gray-800 rounded px-3 py-1 text-gray-500 dark:text-gray-300 text-sm flex items-center gap-1"><i className="fa fa-pencil" /> Edit</button>
               </div>
               <div className="flex flex-col gap-2">
                 {/* Cargo */}
@@ -330,7 +329,7 @@ const PerfilUsuario = () => {
             {/* Materias impartidas */}
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-yellow-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800 dark:text-white">Materias impartidas</div>
+                <div className="font-semibold text-lg text-gray-800 dark:text-white">MATERIAS IMPARTIDAS</div>
               </div>
               <div className="flex flex-col gap-2">
                 {materias.length > 0 ? (

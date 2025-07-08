@@ -434,47 +434,7 @@ const PanelAcceso = () => {
               </div>
             </div>
 
-            {/* Sección de Datos Personales y Académicos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {/* Datos Personales */}
-              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700">
-                  <h2 className="text-lg font-semibold text-white">Datos Personales</h2>
-                </div>
-                <div className="p-4">
-                  <div className="space-y-3">
-                    <Row label="Título" value={docente?.prefijo || "N/A"} />
-                    <Row label="Nombre" value={docente?.nombre || "N/A"} />
-                    <Row label="Apellido Paterno" value={docente?.apellido_paterno || "N/A"} />
-                    <Row label="Apellido Materno" value={docente?.apellido_materno || "N/A"} />
-                    <Row label="Email" value={docente?.correo || "N/A"} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Datos Académicos */}
-              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700">
-                  <h2 className="text-lg font-semibold text-white">Datos Académicos</h2>
-                </div>
-                <div className="p-4">
-                  <div className="space-y-3">
-                    <Row label="Unidad Académica" value={<Link href="#">Derecho</Link>} />
-                    <Row label="Cargo" value="Docente" />
-                    <Row label="Unidad Académica" value={<Link href="#">Enfermería</Link>} />
-                    <Row label="Cargo" value="Docente" />
-                    <Row label="Unidad Académica" value={<Link href="#">Ingeniería</Link>} />
-                    <Row label="Cargo" value="Director de facultad" />
-                    <Row label="Accesos" value={
-                      <>
-                        <Link href="#">Docente</Link><br />
-                        <Link href="#">Docentes</Link>
-                      </>
-                    } />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* ...las tarjetas de Datos Personales y Datos Académicos han sido eliminadas... */}
           </div>
 
           {/* Footer */}
