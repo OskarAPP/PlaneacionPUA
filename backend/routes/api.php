@@ -44,6 +44,7 @@ Route::post('/planestudio', [\App\Http\Controllers\PlanEstudioController::class,
 
 // Competencias Genéricas
 Route::get('/competenciasgenericas', [\App\Http\Controllers\CompetenciaGenericaController::class, 'index']);
+Route::delete('/competenciasgenericas/{id}', [\App\Http\Controllers\CompetenciaGenericaController::class, 'destroy']);
 
 // Obtener carreras asociadas a un docente (para el modal de materias)
 Route::get('/docentes/{docente_id}/carreras', [DocenteController::class, 'carrerasPorDocente']);

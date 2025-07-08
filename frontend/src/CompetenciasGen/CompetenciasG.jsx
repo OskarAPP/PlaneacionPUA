@@ -8,6 +8,27 @@ const CompetenciasG = () => {
   const [competencias, setCompetencias] = useState([]);
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Está seguro de eliminar la competencia genérica?")) return;
+    try {
+      const res = await fetch(`http://localhost:8000/api/competenciasgenericas/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        // Refrescar la lista desde el backend para asegurar que se eliminó
+        const competenciasRes = await fetch("http://localhost:8000/api/competenciasgenericas");
+        const competenciasData = await competenciasRes.json();
+        if (Array.isArray(competenciasData.competencias)) setCompetencias(competenciasData.competencias);
+        else if (Array.isArray(competenciasData)) setCompetencias(competenciasData);
+        else setCompetencias([]);
+      } else {
+        alert("Error al eliminar la competencia genérica.");
+      }
+    } catch {
+      alert("Error de conexión con el servidor.");
+    }
+  };
   const cuentaRef = useRef(null);
   const docentesRef = useRef(null);
   const carrerasRef = useRef(null);
@@ -258,7 +279,11 @@ const CompetenciasG = () => {
                     competencias.map((comp, idx) => (
                       <tr key={comp.competencia_gen_id} className="dark:bg-gray-900 dark:border-gray-700">
                         <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
-                          {/* Aquí puedes agregar función de eliminar si lo deseas */}
+                          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-2 py-1 rounded text-xs dark:bg-red-800 dark:hover:bg-red-900" title="Eliminar" onClick={() => handleDelete(comp.competencia_gen_id)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </td>
                         <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">{idx + 1}</td>
                         <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">{comp.nombre}</td>
