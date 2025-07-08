@@ -25,7 +25,7 @@ class DocenteController extends Controller
     // Obtener datos del docente por id_docente
     public function show($id_docente)
     {
-        $docente = Docente::find($id_docente);
+        $docente = Docente::with(['facultades', 'carreras'])->find($id_docente);
         if ($docente) {
             // Buscar el correo en la tabla acceso
             $correo = null;
@@ -42,7 +42,10 @@ class DocenteController extends Controller
                     'titulo' => $docente->titulo,
                     'correo' => $correo,
                     'prefijo' => $docente->prefijo ?? '',
-                    // Puedes agregar más campos si lo deseas
+                    // Facultades asociadas (array de nombres)
+                    'facultades' => $docente->facultades->pluck('nombre')->toArray(),
+                    // Carreras asociadas (array de nombres)
+                    'carreras' => $docente->carreras->pluck('nombre')->toArray(),
                 ]
             ]);
         } else {

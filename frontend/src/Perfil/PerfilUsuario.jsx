@@ -50,12 +50,19 @@ const PerfilUsuario = () => {
     lastLogin: "Last login: 17 Aug 2018 14:54 (Kendall in DC, New York, US)",
   };
 
-  const bills = [
-    { nombre: "Phone bill", pagado: true },
-    { nombre: "Intranet bill", pagado: false },
-    { nombre: "House rent", pagado: true },
-    { nombre: "Income tax", pagado: true },
-  ];
+  // Materias impartidas por el docente
+  const [materias, setMaterias] = useState([]);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id_docente) {
+      fetch(`http://localhost:8000/api/docentes/${user.id_docente}/materias`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) setMaterias(data);
+        });
+    }
+  }, []);
 
   const handleFotoClick = () => {
     if (!subiendo) fileInputRef.current.click();
@@ -243,7 +250,7 @@ const PerfilUsuario = () => {
 
         {/* Dashboard Content */}
         <main className="flex-1 flex flex-col items-start justify-start bg-gray-50 dark:bg-gray-900 px-0 pt-32 pb-16 w-full relative">
-          <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-40 mt-0">
+          <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-80 px-10 md:px-25 mt-0">
             {/* Profile Card */}
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-blue-900/30" style={{minWidth: 320}}>
               <div className="relative mb-4">
@@ -286,37 +293,55 @@ const PerfilUsuario = () => {
                 <div className="font-semibold text-lg text-gray-800 dark:text-white">DATOS ACADEMICOS</div>
                 <button className="bg-gray-100 dark:bg-gray-800 rounded px-3 py-1 text-gray-500 dark:text-gray-300 text-sm flex items-center gap-1"><i className="fa fa-pencil" /> Edit</button>
               </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700 dark:text-gray-200">Unidad academica</span>
-                  {/* Insertar los datos desde la base de datos */}
+              <div className="flex flex-col gap-2">
+                {/* Cargo */}
+                <div className="flex flex-col mb-2">
+                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Cargo</span>
+                  <span className="text-base text-gray-800 dark:text-gray-100 font-semibold">{docente?.titulo || 'Sin cargo'}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700 dark:text-gray-200">Cargo</span>
-                  {/* Insertar los datos desde la base de datos */}
+                {/* Facultades */}
+                <div className="flex flex-col mb-2">
+                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Facultad(es)</span>
+                  {docente?.facultades && docente.facultades.length > 0 ? (
+                    <ul className="list-disc list-inside ml-2">
+                      {docente.facultades.map((fac, idx) => (
+                        <li key={idx} className="text-gray-800 dark:text-gray-100 text-sm">{fac}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">Sin facultades</span>
+                  )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700 dark:text-gray-200">Accesos</span>
-                  {/* Insertar los datos desde la base de datos */}
+                {/* Carreras */}
+                <div className="flex flex-col mb-2">
+                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Carrera(s)</span>
+                  {docente?.carreras && docente.carreras.length > 0 ? (
+                    <ul className="list-disc list-inside ml-2">
+                      {docente.carreras.map((car, idx) => (
+                        <li key={idx} className="text-gray-800 dark:text-gray-100 text-sm">{car}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">Sin carreras</span>
+                  )}
                 </div>
               </div>
             </div>
-            {/* My bills */}
+            {/* Materias impartidas */}
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-yellow-900/30" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800 dark:text-white">My bills</div>
-                <button className="bg-gray-100 dark:bg-gray-800 rounded px-3 py-1 text-gray-500 dark:text-gray-300 text-sm flex items-center gap-1"><i className="fa fa-filter" /> Filter by</button>
+                <div className="font-semibold text-lg text-gray-800 dark:text-white">Materias impartidas</div>
               </div>
-              <div className="flex flex-col gap-3">
-                {bills.map((bill, idx) => (
-                  <div key={idx} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-3 h-3 rounded-full ${bill.pagado ? 'bg-green-500' : 'bg-pink-500'}`}></span>
-                      <span className="text-gray-700 dark:text-gray-200">{bill.nombre}</span>
-                    </div>
-                    <span className={`rounded px-3 py-1 text-xs font-semibold ml-2 ${bill.pagado ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300'}`}>{bill.pagado ? 'Bill paid' : 'Not paid'}</span>
-                  </div>
-                ))}
+              <div className="flex flex-col gap-2">
+                {materias.length > 0 ? (
+                  <ul className="list-disc list-inside ml-2">
+                    {materias.map((mat, idx) => (
+                      <li key={mat.materia_id || idx} className="text-gray-800 dark:text-gray-100 text-sm">{mat.nombre}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">No tiene materias asignadas</span>
+                )}
               </div>
             </div>
           </div>
