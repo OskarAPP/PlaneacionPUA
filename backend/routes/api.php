@@ -42,6 +42,9 @@ Route::post('/carreras', [CarreraController::class, 'store']);
 // PlanEstudio endpoints
 Route::post('/planestudio', [\App\Http\Controllers\PlanEstudioController::class, 'store']);
 
+// Competencias Genéricas
+Route::get('/competenciasgenericas', [\App\Http\Controllers\CompetenciaGenericaController::class, 'index']);
+
 // Obtener carreras asociadas a un docente (para el modal de materias)
 Route::get('/docentes/{docente_id}/carreras', [DocenteController::class, 'carrerasPorDocente']);
 Route::post('/docentes/{docente_id}/carreras', [DocenteController::class, 'agregarCarrera']);

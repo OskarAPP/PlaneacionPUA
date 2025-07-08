@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
+
 const CompetenciasG = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [competencias, setCompetencias] = useState([]);
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("az");
   const cuentaRef = useRef(null);
   const docentesRef = useRef(null);
   const carrerasRef = useRef(null);
@@ -49,6 +53,17 @@ const CompetenciasG = () => {
       document.removeEventListener("mousedown", handleSidebarClickOutside);
     };
   }, [sidebarOpen]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/competenciasgenericas")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data.competencias)) setCompetencias(data.competencias);
+        else if (Array.isArray(data)) setCompetencias(data);
+        else setCompetencias([]);
+      })
+      .catch(() => setCompetencias([]));
+  }, []);
 
   const toggleDropdown = (key) => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
@@ -235,20 +250,21 @@ const CompetenciasG = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="dark:bg-gray-900 dark:border-gray-700">
-                    <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
-                      <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-2 py-1 rounded text-xs dark:bg-red-800 dark:hover:bg-red-900">Eliminar</button>
-                    </td>
-                    <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">1</td>
-                    <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">Capacidad de organización</td>
-                  </tr>
-                  <tr className="dark:bg-gray-900 dark:border-gray-700">
-                    <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
-                      <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-2 py-1 rounded text-xs dark:bg-red-800 dark:hover:bg-red-900">Eliminar</button>
-                    </td>
-                    <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">2</td>
-                    <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">Capacidad individual</td>
-                  </tr>
+                  {competencias.length === 0 ? (
+                    <tr className="dark:bg-gray-900 dark:border-gray-700">
+                      <td colSpan={3} className="text-center py-4 text-gray-400 dark:text-gray-500">No hay competencias registradas.</td>
+                    </tr>
+                  ) : (
+                    competencias.map((comp, idx) => (
+                      <tr key={comp.competencia_gen_id} className="dark:bg-gray-900 dark:border-gray-700">
+                        <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
+                          {/* Aquí puedes agregar función de eliminar si lo deseas */}
+                        </td>
+                        <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">{idx + 1}</td>
+                        <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">{comp.nombre}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
