@@ -25,6 +25,7 @@ Route::get('/areas', [\App\Http\Controllers\AreaController::class, 'index']);
 Route::get('/nucleos', [\App\Http\Controllers\NucleoController::class, 'index']);
 Route::get('/tipomaterias', [\App\Http\Controllers\TipoMateriaController::class, 'index']);
 Route::get('/academias', [\App\Http\Controllers\AcademiaController::class, 'index']);
+Route::post('/academias', [\App\Http\Controllers\AcademiaController::class, 'store']);
 Route::post('/facultades', [FacultadController::class, 'store']);
 Route::delete('/facultades/{id}', [FacultadController::class, 'destroy']);
 Route::post('/imagenes', [ImagenController::class, 'store']);

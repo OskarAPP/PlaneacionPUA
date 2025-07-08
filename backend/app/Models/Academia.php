@@ -9,7 +9,7 @@ class Academia extends Model
     protected $primaryKey = 'academia_id';
     public $timestamps = false;
     protected $fillable = [
-        'academia_id',
-        'nombre'
+        'nombre',
+        'facultad_id'
     ];
 }

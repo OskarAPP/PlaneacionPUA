@@ -54,24 +54,47 @@ const RegistroAcademias = () => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Opciones de facultad
-  const facultades = [
-    "Contaduría y Administración",
-    "Ingeniería",
-    "Ciencias",
-    "Humanidades",
-    "Artes",
-    "Salud"
-  ];
-  // Estado del formulario
-  const [form, setForm] = useState({ nombre: "", facultad: "" });
+  // Facultades dinámicas desde API
+  const [facultades, setFacultades] = useState([]);
+  const [form, setForm] = useState({ nombre: "", facultad_id: "" });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/facultades")
+      .then(res => res.json())
+      .then(data => setFacultades(data))
+      .catch(() => setFacultades([]));
+  }, []);
+
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
-  const handleSubmit = e => {
+
+  const handleSubmit = async e => {
     e.preventDefault();
-    alert("Academia registrada (demo)");
+    setLoading(true);
+    setSuccess(null);
+    setError(null);
+    try {
+      const res = await fetch("http://localhost:8000/api/academias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre: form.nombre, facultad_id: form.facultad_id })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSuccess("Academia registrada correctamente.");
+        setForm({ nombre: "", facultad_id: "" });
+      } else {
+        setError(data.message || "Error al registrar la academia.");
+      }
+    } catch (err) {
+      setError("Error de conexión con el servidor.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -233,21 +256,25 @@ const RegistroAcademias = () => {
                 <div>
                   <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Facultad:</label>
                   <select
-                    name="facultad"
-                    value={form.facultad}
+                    name="facultad_id"
+                    value={form.facultad_id}
                     onChange={handleChange}
                     className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
                     required
                   >
                     <option value="">Seleccione facultad...</option>
                     {facultades.map(fac => (
-                      <option key={fac} value={fac}>{fac}</option>
+                      <option key={fac.facultad_id} value={fac.facultad_id}>{fac.nombre}</option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="flex justify-center mt-2">
-                <button type="submit" className="bg-[#3578b3] text-white font-semibold w-1/2 md:w-1/3 px-12 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">Registrar</button>
+              <div className="flex flex-col items-center mt-2 gap-2">
+                <button type="submit" disabled={loading} className="bg-[#3578b3] text-white font-semibold w-1/2 md:w-1/3 px-12 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed">
+                  {loading ? "Registrando..." : "Registrar"}
+                </button>
+                {success && <div className="text-green-600 font-semibold">{success}</div>}
+                {error && <div className="text-red-600 font-semibold">{error}</div>}
               </div>
             </form>
           </div>

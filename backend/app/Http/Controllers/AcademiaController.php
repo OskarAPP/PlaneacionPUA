@@ -12,4 +12,18 @@ class AcademiaController extends Controller
         $academias = Academia::all();
         return response()->json($academias);
     }
+
+    // Registrar una nueva academia
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string',
+            'facultad_id' => 'required|exists:facultad,facultad_id',
+        ]);
+        $academia = Academia::create($validated);
+        return response()->json([
+            'success' => true,
+            'academia' => $academia
+        ], 201);
+    }
 }
