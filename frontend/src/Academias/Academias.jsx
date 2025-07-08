@@ -54,31 +54,25 @@ const Academias = () => {
     setDropdownOpen(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Opciones de facultad para el dropdown
-  const facultades = [
-    "Contaduría y Administración",
-    "Ingeniería",
-    "Ciencias",
-    "Humanidades",
-    "Artes",
-    "Salud"
-  ];
-  // Estado para la facultad seleccionada por fila (ejemplo estático para 2 filas)
-  const [selectedFacultad, setSelectedFacultad] = useState([
-    "Ingeniería",
-    "Ciencias"
-  ]);
-  const [facultadDropdownOpen, setFacultadDropdownOpen] = useState([false, false]);
 
-  // Maneja la apertura/cierre del dropdown por fila
-  const handleFacultadDropdown = idx => {
-    setFacultadDropdownOpen(open => open.map((v, i) => i === idx ? !v : false));
-  };
-  // Maneja la selección de facultad por fila
-  const handleSelectFacultad = (idx, facultad) => {
-    setSelectedFacultad(sel => sel.map((v, i) => i === idx ? facultad : v));
-    setFacultadDropdownOpen(open => open.map((v, i) => i === idx ? false : v));
-  };
+  // Estado para academias
+  const [academias, setAcademias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('http://localhost:8000/api/academias')
+      .then(res => res.ok ? res.json() : Promise.reject('Error al cargar academias'))
+      .then(data => {
+        setAcademias(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('No se pudieron cargar las academias');
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
@@ -252,57 +246,38 @@ const Academias = () => {
             {/* Tabla de academias */}
             <div className="bg-[#d6edf9] text-[#1a3c5a] text-base font-semibold rounded-t-md px-4 py-2 text-center border border-[#b5d6ea] dark:bg-blue-950 dark:text-blue-200 dark:border-blue-900">Lista de Academias</div>
             <div className="overflow-x-auto">
-              <table className="min-w-full border border-[#b5d6ea] dark:border-blue-900">
-                <thead>
-                  <tr className="bg-white dark:bg-gray-900">
-                    <th className="border border-[#b5d6ea] px-3 py-2 text-left w-12 dark:border-blue-900"></th>
-                    <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">#</th>
-                    <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">Academia</th>
-                    <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">Facultad</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Ejemplo de fila, puedes mapear datos reales aquí */}
-                  {[{nombre: 'Matemáticas'}, {nombre: 'Física'}].map((row, idx) => (
-                    <tr key={idx} className="dark:hover:bg-gray-700">
-                      <td className="border border-[#b5d6ea] px-2 py-2 text-center dark:border-blue-900">
-                        <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Eliminar">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </td>
-                      <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{idx + 1}</td>
-                      <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{row.nombre}</td>
-                      <td className="border border-[#b5d6ea] px-3 py-2 relative dark:border-blue-900">
-                        <button
-                          type="button"
-                          className="w-full flex items-center justify-between border rounded px-3 py-1 bg-white text-gray-800 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:hover:border-blue-400"
-                          onClick={() => handleFacultadDropdown(idx)}
-                        >
-                          <span className="truncate text-left">{selectedFacultad[idx]}</span>
-                          <svg className="ml-2 h-4 w-4 text-gray-500 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        {facultadDropdownOpen[idx] && (
-                          <div className="absolute left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-10 animate-fade-in dark:bg-gray-800 dark:border-gray-700 dark:shadow-2xl">
-                            {facultades.map(fac => (
-                              <button
-                                key={fac}
-                                className={`block w-full text-left px-3 py-1 hover:bg-blue-100 dark:hover:bg-gray-700 ${selectedFacultad[idx] === fac ? 'font-semibold text-blue-700 dark:text-blue-300' : ''}`}
-                                onClick={() => handleSelectFacultad(idx, fac)}
-                              >
-                                {fac}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </td>
+              {loading ? (
+                <div className="p-4 text-center">Cargando academias...</div>
+              ) : error ? (
+                <div className="p-4 text-center text-red-600">{error}</div>
+              ) : (
+                <table className="min-w-full border border-[#b5d6ea] dark:border-blue-900">
+                  <thead>
+                    <tr className="bg-white dark:bg-gray-900">
+                      <th className="border border-[#b5d6ea] px-3 py-2 text-left w-12 dark:border-blue-900"></th>
+                      <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">#</th>
+                      <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">Academia</th>
+                      <th className="border border-[#b5d6ea] px-3 py-2 text-left dark:border-blue-900">Facultad</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {academias.length === 0 ? (
+                      <tr><td colSpan="4" className="text-center py-4">No hay academias registradas.</td></tr>
+                    ) : (
+                      academias.map((row, idx) => (
+                        <tr key={row.academia_id} className="dark:hover:bg-gray-700">
+                          <td className="border border-[#b5d6ea] px-2 py-2 text-center dark:border-blue-900">
+                            {/* Botón de eliminar (opcional, implementar funcionalidad si se requiere) */}
+                          </td>
+                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{idx + 1}</td>
+                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{row.nombre}</td>
+                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{row.facultad_nombre || '-'}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </main>

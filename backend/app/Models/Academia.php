@@ -12,4 +12,10 @@ class Academia extends Model
         'nombre',
         'facultad_id'
     ];
+
+    // Relación con Facultad
+    public function facultad()
+    {
+        return $this->belongsTo(\App\Models\Facultad::class, 'facultad_id', 'facultad_id');
+    }
 }
