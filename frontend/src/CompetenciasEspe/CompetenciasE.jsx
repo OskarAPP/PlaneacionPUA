@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useRef } from "react";
+import Sidebar from "../Components/Sidebar";
 
 const CompetenciasE = () => {
 
@@ -7,12 +8,54 @@ const CompetenciasE = () => {
 
 
 
+  // Estado y refs para Sidebar modular
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const [cuentaOpen, setCuentaOpen] = useState(false);
+  const docentesRef = useRef(null);
+  const carrerasRef = useRef(null);
+  const materiasRef = useRef(null);
+  const academiasRef = useRef(null);
+  const facultadRef = useRef(null);
+  const compeGenRef = useRef(null);
+  const compeEspecRef = useRef(null);
+  const bibliotecaRef = useRef(null);
+  const cuentaRef = useRef(null);
+
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+      {/* Sidebar modular */}
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        dropdownOpen={dropdownOpen}
+        setDropdownOpen={setDropdownOpen}
+        cuentaOpen={cuentaOpen}
+        setCuentaOpen={setCuentaOpen}
+        refs={{
+          docentesRef,
+          carrerasRef,
+          materiasRef,
+          academiasRef,
+          facultadRef,
+          compeGenRef,
+          compeEspecRef,
+          bibliotecaRef,
+          cuentaRef
+        }}
+      />
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12 dark:bg-gray-800 dark:border-gray-700">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <div className="flex items-center gap-2 ml-auto">
             <span className="text-xs text-gray-800 font-semibold leading-tight text-right dark:text-gray-100">
               Programas de Unidad<br />de Aprendizaje
