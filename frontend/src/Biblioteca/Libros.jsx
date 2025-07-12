@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 
 const Libros = () => {
@@ -13,6 +12,7 @@ const Libros = () => {
   const facultadRef = useRef(null);
   const compeGenRef = useRef(null);
   const compeEspecRef = useRef(null);
+  const bibliotecaRef = useRef(null);
 
   // Estado para los libros
   const [libros, setLibros] = useState([]);
@@ -68,7 +68,7 @@ const Libros = () => {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef].forEach(ref => {
+      [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef, bibliotecaRef].forEach(ref => {
         if (
           ref.current &&
           ref.current.dataset &&
@@ -207,6 +207,18 @@ const Libros = () => {
               <div className="ml-4 mt-2 space-y-2">
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Competencias registradas</a>
                 <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
+              </div>
+            )}
+          </div>
+          {/* Biblioteca */}
+          <div ref={bibliotecaRef} data-key="biblioteca">
+            <button onClick={() => toggleDropdown('biblioteca')} className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 font-medium transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400">
+              <span>Biblioteca</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+            </button>
+            {dropdownOpen['biblioteca'] && (
+              <div className="ml-4 mt-2 space-y-2">
+                <a href="/libros" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Libros</a>
               </div>
             )}
           </div>
