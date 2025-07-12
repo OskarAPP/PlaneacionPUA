@@ -1,10 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Sidebar from "../Components/Sidebar";
 
 const Academias = () => {
 
 
 
-  // Estado para academias
+  // Estado y referencias para Sidebar modular
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const [cuentaOpen, setCuentaOpen] = useState(false);
+  const cuentaRef = useRef(null);
+  const docentesRef = useRef(null);
+  const carrerasRef = useRef(null);
+  const materiasRef = useRef(null);
+  const academiasRef = useRef(null);
+  const facultadRef = useRef(null);
+  const compeGenRef = useRef(null);
+  const compeEspecRef = useRef(null);
+  const refs = { cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef };
   const [academias, setAcademias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,7 +38,17 @@ const Academias = () => {
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-
+      {/* Sidebar modular */}
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        dropdownOpen={dropdownOpen}
+        setDropdownOpen={setDropdownOpen}
+        cuentaOpen={cuentaOpen}
+        setCuentaOpen={setCuentaOpen}
+        refs={refs}
+        activeSection="academias"
+      />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
