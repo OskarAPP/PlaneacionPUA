@@ -20,6 +20,8 @@ import FacultadesRegistradas from './Facultad/Facultades';
 import PerfilUsuario from './Perfil/PerfilUsuario';
 import Area from './Area/Area';
 import RegistroAreas from './Area/RegistroAreas';
+import Libros from './Biblioteca/Libros';
+
 
 function App() {
   return (
@@ -46,6 +48,7 @@ function App() {
       <Route path="/perfilusuario" element={<PerfilUsuario />} />
       <Route path="/area" element={<Area />} />
       <Route path="/registroareas" element={<RegistroAreas />} />
+      <Route path="/libros" element={<Libros />} />
     </Routes>
   );
 }
