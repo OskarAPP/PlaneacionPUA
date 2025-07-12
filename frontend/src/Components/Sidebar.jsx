@@ -97,7 +97,8 @@ const Sidebar = ({
           </button>
           {dropdownOpen['facultad'] && (
             <div className="ml-4 mt-2 space-y-2">
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
+              <a href="/facultades" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Facultades registradas</a>
+              <a href="/registrofacultad" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
             </div>
           )}
         </div>
@@ -122,8 +123,8 @@ const Sidebar = ({
           </button>
           {dropdownOpen['compeEspec'] && (
             <div className="ml-4 mt-2 space-y-2">
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Competencias registradas</a>
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
+              <a href="/competenciase" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Competencias registradas</a>
+              <a href="/registrocompee" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Formulario de registro</a>
             </div>
           )}
         </div>
@@ -161,10 +162,9 @@ const Sidebar = ({
           </button>
           {cuentaOpen && (
             <div className="absolute left-0 mt-2 w-full bg-white border border-blue-200 rounded shadow-lg z-50 animate-fade-in dark:bg-gray-800 dark:border-gray-700 dark:shadow-2xl">
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700" onClick={() => window.location.href = '/panelacceso'}>Inicio</a>
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Perfil</a>
+              <a href="/panelacceso" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700" onClick={() => window.location.href = '/panelacceso'}>Inicio</a>
+              <a href="/perfilusuario" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Perfil</a>
               <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700" onClick={() => window.location.href = '/docentes'}>Contraseña</a>
-              <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700" onClick={() => window.location.href = '/docentes'}>Configuración</a>
               <a href="#" className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md dark:text-red-400 dark:hover:bg-gray-700" onClick={e => { e.preventDefault(); localStorage.removeItem('user'); window.location.href = '/login'; }}>Cerrar sesión</a>
             </div>
           )}
