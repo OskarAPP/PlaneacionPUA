@@ -14,10 +14,16 @@ const Sidebar = ({
     setDropdownOpen((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Cierra el sidebar cuando el mouse sale del área
+  const handleMouseLeave = () => {
+    setSidebarOpen(false);
+  };
+
   return (
     <aside
       className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out z-50 overflow-y-auto max-h-screen custom-scrollbar dark:bg-gray-800 dark:shadow-2xl dark:border-r dark:border-gray-700`}
       style={{ scrollbarColor: '#2563eb #fff', scrollbarWidth: 'thin' }}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-blue-700 dark:text-blue-300">Menú</h2>
