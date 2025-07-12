@@ -1,18 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const RegistroDocentes = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const cuentaRef = useRef(null);
-  const docentesRef = useRef(null);
-  const carrerasRef = useRef(null);
-  const materiasRef = useRef(null);
-  const academiasRef = useRef(null);
-  const facultadRef = useRef(null);
-  const compeGenRef = useRef(null);
-  const compeEspecRef = useRef(null);
 
   // Cerrar menús si se hace clic fuera
   useEffect(() => {
@@ -32,19 +23,6 @@ const RegistroDocentes = () => {
     };
   }, []);
 
-  // Cerrar sidebar si se hace clic fuera
-  useEffect(() => {
-    function handleSidebarClickOutside(event) {
-      const sidebar = document.querySelector('aside');
-      if (sidebarOpen && sidebar && !sidebar.contains(event.target)) {
-        setSidebarOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleSidebarClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleSidebarClickOutside);
-    };
-  }, [sidebarOpen]);
 
   // Alternar dropdowns
   const toggleDropdown = (key) => {
@@ -177,14 +155,6 @@ const RegistroDocentes = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-1 rounded bg-white dark:bg-gray-800 border border-blue-700 dark:border-blue-400 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-800 dark:hover:border-blue-500 focus:outline-none transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
           <div className="flex items-center gap-2 ml-auto">
             <span className="text-xs text-gray-800 dark:text-gray-100 font-semibold leading-tight text-right">
               Programas de Unidad<br />de Aprendizaje
