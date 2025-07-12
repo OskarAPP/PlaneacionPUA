@@ -109,7 +109,14 @@ const Libros = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 relative">
+      {/* Overlay para móvil */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       {/* Sidebar modular */}
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -129,10 +136,11 @@ const Libros = () => {
           compeEspecRef,
           bibliotecaRef
         }}
+        activeSection="libros"
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen z-0">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12 dark:bg-gray-800 dark:border-gray-700">
           <button
@@ -252,5 +260,6 @@ const Libros = () => {
       `}</style>
     </div>
   );
-
 }
+
+export default Libros;

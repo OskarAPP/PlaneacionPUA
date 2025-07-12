@@ -7,7 +7,8 @@ const Sidebar = ({
   setDropdownOpen,
   cuentaOpen,
   setCuentaOpen,
-  refs
+  refs,
+  activeSection
 }) => {
   const toggleDropdown = (key) => {
     setDropdownOpen((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -128,7 +129,16 @@ const Sidebar = ({
           </button>
           {dropdownOpen['biblioteca'] && (
             <div className="ml-4 mt-2 space-y-2">
-              <a href="/libros" className="block p-2 text-sm text-blue-700 hover:bg-blue-100 rounded-md dark:text-blue-300 dark:hover:bg-gray-700">Libros</a>
+              <a
+                href="/libros"
+                className={`block p-2 text-sm rounded-md transition-colors
+                  ${activeSection === 'libros'
+                    ? 'bg-blue-700 text-white dark:bg-blue-400 dark:text-gray-900 font-bold shadow'
+                    : 'text-blue-700 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-gray-700'}
+                `}
+              >
+                Libros
+              </a>
             </div>
           )}
         </div>
