@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Sidebar from "../Components/Sidebar";
 
 
 const CompetenciasG = () => {
-  // ...
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const [cuentaOpen, setCuentaOpen] = useState(false);
+  // Refs para los menús del sidebar
+  const docentesRef = useRef(null);
+  const carrerasRef = useRef(null);
+  const materiasRef = useRef(null);
+  const academiasRef = useRef(null);
+  const facultadRef = useRef(null);
+  const compeGenRef = useRef(null);
+  const compeEspecRef = useRef(null);
+  const bibliotecaRef = useRef(null);
+  const cuentaRef = useRef(null);
   const [competencias, setCompetencias] = useState([]);
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
@@ -46,8 +59,26 @@ const CompetenciasG = () => {
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-
-
+      {/* Sidebar modular */}
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        dropdownOpen={dropdownOpen}
+        setDropdownOpen={setDropdownOpen}
+        cuentaOpen={cuentaOpen}
+        setCuentaOpen={setCuentaOpen}
+        refs={{
+          docentesRef,
+          carrerasRef,
+          materiasRef,
+          academiasRef,
+          facultadRef,
+          compeGenRef,
+          compeEspecRef,
+          bibliotecaRef,
+          cuentaRef
+        }}
+      />
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
