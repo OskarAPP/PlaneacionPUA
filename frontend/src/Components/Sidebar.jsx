@@ -11,7 +11,13 @@ const Sidebar = ({
   activeSection
 }) => {
   const toggleDropdown = (key) => {
-    setDropdownOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+    setDropdownOpen((prev) => {
+      // Si ya está abierto, ciérralo; si no, abre solo ese y cierra los demás
+      const isOpen = !!prev[key];
+      const newState = {};
+      if (!isOpen) newState[key] = true;
+      return newState;
+    });
   };
 
   // Cierra el sidebar cuando el mouse sale del área
