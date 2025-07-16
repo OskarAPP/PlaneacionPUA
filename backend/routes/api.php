@@ -11,8 +11,10 @@ use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\CarreraController;
+use App\Http\Controllers\NotificacionController;
 
 // Mueve el endpoint de login a la API
+Route::get('/notificaciones', [NotificacionController::class, 'index']);
 Route::post('/login', [AccesoController::class, 'login']);
 Route::get('/docente/{id_docente}', [DocenteController::class, 'show']);
 Route::get('/docentes', [DocenteController::class, 'index']);
