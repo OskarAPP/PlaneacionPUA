@@ -8,9 +8,22 @@ const PanelAcceso = () => {
   const [docente, setDocente] = useState(null);
   const [greeting, setGreeting] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [notificaciones, setNotificaciones] = useState([]);
   const dropdownRef = useRef(null);
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
+  // Cargar notificaciones al montar el componente
+  useEffect(() => {
+    fetch("http://localhost:8000/api/notificaciones")
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          setNotificaciones(data);
+        } else if (data && data.notificaciones) {
+          setNotificaciones(data.notificaciones);
+        }
+      });
+  }, []);
 
   // Saludo dinámico
   useEffect(() => {
@@ -343,31 +356,20 @@ const PanelAcceso = () => {
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full dark:bg-gray-800/30">
                     <h3 className="font-extrabold text-2xl text-white mb-3">Notificaciones Nuevas</h3>
                     <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] dark:bg-gray-900/80">
-                      {/* Notificaciones de muestra */}
-                      <div className="flex items-start gap-2">
-                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-blue-500"></span>
-                        <div>
-                          <span className="font-semibold text-blue-700">Nueva materia registrada</span>
-                          <div className="text-gray-600 text-sm">Se ha agregado la materia "Matemáticas Discretas".</div>
-                          <div className="text-xs text-gray-400">Hace 2 horas</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-green-500"></span>
-                        <div>
-                          <span className="font-semibold text-blue-700">Docente asignado</span>
-                          <div className="text-gray-600 text-sm">El docente Juan Pérez fue asignado a "Ingeniería".</div>
-                          <div className="text-xs text-gray-400">Hace 1 día</div>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="inline-block w-2 h-2 mt-2 rounded-full bg-yellow-500"></span>
-                        <div>
-                          <span className="font-semibold text-blue-700">Actualización de PUA</span>
-                          <div className="text-gray-600 text-sm">El PUA de "Programación" fue actualizado.</div>
-                          <div className="text-xs text-gray-400">Hace 3 días</div>
-                        </div>
-                      </div>
+                      {notificaciones.length === 0 ? (
+                        <div className="text-gray-500 text-center">No hay notificaciones recientes.</div>
+                      ) : (
+                        notificaciones.map((notif, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className={`inline-block w-2 h-2 mt-2 rounded-full ${getNotifColor(notif.tipo)}`}></span>
+                            <div>
+                              <span className="font-semibold text-blue-700">{notif.tipo}</span>
+                              <div className="text-gray-600 text-sm">{notif.mensaje}</div>
+                              <div className="text-xs text-gray-400">{formatFecha(notif.fecha)}</div>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
@@ -453,6 +455,7 @@ const PanelAcceso = () => {
   );
 };
 
+
 // Componentes auxiliares
 const Row = ({ label, value, white }) => (
   <div className="flex items-center gap-4 mb-3">
@@ -466,5 +469,32 @@ const Link = ({ href, children }) => (
     {children}
   </a>
 );
+
+// Color para el tipo de notificación
+function getNotifColor(tipo) {
+  switch (tipo) {
+    case 'Docente': return 'bg-green-500';
+    case 'Materia': return 'bg-blue-500';
+    case 'Facultad': return 'bg-purple-500';
+    case 'Carrera': return 'bg-yellow-500';
+    default: return 'bg-gray-400';
+  }
+}
+
+// Formatear fecha relativa
+function formatFecha(fecha) {
+  if (!fecha) return '';
+  const date = new Date(fecha);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 60) return 'Hace unos segundos';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `Hace ${diffMin} min`;
+  const diffHrs = Math.floor(diffMin / 60);
+  if (diffHrs < 24) return `Hace ${diffHrs} horas`;
+  const diffDays = Math.floor(diffHrs / 24);
+  return `Hace ${diffDays} días`;
+}
 
 export default PanelAcceso;
