@@ -12,17 +12,22 @@ const PanelAcceso = () => {
   const dropdownRef = useRef(null);
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
-  // Cargar notificaciones al montar el componente
+  // Cargar notificaciones al montar el componente y actualizar cada 10 segundos
   useEffect(() => {
-    fetch("http://localhost:8000/api/notificaciones")
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data && Array.isArray(data)) {
-          setNotificaciones(data);
-        } else if (data && data.notificaciones) {
-          setNotificaciones(data.notificaciones);
-        }
-      });
+    const fetchNotificaciones = () => {
+      fetch("http://localhost:8000/api/notificaciones")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && Array.isArray(data)) {
+            setNotificaciones(data);
+          } else if (data && data.notificaciones) {
+            setNotificaciones(data.notificaciones);
+          }
+        });
+    };
+    fetchNotificaciones(); // Primera carga
+    const interval = setInterval(fetchNotificaciones, 10000); // Actualiza cada 10 segundos
+    return () => clearInterval(interval);
   }, []);
 
   // Saludo dinámico
