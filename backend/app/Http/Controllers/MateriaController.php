@@ -72,6 +72,12 @@ class MateriaController extends Controller
             'creditos_totales' => $validated['creditos_totales'],
         ]);
 
+        // Registrar notificación
+        \App\Models\Notificacion::create([
+            'tipo' => 'materia',
+            'mensaje' => 'Nueva materia registrada: ' . $materia->nombre,
+        ]);
+
         return response()->json([
             'success' => true,
             'materia' => $materia

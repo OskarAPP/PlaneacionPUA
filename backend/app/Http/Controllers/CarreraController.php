@@ -29,6 +29,11 @@ class CarreraController extends Controller
             'plan_estudio_id' => 'required|integer|exists:planestudio,plan_estudio_id',
         ]);
         $carrera = Carrera::create($validated);
+        // Registrar notificación
+        \App\Models\Notificacion::create([
+            'tipo' => 'carrera',
+            'mensaje' => 'Nueva carrera registrada: ' . $carrera->nombre,
+        ]);
         return response()->json([
             'success' => true,
             'carrera' => $carrera

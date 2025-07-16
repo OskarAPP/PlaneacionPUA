@@ -46,6 +46,12 @@ class PersonalController extends Controller
         // 3. Registrar relación en la tabla pivote docentefacultad
         $docente->facultades()->attach($validated['facultad_id']);
 
+        // Registrar notificación
+        \App\Models\Notificacion::create([
+            'tipo' => 'docente',
+            'mensaje' => 'Nuevo docente registrado: ' . $docente->nombre . ' ' . $docente->apellido_paterno,
+        ]);
+
         return response()->json([
             'success' => true,
             'acceso_id' => $acceso->acceso_id,

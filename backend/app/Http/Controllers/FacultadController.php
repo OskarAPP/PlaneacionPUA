@@ -20,6 +20,11 @@ class FacultadController extends Controller
             'nombre' => 'required|string|unique:facultad,nombre',
         ]);
         $facultad = Facultad::create($validated);
+        // Registrar notificación
+        \App\Models\Notificacion::create([
+            'tipo' => 'facultad',
+            'mensaje' => 'Nueva facultad registrada: ' . $facultad->nombre,
+        ]);
         return response()->json([
             'success' => true,
             'facultad' => $facultad
