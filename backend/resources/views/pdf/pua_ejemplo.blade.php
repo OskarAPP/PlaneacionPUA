@@ -19,13 +19,14 @@
         .center { text-align: center; }
         .small { font-size: 10px; }
         ul { margin: 0; padding-left: 18px; }
+        @page { size: A4 landscape; }
     </style>
 </head>
 <body>
     <table style="width:100%;">
         <tr>
             <td style="width:70px; vertical-align:top;">
-                <img src="{{ public_path('images/uacj_logo.png') }}" class="logo" alt="Logo UACJ">
+                <img src="C:\Users\Oskii\Documents\PlaneacionPUA\frontend\src\Imagenes\60aniversario.png" class="logo" alt="Logo UACJ">
             </td>
             <td class="right" style="vertical-align:top;">
                 <span style="font-size:16px; color:#1a237e; font-weight:bold;">Programa de Unidad Académica</span>
