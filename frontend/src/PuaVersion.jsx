@@ -16,7 +16,9 @@ const PuaVersion = () => {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 py-2 transition-colors z-30">
         <div className="flex items-center gap-2">
-          <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
+          <a href="/PanelAcceso">
+            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain cursor-pointer" />
+          </a>
           <div className="ml-2">
             <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight"></div>
           </div>
