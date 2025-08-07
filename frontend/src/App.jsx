@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PanelAcceso from './PanelAcceso';
 import Docentes from './Docentes/Docentes';
-import ProcesarPua from "./ProcesarPua";
-import PuaVersion from './PuaVersion';
+import ProcesarPua from "./Pua/ProcesarPua";
+import PuaVersion from './Pua/PuaVersion';
 import Login from './Login/Login';
 import RegistroDocentes from './Docentes/RegistroDocentes';
 import Carreras from './Carreras/Carreras';
