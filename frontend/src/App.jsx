@@ -3,7 +3,7 @@ import PanelAcceso from './PanelAcceso';
 import Docentes from './Docentes/Docentes';
 import ProcesarPua from "./ProcesarPua";
 import PuaVersion from './PuaVersion';
-import Login from './Login';
+import Login from './Login/Login';
 import RegistroDocentes from './Docentes/RegistroDocentes';
 import Carreras from './Carreras/Carreras';
 import RegistroCarreras from './Carreras/RegistroCarreras';

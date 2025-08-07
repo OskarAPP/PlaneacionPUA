@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import aniversarioImg from './Imagenes/60aniversario.png';
+import aniversarioImg from '../Imagenes/60aniversario.png';
 
 function Login() {
   const [email, setEmail] = useState('');
