@@ -1096,7 +1096,26 @@ const ProcesarPua = () => {
         <main className="flex-1 flex flex-col items-center justify-start pt-28 pb-8 overflow-y-auto ml-16 md:ml-20 transition-all duration-300 h-[calc(100vh)] scrollbar-thin scrollbar-thumb-gray-300 w-full">
           <div className="w-full max-w-4xl mx-auto">
             <div className="text-center text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">
-              Bienvenido M. en C. Guadalupe Manuel Estrada Segovia
+              {/* Bienvenida dinámica con datos de la API */}
+              {(() => {
+                const [docente, setDocente] = React.useState(null);
+                React.useEffect(() => {
+                  const user = JSON.parse(localStorage.getItem("user"));
+                  if (user && user.id_docente) {
+                    fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+                      .then((res) => res.json())
+                      .then((data) => {
+                        if (data.success) setDocente(data.docente);
+                      });
+                  }
+                }, []);
+                if (!docente) return "Bienvenido";
+                const titulo = docente.titulo ? docente.titulo : '';
+                const nombre = docente.nombre ? docente.nombre : '';
+                const apellidoP = docente.apellido_paterno ? docente.apellido_paterno : '';
+                const apellidoM = docente.apellido_materno ? docente.apellido_materno : '';
+                return `Bienvenido${titulo ? ' ' + titulo : ''}${nombre ? ' ' + nombre : ''}${apellidoP ? ' ' + apellidoP : ''}${apellidoM ? ' ' + apellidoM : ''}`.trim();
+              })()}
             </div>
             <div className="bg-white border rounded-xl shadow p-6 mb-8">
               <div className="text-center text-base font-bold text-gray-700 mb-4">Programa de aprendizaje</div>
