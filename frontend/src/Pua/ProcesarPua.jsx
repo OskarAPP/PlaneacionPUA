@@ -1072,13 +1072,16 @@ const ProcesarPua = () => {
           <div className="flex flex-col">
             <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300 text-gray-700 dark:text-gray-100">
           <div className="flex items-center gap-2">
-            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain" />
-            <div className="ml-2 hidden md:block">
-              <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight">
+          <a href="/PanelAcceso">
+            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain cursor-pointer" />
+          </a>
+          <div className="ml-2">
+            <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight"></div>
+            <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight">
                 Programas de Unidad<br />de Aprendizaje
               </div>
-            </div>
           </div>
+        </div>
         </header>
 
           <SidebarProcesarPua

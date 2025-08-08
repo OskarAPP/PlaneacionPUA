@@ -21,6 +21,9 @@ const PuaVersion = () => {
           </a>
           <div className="ml-2">
             <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight"></div>
+            <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight">
+                Programas de Unidad<br />de Aprendizaje
+              </div>
           </div>
         </div>
         <nav className="flex-1 flex items-center ml-8">
