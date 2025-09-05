@@ -98,7 +98,13 @@ const ProcesarPua = () => {
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
                   <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
-                    <option>Seleccione una carrera...</option>
+                    {docente && docente.carreras && docente.carreras.length > 0 ? (
+                      docente.carreras.map((nombre, idx) => (
+                        <option key={idx} value={nombre}>{nombre}</option>
+                      ))
+                    ) : (
+                      <option>Sin carreras registradas</option>
+                    )}
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
