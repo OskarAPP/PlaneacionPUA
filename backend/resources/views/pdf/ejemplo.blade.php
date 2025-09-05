@@ -7,23 +7,22 @@
         /* Define la configuración de la página para Dompdf */
         @page {
             size: letter landscape;
-            margin: 2.5cm 1.5cm 2cm 1.5cm; /* Ajusta márgenes para cabecera/pie */
+            margin: 2.5cm 1.5cm 2cm 1.5cm; /* Márgenes: arriba, lados, abajo */
         }
 
         /* Estilos generales del cuerpo del documento */
         body {
-            font-family: Arial, sans-serif; /* Se usa Arial por compatibilidad, DejaVu Sans es una buena alternativa si está instalada */
+            font-family: Arial, sans-serif;
             font-size: 10px;
             color: #000;
         }
 
         /* Contenedor principal y tablas */
-        .page-container { width: 100%; }
         table { border-collapse: collapse; width: 100%; }
         td, th { border: 1px solid #000; padding: 4px 6px; vertical-align: top; text-align: left; word-wrap: break-word; }
-        .no-border { border: none !important; } /* Utilidad para quitar bordes */
+        .no-border { border: none !important; }
 
-        /* Estilos de celdas con fondo gris */
+        /* Estilos de celdas con fondo gris y negritas */
         .header-gray { background-color: #e6e6e6; font-weight: bold; }
         .left-col-header { background-color: #e6e6e6; font-weight: bold; width: 45%; }
         .competencies-table .col1 { width: 25%; background-color: #e6e6e6; font-weight: bold; }
@@ -32,35 +31,25 @@
         /* Checkbox */
         .checkbox { display: inline-block; width: 12px; height: 12px; border: 1px solid #000; text-align: center; line-height: 12px; font-weight: bold; vertical-align: middle; }
 
-        /* Encabezado y Pie de página */
-        #header, #footer {
-            position: fixed;
-            left: 0;
-            right: 0;
-            width: 100%;
-        }
+        /* Encabezado y Pie de página fijos */
+        #header, #footer { position: fixed; left: 0; right: 0; width: 100%; }
         #header { top: -2.2cm; }
         #footer { bottom: -1.8cm; font-size: 9px; }
-        .header-table, .footer-table { width: 100%; }
-        .header-title {
-            text-align: right;
-            font-weight: bold;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-        .logo { width: 60px; vertical-align: middle; }
+        .header-title { text-align: right; font-weight: bold; font-size: 14px; vertical-align: middle; color: #0099CC; }
 
     </style>
 </head>
 <body>
 
-    <!-- ENCABEZADO FIJO -->
+    <!-- ================================================================================== -->
+    <!-- ENCABEZADO FIJO (Traducción de pageHeader en puaReport.jrxml) -->
+    <!-- ================================================================================== -->
     <div id="header">
-        <table class="header-table no-border">
+        <table class="no-border">
             <tr>
-                <td class="no-border" style="width: 10%;">
+                <td class="no-border" style="width: 50%;">
                     <!-- Logo de la Universidad (Embebido en Base64 para evitar problemas de rutas) -->
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARFSURBVHhe7Z1/aBNhGMf/9+221rZt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt2..."/>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARFSURBVHhe7Z1/aBNhGMf/9+221rZt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt22Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt27Zt2..."/>
                 </td>
                 <td class="no-border header-title">
                     Programa de Unidad Académica
@@ -69,9 +58,11 @@
         </table>
     </div>
 
+    <!-- ================================================================================== -->
     <!-- PIE DE PÁGINA FIJO -->
+    <!-- ================================================================================== -->
     <div id="footer">
-        <table class="footer-table no-border">
+        <table class="no-border">
             <tr>
                 <td class="no-border" style="text-align: left; width: 33%;">R00/2014</td>
                 <td class="no-border" style="text-align: center; width: 33%;">Página 1 de 13</td>
@@ -80,15 +71,16 @@
         </table>
     </div>
 
+    <!-- ================================================================================== -->
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="page-container">
-
+    <!-- ================================================================================== -->
+    <main>
         <!-- Sección superior en 2 columnas -->
         <table class="no-border" style="margin-bottom:12px;">
             <tr class="no-border">
                 <!-- Columna Izquierda -->
                 <td class="no-border" style="width: 50%; padding-right: 8px; vertical-align: top;">
-                    <table class="left-col">
+                    <table>
                         <tr>
                             <td class="left-col-header">Nombre de la Facultad o Escuela</td>
                             <td>Facultad de Ingeniería</td>
@@ -152,7 +144,7 @@
         </table>
 
         <!-- Tabla de Competencias -->
-        <table class="competencies-table">
+        <table class="competencies-table" style="margin-bottom:12px;">
             <thead>
                 <tr>
                     <th colspan="2" class="full-width-header">Competencias del Perfil de Egreso del Programa Educativo</th>
@@ -177,6 +169,75 @@
                     <td class="col1">Competencia de la Unidad de Aprendizaje</td>
                 </tr>
             </tbody>
+        </table>
+
+        <!-- ================================================================================== -->
+        <!-- SECCIÓN SUBCOMPETENCIAS (Maqueta con datos de relleno) -->
+        <!-- ================================================================================== -->
+        <table style="margin-bottom: 15px;">
+             <tr>
+                <td class="header-gray" style="width: 25%;">Subcompetencia</td>
+                <td style="width: 75%; text-align: center;">Identificar los fundamentos y arquitecturas de la computación en la nube.</td>
+            </tr>
+        </table>
+         <table style="margin-bottom: 15px;">
+             <tr>
+                <td class="header-gray" style="width: 25%;">Subcompetencia</td>
+                <td style="width: 75%; text-align: center;">Desarrollar aplicaciones y servicios utilizando plataformas en la nube.</td>
+            </tr>
+        </table>
+
+
+        <!-- ================================================================================== -->
+        <!-- SECCIÓN BIBLIOGRAFÍA (Maqueta con datos de relleno) -->
+        <!-- ================================================================================== -->
+        <table style="margin-bottom:12px;">
+            <tr><th class="full-width-header">Bibliografía Sugerída</th></tr>
+            <tr>
+                <td>
+                    <b>Básica:</b><br>
+                    - Thomas Erl, "Cloud Computing: Concepts, Technology & Architecture", Prentice Hall, 2013.<br>
+                    - Barrie Sosinsky, "Cloud Computing Bible", Wiley, 2011.<br>
+                    <br><b>Complementaria:</b><br>
+                    - Kris Jamsa, "Cloud Computing: SaaS, PaaS, IaaS, Virtualization, Business Models, Mobile, Security and More", Jones & Bartlett Learning, 2013.<br>
+                    <br><b>Sitios Web:</b><br>
+                    - https://aws.amazon.com/what-is-cloud-computing/<br>
+                    - https://azure.microsoft.com/en-us/overview/what-is-cloud-computing/<br>
+                </td>
+            </tr>
+        </table>
+
+        <!-- ================================================================================== -->
+        <!-- SECCIÓN PERFIL DOCENTE (Maqueta con datos de relleno) -->
+        <!-- ================================================================================== -->
+        <table style="margin-bottom:12px;">
+            <tr><th class="full-width-header">Perfil del docente</th></tr>
+             <tr>
+                <td>
+                    <b>Académicos:</b><br>
+                    - Maestría o Doctorado en Ciencias de la Computación, Ingeniería de Software o área afín.<br>
+                    <br><b>Profesionales:</b><br>
+                     - Experiencia demostrable en el desarrollo y despliegue de aplicaciones en plataformas como AWS, Azure o Google Cloud.<br>
+                     - Certificaciones en tecnologías de la nube (ej. AWS Certified Solutions Architect).<br>
+                     <br><b>Docentes:</b><br>
+                     - Experiencia docente a nivel superior en áreas de desarrollo de software, redes o sistemas distribuidos.<br>
+                </td>
+            </tr>
+        </table>
+
+        <!-- ================================================================================== -->
+        <!-- SECCIÓN COMITÉ (Maqueta con datos de relleno) -->
+        <!-- ================================================================================== -->
+        <table>
+            <tr><th class="full-width-header">Comité Curricular</th></tr>
+            <tr>
+                <td class="header-gray" style="width: 50%; height: 40px;">Nombre y firma de los docentes que participaron en la elaboración</td>
+                <td style="width: 50%;">
+                    Dr. Juan Pérez García<br>
+                    M.C. Ana López Hernández<br>
+                    Ing. Carlos Sánchez Martínez<br>
+                </td>
+            </tr>
         </table>
 
     </main>
