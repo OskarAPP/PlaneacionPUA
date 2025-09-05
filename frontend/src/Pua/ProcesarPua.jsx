@@ -34,7 +34,7 @@ const ProcesarPua = () => {
   const [cuentaOpen, setCuentaOpen] = useState(false);
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
-  const { bienvenida } = useDocente();
+  const { docente, bienvenida } = useDocente();
 
   // Funciones para manejar eventos
   const handleAgregarSubcompetencia = () => {
@@ -84,9 +84,15 @@ const ProcesarPua = () => {
               <div className="text-center text-base font-bold text-gray-700 mb-4">Programa de aprendizaje</div>
               <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div className="flex-1 min-w-[200px]">
-                   <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
+                  <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
                   <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
-                    <option>Enfermería</option>
+                    {docente && docente.facultades && docente.facultades.length > 0 ? (
+                      docente.facultades.map((nombre, idx) => (
+                        <option key={idx} value={nombre}>{nombre}</option>
+                      ))
+                    ) : (
+                      <option>Sin facultades registradas</option>
+                    )}
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
