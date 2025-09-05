@@ -92,6 +92,17 @@ Pruebas y Desarrollo
 - **Hot Reload Frontend:**
   El comando `npm run dev` en frontend permite recarga automática al guardar cambios.
 
+  Ejecutar el proyecto
+--------------------
+Carpeta Frontend
+PS C:\Users\Oskii\Documents\PlaneacionPUA> cd frontend
+PS C:\Users\Oskii\Documents\PlaneacionPUA\frontend> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+PS C:\Users\Oskii\Documents\PlaneacionPUA\frontend> npm run dev 
+
+Carpeta Backend
+PS C:\Users\Oskii\Documents\PlaneacionPUA> cd backend       
+PS C:\Users\Oskii\Documents\PlaneacionPUA\backend> php artisan serve
+
 Notas Adicionales
 -----------------
 - El sistema está preparado para ser desplegado en servidores Linux.
