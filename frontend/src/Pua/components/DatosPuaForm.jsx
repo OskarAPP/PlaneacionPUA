@@ -1,7 +1,7 @@
 import React from "react";
 
 const DatosPuaForm = () => (
-    <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <form className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-gray-100">
     <div>
       <label className="block font-semibold text-gray-700 mb-1">Unidad de aprendizaje:</label>
       <input type="text" className="w-full max-w-full border rounded px-2 py-1 bg-gray-100" placeholder="Investigación de operaciones I" />

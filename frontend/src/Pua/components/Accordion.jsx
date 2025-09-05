@@ -9,7 +9,7 @@ const Accordion = ({ accordionData }) => {
         <div key={item.title} className="border rounded mb-2">
           <button
             type="button"
-            className="w-full text-left px-4 py-2 bg-gray-100 hover:bg-gray-200 font-semibold flex justify-between items-center"
+            className="w-full text-left px-4 py-2 bg-gray-100 dark:bg-gray-200 hover:bg-gray-200 dark:hover:bg-gray-300 font-semibold flex justify-between items-center"
             onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
           >
             <span>{item.title}</span>
