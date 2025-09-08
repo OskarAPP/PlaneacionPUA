@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Importaciones de los componentes modulares
 import SidebarProcesarPua from "./components/SidebarProcesarPua";
@@ -32,9 +32,33 @@ const ProcesarPua = () => {
   const [subcompetencias, setSubcompetencias] = useState([]);
   const [estadisticasOpen, setEstadisticasOpen] = useState(false);
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  // Estado para selects
+  const [carreraSeleccionada, setCarreraSeleccionada] = useState("");
+  const [materiasCarrera, setMateriasCarrera] = useState([]);
+
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
+
+  // Efecto para cargar materias según la carrera seleccionada
+  useEffect(() => {
+    if (!carreraSeleccionada) {
+      setMateriasCarrera([]);
+      return;
+    }
+    fetch(`http://localhost:8000/api/materias/carrera/${carreraSeleccionada}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setMateriasCarrera(data);
+        } else {
+          setMateriasCarrera([]);
+        }
+      })
+      .catch(() => {
+        setMateriasCarrera([]);
+      });
+  }, [carreraSeleccionada]);
 
   // Funciones para manejar eventos
   const handleAgregarSubcompetencia = () => {
@@ -97,22 +121,38 @@ const ProcesarPua = () => {
                 </div>
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
-                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
-                    {docente && docente.carreras && docente.carreras.length > 0 ? (
-                      docente.carreras.map((nombre, idx) => (
-                        <option key={idx} value={nombre}>{nombre}</option>
+                  <select
+                  className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                  value={carreraSeleccionada}
+                  onChange={e => setCarreraSeleccionada(e.target.value)}
+              >
+                  <option value="">Seleccione una carrera...</option>
+                  
+                  {/* Asegúrate de que aquí se use "carreras_full" */}
+                  {docente && docente.carreras_full && docente.carreras_full.length > 0 ? (
+                      
+                      docente.carreras_full.map((carrera) => (
+                          <option key={carrera.carrera_id} value={carrera.carrera_id}>
+                              {carrera.nombre}
+                          </option>
                       ))
-                    ) : (
+
+                  ) : (
                       <option>Sin carreras registradas</option>
-                    )}
-                  </select>
+                  )}
+              </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Materia:</label>
-                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
-                    {docente && docente.materias && docente.materias.length > 0 ? (
-                      docente.materias.map((nombre, idx) => (
-                        <option key={idx} value={nombre}>{nombre}</option>
+                  <select
+                    className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                    value={""}
+                    onChange={() => {}}
+                  >
+                    <option value="">Seleccione una materia...</option>
+                    {materiasCarrera.length > 0 ? (
+                      materiasCarrera.map((materia) => (
+                        <option key={materia.materia_id} value={materia.materia_id}>{materia.nombre}</option>
                       ))
                     ) : (
                       <option>Sin materias registradas</option>
