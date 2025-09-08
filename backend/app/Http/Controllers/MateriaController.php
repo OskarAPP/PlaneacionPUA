@@ -100,4 +100,35 @@ class MateriaController extends Controller
     {
         return Materia::where('carrera_id', $carrera_id)->get(['materia_id', 'nombre']);
     }
+
+    // Obtener una materia por id (sin afectar endpoints existentes)
+    public function show($id)
+    {
+        $materia = Materia::with(['facultad', 'carrera', 'area', 'nucleo', 'tipoMateria', 'academia'])->find($id);
+        if (!$materia) {
+            return response()->json(['success' => false, 'message' => 'Materia no encontrada'], 404);
+        }
+        $result = [
+            'materia_id' => $materia->materia_id,
+            'nombre' => $materia->nombre,
+            'facultad_id' => $materia->facultad_id,
+            'facultad_nombre' => $materia->facultad ? $materia->facultad->nombre : null,
+            'carrera_id' => $materia->carrera_id,
+            'carrera_nombre' => $materia->carrera ? $materia->carrera->nombre : null,
+            'area_id' => $materia->area_id,
+            'area_nombre' => $materia->area ? ($materia->area->nombre ?? $materia->area->descripcion ?? null) : null,
+            'nucleo_id' => $materia->nucleo_id,
+            'nucleo_nombre' => $materia->nucleo ? ($materia->nucleo->descripcion ?? $materia->nucleo->nombre ?? null) : null,
+            'tipo_materia_id' => $materia->tipo_materia_id,
+            'tipo_materia_nombre' => $materia->tipoMateria ? ($materia->tipoMateria->descripcion ?? $materia->tipoMateria->nombre ?? null) : null,
+            'creditos_totales' => $materia->creditos_totales,
+            'horas_totales' => $materia->horas_totales,
+            'horas_teoricas' => $materia->horas_teoricas,
+            'horas_practicas' => $materia->horas_practicas,
+            'art57' => $materia->art57,
+            'academia_id' => $materia->academia_id,
+            'academia_nombre' => $materia->academia ? $materia->academia->nombre : null,
+        ];
+        return response()->json(['success' => true, 'materia' => $result]);
+    }
 }

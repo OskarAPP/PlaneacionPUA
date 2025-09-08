@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Http\Request;
@@ -64,3 +63,9 @@ Route::delete('/docentes/{docente_id}/materias/{materia_id}', [DocenteController
 
 // PDF de PUA ejemplo
 Route::get('/pua/pdf', [\App\Http\Controllers\PuaPdfController::class, 'descargar']);
+
+// Endpoint GET para obtener una materia por id (no afecta los existentes)
+Route::get('/materias/{id}', [MateriaController::class, 'show']);
+
+// Endpoint GET para obtener el plan de estudio por carrera
+Route::get('/carreras/{carrera_id}/planestudio', [CarreraController::class, 'getPlanEstudioPorCarrera']);

@@ -39,4 +39,21 @@ class CarreraController extends Controller
             'carrera' => $carrera
         ]);
     }
+
+    // Obtener plan de estudio por carrera
+    public function getPlanEstudioPorCarrera($carrera_id)
+    {
+        $carrera = Carrera::with('planEstudio')->find($carrera_id);
+        if (!$carrera || !$carrera->planEstudio) {
+            return response()->json(['success' => false, 'message' => 'Plan de estudio no encontrado'], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'plan_estudio' => [
+                'plan_estudio_id' => $carrera->planEstudio->plan_estudio_id,
+                'nombre' => $carrera->planEstudio->nombre,
+                'descripcion' => $carrera->planEstudio->descripcion,
+            ]
+        ]);
+    }
 }

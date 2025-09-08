@@ -15,27 +15,19 @@ import SubcompetenciaPanel from "./components/SubcompetenciaPanel";
 // Importación del hook personalizado
 import useDocente from "./hooks/useDocente";
 
-// Definición de los datos para el acordeón.
-// Se debe definir fuera del componente para no recrearlo en cada render.
-const accordionData = [
-  { title: "Datos del pua", content: <DatosPuaForm /> },
-  { title: "Competencias del Perfil de Egreso", content: <CompetenciasPerfilEgresoTabs /> },
-  { title: "Bibliografía sugerida", content: <BibliografiaSugerida /> },
-  { title: "Comité Curricular", content: <ComiteCurricular /> },
-  { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
-  { title: "Evaluación Final", content: <EvaluacionFinal /> },
-  { title: "Evaluación Por Competencias", content: <EvaluacionPorCompetencias /> },
-];
-
 const ProcesarPua = () => {
   // Estado para manejar las subcompetencias y el sidebar
   const [subcompetencias, setSubcompetencias] = useState([]);
   const [estadisticasOpen, setEstadisticasOpen] = useState(false);
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  
   // Estado para selects
   const [carreraSeleccionada, setCarreraSeleccionada] = useState("");
   const [materiasCarrera, setMateriasCarrera] = useState([]);
-
+  const [materiaIdSeleccionada, setMateriaIdSeleccionada] = useState("");
+  const [materiaData, setMateriaData] = useState(null);
+  // Estado para el plan de estudio
+  const [planEstudio, setPlanEstudio] = useState(null);
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
@@ -60,6 +52,34 @@ const ProcesarPua = () => {
       });
   }, [carreraSeleccionada]);
 
+  // useEffect para cargar los datos de la materia seleccionada
+  useEffect(() => {
+    if (!materiaIdSeleccionada) {
+      setMateriaData(null);
+      return;
+    }
+    fetch(`http://localhost:8000/api/materias/${materiaIdSeleccionada}`)
+      .then(res => res.json())
+      .then(data => {
+        setMateriaData(data.materia || data); 
+      })
+      .catch(() => setMateriaData(null));
+  }, [materiaIdSeleccionada]);
+
+  // useEffect para cargar el plan de estudio según la carrera seleccionada
+  useEffect(() => {
+    if (!carreraSeleccionada) {
+      setPlanEstudio(null);
+      return;
+    }
+    fetch(`http://localhost:8000/api/carreras/${carreraSeleccionada}/planestudio`)
+      .then(res => res.json())
+      .then(data => {
+        setPlanEstudio(data.plan_estudio || null);
+      })
+      .catch(() => setPlanEstudio(null));
+  }, [carreraSeleccionada]);
+
   // Funciones para manejar eventos
   const handleAgregarSubcompetencia = () => {
     setSubcompetencias([...subcompetencias, `Subcompetencia ${subcompetencias.length + 1}`]);
@@ -70,6 +90,17 @@ const ProcesarPua = () => {
     setCuentaOpen(false);
   };
 
+  // Definir accordionData DENTRO del componente y pasar materiaData y planEstudio
+  const accordionData = [
+    { title: "Datos del pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
+    { title: "Competencias del Perfil de Egreso", content: <CompetenciasPerfilEgresoTabs /> },
+    { title: "Bibliografía sugerida", content: <BibliografiaSugerida /> },
+    { title: "Comité Curricular", content: <ComiteCurricular /> },
+    { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
+    { title: "Evaluación Final", content: <EvaluacionFinal /> },
+    { title: "Evaluación Por Competencias", content: <EvaluacionPorCompetencias /> },
+  ];
+
   return (
     <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="flex w-full">
@@ -77,7 +108,6 @@ const ProcesarPua = () => {
           <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300 text-gray-700 dark:text-gray-100">
             <div className="flex items-center gap-2">
               <a href="/PanelAcceso">
-                {/* Asegúrate que la ruta a la imagen sea correcta para tu proyecto */}
                 <img src="/src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain cursor-pointer" />
               </a>
               <div className="ml-2">
@@ -122,32 +152,28 @@ const ProcesarPua = () => {
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
                   <select
-                  className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
-                  value={carreraSeleccionada}
-                  onChange={e => setCarreraSeleccionada(e.target.value)}
-              >
-                  <option value="">Seleccione una carrera...</option>
-                  
-                  {/* Asegúrate de que aquí se use "carreras_full" */}
-                  {docente && docente.carreras_full && docente.carreras_full.length > 0 ? (
-                      
+                    className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                    value={carreraSeleccionada}
+                    onChange={e => setCarreraSeleccionada(e.target.value)}
+                  >
+                    <option value="">Seleccione una carrera...</option>
+                    {docente && docente.carreras_full && docente.carreras_full.length > 0 ? (
                       docente.carreras_full.map((carrera) => (
                           <option key={carrera.carrera_id} value={carrera.carrera_id}>
                               {carrera.nombre}
                           </option>
                       ))
-
-                  ) : (
+                    ) : (
                       <option>Sin carreras registradas</option>
-                  )}
-              </select>
+                    )}
+                  </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Materia:</label>
                   <select
                     className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
-                    value={""}
-                    onChange={() => {}}
+                    value={materiaIdSeleccionada}
+                    onChange={e => setMateriaIdSeleccionada(e.target.value)}
                   >
                     <option value="">Seleccione una materia...</option>
                     {materiasCarrera.length > 0 ? (
@@ -155,7 +181,7 @@ const ProcesarPua = () => {
                         <option key={materia.materia_id} value={materia.materia_id}>{materia.nombre}</option>
                       ))
                     ) : (
-                      <option>Sin materias registradas</option>
+                      <option disabled>Seleccione una carrera primero</option>
                     )}
                   </select>
                 </div>
@@ -163,7 +189,6 @@ const ProcesarPua = () => {
             </div>
 
             <div className="bg-white border rounded-xl shadow p-4">
-              {/* Se pasa `accordionData` como prop al componente Accordion */}
               <Accordion accordionData={accordionData} />
             </div>
 
