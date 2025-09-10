@@ -1,10 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { genericas, especificas } from "../constants/puaConstants";
 
 const CompetenciasPerfilEgresoTabs = () => {
   const [tab, setTab] = useState(0);
-  const [selectedGenericas, setSelectedGenericas] = useState([0, 1, 2]);
+  const [selectedGenericas, setSelectedGenericas] = useState([]);
   const [selectedEspecificas, setSelectedEspecificas] = useState([0, 1, 2]);
+  const [competenciasGenericas, setCompetenciasGenericas] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/competenciasgenericas")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setCompetenciasGenericas(data);
+        } else if (Array.isArray(data.competencias)) {
+          setCompetenciasGenericas(data.competencias);
+        } else {
+          setCompetenciasGenericas([]);
+        }
+      })
+      .catch(() => setCompetenciasGenericas([]));
+  }, []);
 
   // Genéricas handlers
   const handleCheck = idx => {
@@ -39,10 +55,10 @@ const CompetenciasPerfilEgresoTabs = () => {
           <>
             <div className="flex-1">
               <div className="bg-white border rounded p-2">
-                {genericas.map((g, idx) => (
-                  <label key={g} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
+                {competenciasGenericas.map((g, idx) => (
+                  <label key={g.competencia_id || g.id || idx} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
                     <input type="checkbox" checked={selectedGenericas.includes(idx)} onChange={() => handleCheck(idx)} />
-                    <span className="text-gray-800">{g}</span>
+                    <span className="text-gray-800">{g.nombre || g.descripcion || g.competencia || g}</span>
                   </label>
                 ))}
               </div>
@@ -55,8 +71,8 @@ const CompetenciasPerfilEgresoTabs = () => {
             <div className="flex-1">
               <div className="bg-white border rounded p-2 min-h-[120px]">
                 {selectedGenericas.map(idx => (
-                  <div key={genericas[idx]} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
-                    <span className="text-gray-800">{genericas[idx]}</span>
+                  <div key={competenciasGenericas[idx]?.competencia_id || idx} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
+                    <span className="text-gray-800">{competenciasGenericas[idx]?.nombre || competenciasGenericas[idx]?.descripcion || competenciasGenericas[idx]?.competencia || competenciasGenericas[idx]}</span>
                     <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemove(idx)}>
                       ×
                     </button>
