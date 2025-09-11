@@ -97,7 +97,7 @@ const CompetenciasPerfilEgresoTabs = () => {
             </div>
             <div className="flex flex-col justify-center items-center">
               <button type="button" className="border border-blue-700 text-blue-700 bg-white rounded px-3 py-2 mt-6 md:mt-0 flex items-center justify-center h-10 w-10 shadow hover:bg-blue-50 hover:border-blue-800">
-                <span className="fa fa-arrow-right" />
+                <span className="fa-solid fa-arrow-right"/>
               </button>
             </div>
             <div className="flex-1">
