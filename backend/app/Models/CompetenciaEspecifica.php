@@ -13,4 +13,14 @@ class CompetenciaEspecifica extends Model
         'facultad_id',
         'carrera_id',
     ];
+
+    public function facultad()
+    {
+        return $this->belongsTo(\App\Models\Facultad::class, 'facultad_id', 'facultad_id');
+    }
+
+    public function carrera()
+    {
+        return $this->belongsTo(\App\Models\Carrera::class, 'carrera_id', 'carrera_id');
+    }
 }

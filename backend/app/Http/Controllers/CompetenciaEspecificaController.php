@@ -22,4 +22,11 @@ class CompetenciaEspecificaController extends Controller
             'competencia' => $competencia
         ], 201);
     }
+
+    // Obtener todas las competencias específicas
+    public function index()
+    {
+        $competencias = CompetenciaEspecifica::with(['facultad', 'carrera'])->get();
+        return response()->json($competencias);
+    }
 }

@@ -72,3 +72,6 @@ Route::get('/materias/{id}', [MateriaController::class, 'show']);
 
 // Endpoint GET para obtener el plan de estudio por carrera
 Route::get('/carreras/{carrera_id}/planestudio', [CarreraController::class, 'getPlanEstudioPorCarrera']);
+
+// Obtener todas las competencias específicas
+Route::get('/competenciaespecifica', [\App\Http\Controllers\CompetenciaEspecificaController::class, 'index']);

@@ -18,11 +18,10 @@ const CompetenciasE = () => {
   const [competencias, setCompetencias] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/competenciasespecificas")
+    fetch("http://localhost:8000/api/competenciaespecifica")
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setCompetencias(data);
-        else if (Array.isArray(data.competencias)) setCompetencias(data.competencias);
         else setCompetencias([]);
       })
       .catch(() => setCompetencias([]));
@@ -108,18 +107,14 @@ const CompetenciasE = () => {
                 </thead>
                 <tbody>
                   {competencias.map((compe, idx) => (
-                    <tr key={compe.id || idx} className="dark:bg-gray-900 dark:border-gray-700">
+                    <tr key={compe.competencia_esp_id || idx} className="dark:bg-gray-900 dark:border-gray-700">
                       <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
                         <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded text-xs dark:bg-red-800 dark:hover:bg-red-900">Eliminar</button>
                       </td>
                       <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">{idx + 1}</td>
-                      <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">{compe.descripcion || compe.nombre || compe.competencia}</td>
+                      <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">{compe.nombre}</td>
                       <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">
-                        <select className="w-full border rounded px-2 py-1 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
-                          {compe.carreras?.map(c => (
-                            <option key={c.carrera_id}>{c.nombre}</option>
-                          ))}
-                        </select>
+                        {compe.carrera?.nombre || compe.carrera_id}
                       </td>
                     </tr>
                   ))}
@@ -139,7 +134,7 @@ const CompetenciasE = () => {
           </div>
         </footer>
       </div>
-      <style jsx global>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
           background: #fff;
