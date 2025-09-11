@@ -1,10 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../Components/Sidebar";
 
 const RegistroCompeE = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [cuentaOpen, setCuentaOpen] = useState(false);
+  const [facultades, setFacultades] = useState([]);
+  const [facultadSeleccionada, setFacultadSeleccionada] = useState("");
+  const [carreras, setCarreras] = useState([]);
+  const [carreraSeleccionada, setCarreraSeleccionada] = useState("");
+  const [nombreCompetencia, setNombreCompetencia] = useState("");
 
   const cuentaRef = useRef(null);
   const docentesRef = useRef(null);
@@ -17,6 +22,69 @@ const RegistroCompeE = () => {
   const bibliotecaRef = useRef(null);
 
   const activeSection = "competenciase";
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id_docente) {
+      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // Usar el nuevo formato: array de objetos con facultad_id y nombre
+          if (data.success && Array.isArray(data.docente.facultades)) {
+            setFacultades(data.docente.facultades);
+          } else {
+            setFacultades([]);
+          }
+        })
+        .catch(() => setFacultades([]));
+    }
+  }, []);
+
+  useEffect(() => {
+    setCarreraSeleccionada(""); // Limpiar carrera al cambiar facultad
+    if (!facultadSeleccionada) {
+      setCarreras([]);
+      return;
+    }
+    fetch(
+      `http://localhost:8000/api/carreras/facultad/${facultadSeleccionada}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCarreras(data);
+        else setCarreras([]);
+      })
+      .catch(() => setCarreras([]));
+  }, [facultadSeleccionada]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!nombreCompetencia || !facultadSeleccionada || !carreraSeleccionada) {
+      alert("Todos los campos son obligatorios");
+      return;
+    }
+    fetch("http://localhost:8000/api/competenciaespecifica", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombre: nombreCompetencia,
+        facultad_id: facultadSeleccionada,
+        carrera_id: carreraSeleccionada,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Competencia registrada correctamente");
+          setNombreCompetencia("");
+          setFacultadSeleccionada("");
+          setCarreraSeleccionada("");
+        } else {
+          alert("Error al registrar la competencia");
+        }
+      })
+      .catch(() => alert("Error de conexión"));
+  };
 
   return (
     <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
@@ -50,15 +118,32 @@ const RegistroCompeE = () => {
             onClick={() => setSidebarOpen(true)}
             className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-auto">
             <span className="text-xs text-gray-800 font-semibold leading-tight text-right dark:text-gray-100">
-              Programas de Unidad<br />de Aprendizaje
+              Programas de Unidad
+              <br />
+              de Aprendizaje
             </span>
-            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
+            <img
+              src="../src/imagenes/imagen_salida1.png"
+              alt="UAC Logo"
+              className="w-8 h-8 object-contain"
+            />
           </div>
         </header>
 
@@ -69,29 +154,57 @@ const RegistroCompeE = () => {
               Registro de Competencia Específica
             </div>
             <div className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
-              <form className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+              <form className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Competencia Específica:</label>
-                  <input type="text" className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                    Competencia Específica:
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    value={nombreCompetencia}
+                    onChange={e => setNombreCompetencia(e.target.value)}
+                  />
                 </div>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Facultad:</label>
-                  <select className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
+                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                    Facultad:
+                  </label>
+                  <select
+                    className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    value={facultadSeleccionada}
+                    onChange={(e) => setFacultadSeleccionada(e.target.value)}
+                  >
                     <option value="">Seleccione facultad...</option>
-                    <option value="fac1">Facultad de Ingeniería</option>
-                    <option value="fac2">Facultad de Ciencias</option>
+                    {facultades.map((fac, idx) => (
+                      <option key={fac.facultad_id || idx} value={fac.facultad_id}>
+                        {fac.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Carrera:</label>
-                  <select className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
+                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                    Carrera:
+                  </label>
+                  <select
+                    className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    value={carreraSeleccionada}
+                    onChange={(e) => setCarreraSeleccionada(e.target.value)}
+                  >
                     <option value="">Seleccione una carrera...</option>
-                    <option value="carr1">Ingeniería en Sistemas Computacionales</option>
-                    <option value="carr2">Licenciatura en Administración y Finanzas</option>
+                    {carreras.map((c) => (
+                      <option key={c.carrera_id} value={c.carrera_id}>
+                        {c.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="md:col-span-3 flex justify-center mt-2">
-                  <button type="submit" className="w-1/2 bg-[#3578b3] hover:bg-[#285a8c] text-white font-semibold rounded px-4 py-2 transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">
+                  <button
+                    type="submit"
+                    className="w-1/2 bg-[#3578b3] hover:bg-[#285a8c] text-white font-semibold rounded px-4 py-2 transition-colors dark:bg-blue-900 dark:hover:bg-blue-800"
+                  >
                     Registrar
                   </button>
                 </div>
@@ -102,9 +215,14 @@ const RegistroCompeE = () => {
 
         {/* Footer */}
         <footer className="bg-gray-600/90 text-white py-4 flex flex-col items-center mt-auto shadow-glass dark:bg-gray-900/90 dark:text-gray-200">
-          <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
+          <img
+            src="../src/imagenes/imagen_salida1.png"
+            alt="Facultad de Ingeniería"
+            className="w-16 h-16 mb-2"
+          />
           <div className="text-center text-sm">
-            Facultad de Ingeniería<br />
+            Facultad de Ingeniería
+            <br />
             Laboratorio de Diseño de Aplicaciones Móviles
           </div>
         </footer>

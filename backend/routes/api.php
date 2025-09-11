@@ -50,6 +50,9 @@ Route::get('/competenciasgenericas', [\App\Http\Controllers\CompetenciaGenericaC
 Route::post('/competenciasgenericas', [\App\Http\Controllers\CompetenciaGenericaController::class, 'store']);
 Route::delete('/competenciasgenericas/{id}', [\App\Http\Controllers\CompetenciaGenericaController::class, 'destroy']);
 
+// Registrar competencia específica
+Route::post('/competenciaespecifica', [\App\Http\Controllers\CompetenciaEspecificaController::class, 'store']);
+
 // Obtener carreras asociadas a un docente (para el modal de materias)
 Route::get('/docentes/{docente_id}/carreras', [DocenteController::class, 'carrerasPorDocente']);
 Route::post('/docentes/{docente_id}/carreras', [DocenteController::class, 'agregarCarrera']);

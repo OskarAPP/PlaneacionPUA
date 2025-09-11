@@ -46,12 +46,16 @@ class DocenteController extends Controller
                     'titulo' => $docente->titulo,
                     'correo' => $correo,
                     'prefijo' => $docente->prefijo ?? '',
-                    
-                    // Se mantiene para compatibilidad con el código anterior
-                    'facultades' => $docente->facultades->pluck('nombre')->toArray(),
+                    // Nuevo formato: array de objetos
+                    'facultades' => $docente->facultades->map(function($f) {
+                        return [
+                            'facultad_id' => $f->facultad_id,
+                            'nombre' => $f->nombre
+                        ];
+                    })->toArray(),
+                    // Compatibilidad: array de nombres
+                    'facultades_nombres' => $docente->facultades->pluck('nombre')->toArray(),
                     'carreras' => $docente->carreras->pluck('nombre')->toArray(),
-                    
-                    // NUEVO CAMPO: Contiene los objetos completos de las carreras (ID y nombre)
                     'carreras_full' => $docente->carreras,
                 ]
             ]);
