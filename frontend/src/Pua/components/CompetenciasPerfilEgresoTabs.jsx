@@ -6,6 +6,9 @@ const CompetenciasPerfilEgresoTabs = () => {
   const [selectedGenericas, setSelectedGenericas] = useState([]);
   const [selectedEspecificas, setSelectedEspecificas] = useState([0, 1, 2]);
   const [competenciasGenericas, setCompetenciasGenericas] = useState([]);
+  const [competenciasEspecificas, setCompetenciasEspecificas] = useState([]);
+  const [carreraSeleccionada, setCarreraSeleccionada] = useState("");
+  const [facultadSeleccionada, setFacultadSeleccionada] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:8000/api/competenciasgenericas")
@@ -20,6 +23,16 @@ const CompetenciasPerfilEgresoTabs = () => {
         }
       })
       .catch(() => setCompetenciasGenericas([]));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/competenciaespecifica")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setCompetenciasEspecificas(data);
+        else setCompetenciasEspecificas([]);
+      })
+      .catch(() => setCompetenciasEspecificas([]));
   }, []);
 
   // Genéricas handlers
@@ -87,12 +100,18 @@ const CompetenciasPerfilEgresoTabs = () => {
           <>
             <div className="flex-1">
               <div className="bg-white border rounded p-2">
-                {especificas.map((e, idx) => (
-                  <label key={e} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
-                    <input type="checkbox" checked={selectedEspecificas.includes(idx)} onChange={() => handleCheckEsp(idx)} />
-                    <span className="text-gray-800">{e}</span>
-                  </label>
-                ))}
+                {competenciasEspecificas
+                  .filter(e => {
+                    if (carreraSeleccionada) return e.carrera_id == carreraSeleccionada;
+                    if (facultadSeleccionada) return e.facultad_id == facultadSeleccionada;
+                    return true;
+                  })
+                  .map((e, idx) => (
+                    <label key={e.competencia_esp_id || idx} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
+                      <input type="checkbox" checked={selectedEspecificas.includes(idx)} onChange={() => handleCheckEsp(idx)} />
+                      <span className="text-gray-800">{e.nombre}</span>
+                    </label>
+                  ))}
               </div>
             </div>
             <div className="flex flex-col justify-center items-center">
@@ -103,8 +122,8 @@ const CompetenciasPerfilEgresoTabs = () => {
             <div className="flex-1">
               <div className="bg-white border rounded p-2 min-h-[120px]">
                 {selectedEspecificas.map(idx => (
-                  <div key={especificas[idx]} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
-                    <span className="text-gray-800">{especificas[idx]}</span>
+                  <div key={competenciasEspecificas[idx]?.competencia_esp_id || idx} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
+                    <span className="text-gray-800">{competenciasEspecificas[idx]?.nombre}</span>
                     <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemoveEsp(idx)}>
                       ×
                     </button>
