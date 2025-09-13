@@ -26,8 +26,8 @@ const ProcesarPua = () => {
   const [materiasCarrera, setMateriasCarrera] = useState([]);
   const [materiaIdSeleccionada, setMateriaIdSeleccionada] = useState("");
   const [materiaData, setMateriaData] = useState(null);
-  // Estado para el plan de estudio
   const [planEstudio, setPlanEstudio] = useState(null);
+  const [facultadSeleccionada, setFacultadSeleccionada] = useState(""); // Nuevo estado para facultad seleccionada
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
@@ -79,6 +79,18 @@ const ProcesarPua = () => {
       })
       .catch(() => setPlanEstudio(null));
   }, [carreraSeleccionada]);
+
+  // Sincroniza carrera y materia cuando cambia la facultad
+  useEffect(() => {
+    if (!facultadSeleccionada) return;
+    const carreraActual = docente?.carreras_full?.find(c => String(c.carrera_id) === String(carreraSeleccionada));
+    if (carreraActual && String(carreraActual.facultad_id) !== String(facultadSeleccionada)) {
+      setCarreraSeleccionada("");
+      setMateriaIdSeleccionada("");
+      setMateriasCarrera([]);
+      setPlanEstudio(null);
+    }
+  }, [facultadSeleccionada]);
 
   // Funciones para manejar eventos
   const handleAgregarSubcompetencia = () => {
@@ -139,7 +151,17 @@ const ProcesarPua = () => {
               <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
-                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100">
+                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                    value={facultadSeleccionada}
+                    onChange={e => {
+                      setFacultadSeleccionada(e.target.value);
+                      // Al cambiar de facultad, limpiar selección dependiente
+                      setCarreraSeleccionada("");
+                      setMateriaIdSeleccionada("");
+                      setMateriasCarrera([]);
+                      setPlanEstudio(null);
+                    }}>
+                    <option value="">Seleccione una facultad...</option>
                     {docente && docente.facultades && docente.facultades.length > 0 ? (
                       docente.facultades.map((facultad, idx) => (
                         <option key={facultad.facultad_id || idx} value={facultad.facultad_id}>{facultad.nombre}</option>
@@ -154,15 +176,25 @@ const ProcesarPua = () => {
                   <select
                     className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
                     value={carreraSeleccionada}
-                    onChange={e => setCarreraSeleccionada(e.target.value)}
+                    onChange={e => {
+                      const carreraId = e.target.value;
+                      setCarreraSeleccionada(carreraId);
+                      // Buscar la facultad correspondiente a la carrera seleccionada
+                      const carreraObj = docente?.carreras_full?.find(c => c.carrera_id === carreraId);
+                      if (carreraObj && carreraObj.facultad_id) {
+                        setFacultadSeleccionada(carreraObj.facultad_id);
+                      }
+                    }}
                   >
                     <option value="">Seleccione una carrera...</option>
                     {docente && docente.carreras_full && docente.carreras_full.length > 0 ? (
-                      docente.carreras_full.map((carrera) => (
+                      docente.carreras_full
+                        .filter(carrera => !facultadSeleccionada || String(carrera.facultad_id) === String(facultadSeleccionada))
+                        .map((carrera) => (
                           <option key={carrera.carrera_id} value={carrera.carrera_id}>
                               {carrera.nombre}
                           </option>
-                      ))
+                        ))
                     ) : (
                       <option>Sin carreras registradas</option>
                     )}
