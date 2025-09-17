@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Sidebar from '../Components/Sidebar';
 
 // Componente de Registro Local de Bibliografía (sin backend)
@@ -41,9 +41,90 @@ const LibrosRegistro = () => {
   const [filtro, setFiltro] = useState('');
   const [orden, setOrden] = useState('reciente');
 
+  // ---------------- Estados para selección jerárquica Facultad -> Carrera -> Materia ----------------
+  const [facultades, setFacultades] = useState([]);
+  const [carreras, setCarreras] = useState([]); // se llenará tras seleccionar facultad
+  const [materias, setMaterias] = useState([]); // se llenará tras seleccionar carrera
+  const [selectedFacultad, setSelectedFacultad] = useState('');
+  const [selectedCarrera, setSelectedCarrera] = useState('');
+  const [loadingFacultades, setLoadingFacultades] = useState(false);
+  const [errorFacultades, setErrorFacultades] = useState('');
+  const [loadingCarreras, setLoadingCarreras] = useState(false);
+  const [errorCarreras, setErrorCarreras] = useState('');
+  const [loadingMaterias, setLoadingMaterias] = useState(false);
+  const [errorMaterias, setErrorMaterias] = useState('');
+
+  // Cargar facultades al montar
+  useEffect(() => {
+    setLoadingFacultades(true);
+    fetch('http://localhost:8000/api/facultades')
+      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener facultades'))
+      .then(data => {
+        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+        setFacultades(arr);
+        setLoadingFacultades(false);
+      })
+      .catch(() => {
+        setErrorFacultades('No se pudieron cargar las facultades');
+        setLoadingFacultades(false);
+      });
+  }, []);
+
+  // Efecto: cuando cambia la facultad cargar carreras
+  useEffect(() => {
+    if (!selectedFacultad) {
+      setCarreras([]);
+      setSelectedCarrera('');
+      setMaterias([]);
+      setForm(prev => ({ ...prev, materia_id: '' }));
+      return;
+    }
+    setLoadingCarreras(true);
+    setErrorCarreras('');
+    fetch(`http://localhost:8000/api/carreras/facultad/${selectedFacultad}`)
+      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener carreras'))
+      .then(data => {
+        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+        setCarreras(arr);
+        setLoadingCarreras(false);
+        // Reset inferiores
+        setSelectedCarrera('');
+        setMaterias([]);
+        setForm(prev => ({ ...prev, materia_id: '' }));
+      })
+      .catch(() => {
+        setErrorCarreras('No se pudieron cargar las carreras');
+        setLoadingCarreras(false);
+      });
+  }, [selectedFacultad]);
+
+  // Efecto: cuando cambia la carrera cargar materias
+  useEffect(() => {
+    if (!selectedCarrera) {
+      setMaterias([]);
+      setForm(prev => ({ ...prev, materia_id: '' }));
+      return;
+    }
+    setLoadingMaterias(true);
+    setErrorMaterias('');
+    fetch(`http://localhost:8000/api/materias/carrera/${selectedCarrera}`)
+      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener materias'))
+      .then(data => {
+        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+        setMaterias(arr);
+        setLoadingMaterias(false);
+        setForm(prev => ({ ...prev, materia_id: '' }));
+      })
+      .catch(() => {
+        setErrorMaterias('No se pudieron cargar las materias');
+        setLoadingMaterias(false);
+      });
+  }, [selectedCarrera]);
+
   // Validaciones simples
   const validar = (f) => {
     const e = {};
+    if (!f.materia_id) e.materia_id = 'Materia requerida';
     if (!f.autor.trim()) e.autor = 'Autor requerido';
     if (!f.titulo.trim()) e.titulo = 'Título requerido';
     if (!f.editorial.trim()) e.editorial = 'Editorial requerida';
@@ -63,6 +144,12 @@ const LibrosRegistro = () => {
     const isbn = form.isbn ? `ISBN: ${form.isbn}.` : '';
     return `${autor} (${anio}). ${titulo} ${editorial} ${lugar} ${isbn}`.replace(/\s+/g,' ').trim();
   }, [form]);
+
+  // Materias filtradas localmente (si la lista fuera grande se podría migrar a búsqueda server-side)
+  const materiasFiltradas = useMemo(() => {
+    if (!filtro.trim()) return materias;
+    return materias.filter(m => (m.nombre || '').toLowerCase().includes(filtro.toLowerCase()));
+  }, [filtro, materias]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -137,6 +224,65 @@ const LibrosRegistro = () => {
             <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Registro Bibliográfico</div>
             <form onSubmit={onAdd} className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {/* Selección jerárquica */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Facultad</label>
+                  <select
+                    value={selectedFacultad}
+                    onChange={e => setSelectedFacultad(e.target.value)}
+                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                  >
+                    <option value="">-- Seleccione --</option>
+                    {loadingFacultades && <option>Cargando...</option>}
+                    {!loadingFacultades && errorFacultades && <option>{errorFacultades}</option>}
+                    {!loadingFacultades && !errorFacultades && facultades.map(f => (
+                      <option key={f.facultad_id} value={f.facultad_id}>{f.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Carrera</label>
+                  <select
+                    value={selectedCarrera}
+                    onChange={e => setSelectedCarrera(e.target.value)}
+                    disabled={!selectedFacultad || loadingCarreras}
+                    className="w-full border rounded px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                  >
+                    <option value="">-- Seleccione --</option>
+                    {loadingCarreras && <option>Cargando...</option>}
+                    {!loadingCarreras && errorCarreras && <option>{errorCarreras}</option>}
+                    {!loadingCarreras && !errorCarreras && carreras.map(c => (
+                      <option key={c.carrera_id} value={c.carrera_id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="md:col-span-1 lg:col-span-2">
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Materia *</label>
+                  {selectedCarrera && materias.length > 8 && (
+                    <input
+                      placeholder="Filtrar materias..."
+                      value={filtro}
+                      onChange={e => setFiltro(e.target.value)}
+                      className="mb-1 w-full border rounded px-2 py-1 text-xs dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    />
+                  )}
+                  <select
+                    name="materia_id"
+                    value={form.materia_id}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    disabled={!selectedCarrera || loadingMaterias}
+                    className="w-full border rounded px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                  >
+                    <option value="">-- Seleccione --</option>
+                    {loadingMaterias && <option>Cargando...</option>}
+                    {!loadingMaterias && errorMaterias && <option>{errorMaterias}</option>}
+                    {!loadingMaterias && !errorMaterias && materiasFiltradas.map(m => (
+                      <option key={m.materia_id} value={m.materia_id}>{m.nombre}</option>
+                    ))}
+                  </select>
+                  {tocar.materia_id && errores.materia_id && <p className="text-red-600 text-xs mt-1">{errores.materia_id}</p>}
+                </div>
                 <div className="md:col-span-2 lg:col-span-4">
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Autor *</label>
                   <input name="autor" value={form.autor} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
