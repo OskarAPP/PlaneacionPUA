@@ -153,7 +153,7 @@ const Sidebar = ({
                 Libros
               </a>
               <a
-                href="/librosregistro"
+                href="/registrolibros"
                 className={`block p-2 text-sm rounded-md transition-colors
                   ${activeSection === 'librosregistro'
                     ? 'bg-blue-700 text-white dark:bg-blue-400 dark:text-gray-900 font-bold shadow'

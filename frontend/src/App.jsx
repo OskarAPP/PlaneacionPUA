@@ -21,7 +21,7 @@ import PerfilUsuario from './Perfil/PerfilUsuario';
 import Area from './Area/Area';
 import RegistroAreas from './Area/RegistroAreas';
 import Libros from './Biblioteca/Libros';
-import LibrosRegistro from './Biblioteca/LibrosRegistro';
+import RegistroLibros from './Biblioteca/RegistroLibros';
  
 
 
@@ -51,7 +51,7 @@ function App() {
       <Route path="/area" element={<Area />} />
       <Route path="/registroareas" element={<RegistroAreas />} />
       <Route path="/libros" element={<Libros />} />
-      <Route path="/librosregistro" element={<LibrosRegistro />} />
+      <Route path="/registrolibros" element={<RegistroLibros />} />
     </Routes>
   );
 }
