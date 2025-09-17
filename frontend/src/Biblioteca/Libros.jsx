@@ -36,35 +36,17 @@ const Libros = () => {
 
   useEffect(() => {
     setLoading(true);
-    // TODO: Reemplazar simulación por fetch real: /api/bibliografia
-    setTimeout(() => {
-      const simulacion = [
-        {
-          id: 1,
-          materia_id: 10,
-          autor: "Stewart, J.",
-          anio_publicacion: 2012,
-          titulo: "Cálculo de una variable",
-          editorial: "Cengage Learning",
-          lugar_publicacion: "México",
-          isbn: "978-607-481-714-3",
-          materia: { nombre: "Cálculo Diferencial", carrera: { nombre: "Ingeniería Civil" } }
-        },
-        {
-          id: 2,
-          materia_id: 11,
-          autor: "Grossman, S.",
-            anio_publicacion: 2007,
-          titulo: "Álgebra Lineal",
-          editorial: "McGraw-Hill",
-          lugar_publicacion: "España",
-          isbn: "978-970-686-646-2",
-          materia: { nombre: "Álgebra Lineal", carrera: { nombre: "Ingeniería Industrial" } }
-        }
-      ];
-      setBibliografia(simulacion);
-      setLoading(false);
-    }, 500);
+    fetch('http://localhost:8000/api/bibliografia')
+      .then(res => res.ok ? res.json() : Promise.reject('Error al cargar bibliografía'))
+      .then(data => {
+        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+        setBibliografia(arr);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('No se pudo cargar la bibliografía');
+        setLoading(false);
+      });
   }, []);
 
   // Filtrado y ordenamiento

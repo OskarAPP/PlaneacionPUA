@@ -43,4 +43,8 @@ class Materia extends Model
     public function academia() {
         return $this->belongsTo(\App\Models\Academia::class, 'academia_id', 'academia_id');
     }
+
+    public function bibliografias() {
+        return $this->hasMany(\App\Models\Bibliografia::class, 'materia_id', 'materia_id');
+    }
 }

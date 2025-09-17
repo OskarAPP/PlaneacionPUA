@@ -75,3 +75,5 @@ Route::get('/carreras/{carrera_id}/planestudio', [CarreraController::class, 'get
 
 // Obtener todas las competencias específicas
 Route::get('/competenciaespecifica', [\App\Http\Controllers\CompetenciaEspecificaController::class, 'index']);
+// Bibliografia
+Route::get('/bibliografia', [\App\Http\Controllers\BibliografiaController::class, 'index']);
