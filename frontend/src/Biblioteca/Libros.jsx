@@ -16,55 +16,64 @@ const Libros = () => {
   const bibliotecaRef = useRef(null);
 
   // Estado para los libros
-  const [libros, setLibros] = useState([]);
+  const [bibliografia, setBibliografia] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Generador de ficha bibliográfica
+  const construirFicha = (item) => {
+    if (!item) return "";
+    const autor = item.autor || "Autor desconocido";
+    const anio = item.anio_publicacion || "s.f.";
+    const titulo = item.titulo || item.nombre || "Título";
+    const editorial = item.editorial || "Editorial";
+    const lugar = item.lugar_publicacion ? `${item.lugar_publicacion}.` : "";
+    const isbn = item.isbn ? `ISBN: ${item.isbn}.` : "";
+    return `${autor} (${anio}). ${titulo}. ${editorial}. ${lugar} ${isbn}`.replace(/\s+/g,' ').trim();
+  };
+
   useEffect(() => {
     setLoading(true);
-    // fetch('http://localhost:8000/api/libros')
-    //   .then(res => res.ok ? res.json() : Promise.reject('Error al cargar libros'))
-    //   .then(data => {
-    //     setLibros(Array.isArray(data) ? data : []);
-    //     setLoading(false);
-    //   })
-    //   .catch(() => {
-    //     setError('No se pudieron cargar los libros');
-    //     setLoading(false);
-    //   });
-    // Simulación de datos
+    // TODO: Reemplazar simulación por fetch real: /api/bibliografia
     setTimeout(() => {
-      setLibros([
+      const simulacion = [
         {
-          libro_id: 1,
-          nombre: "Cálculo de una variable",
-          autor: "James Stewart",
+          id: 1,
+          materia_id: 10,
+          autor: "Stewart, J.",
+          anio_publicacion: 2012,
+          titulo: "Cálculo de una variable",
+          editorial: "Cengage Learning",
+          lugar_publicacion: "México",
           isbn: "978-607-481-714-3",
-          ficha: "Stewart, J. (2012). Cálculo de una variable. Cengage Learning."
+          materia: { nombre: "Cálculo Diferencial", carrera: { nombre: "Ingeniería Civil" } }
         },
         {
-          libro_id: 2,
-          nombre: "Álgebra Lineal",
-          autor: "Stanley Grossman",
+          id: 2,
+          materia_id: 11,
+          autor: "Grossman, S.",
+            anio_publicacion: 2007,
+          titulo: "Álgebra Lineal",
+          editorial: "McGraw-Hill",
+          lugar_publicacion: "España",
           isbn: "978-970-686-646-2",
-          ficha: "Grossman, S. (2007). Álgebra Lineal. McGraw-Hill."
+          materia: { nombre: "Álgebra Lineal", carrera: { nombre: "Ingeniería Industrial" } }
         }
-      ]);
+      ];
+      setBibliografia(simulacion);
       setLoading(false);
     }, 500);
   }, []);
 
   // Filtrado y ordenamiento
-  const filteredLibros = libros
-    .filter(l => (l.nombre || "").toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => {
-      if (sortOrder === "az") {
-        return (a.nombre || "").localeCompare(b.nombre || "");
-      } else {
-        return (b.nombre || "").localeCompare(a.nombre || "");
-      }
+  const filteredItems = bibliografia
+    .filter(i => (i.titulo || "").toLowerCase().includes(searchTerm.toLowerCase()) || (i.autor||"").toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a,b) => {
+      const ta = (a.titulo||"").toLowerCase();
+      const tb = (b.titulo||"").toLowerCase();
+      return sortOrder === 'az' ? ta.localeCompare(tb) : tb.localeCompare(ta);
     });
 
   useEffect(() => {
@@ -188,36 +197,50 @@ const Libros = () => {
               </div>
             </div>
             {/* Lista de libros */}
-            <div className="bg-[#d6edf9] text-[#1a3c5a] text-base font-semibold rounded-t-md px-4 py-2 text-center border border-[#b5d6ea] dark:bg-blue-950 dark:text-blue-200 dark:border-blue-900">Lista de Libros</div>
+            <div className="bg-[#d6edf9] text-[#1a3c5a] text-base font-semibold rounded-t-md px-4 py-2 text-center border border-[#b5d6ea] dark:bg-blue-950 dark:text-blue-200 dark:border-blue-900">Bibliografía</div>
             <div className="overflow-x-auto">
               {loading ? (
-                <div className="p-4 text-center">Cargando libros...</div>
+                <div className="p-4 text-center">Cargando bibliografía...</div>
               ) : error ? (
                 <div className="p-4 text-center text-red-600">{error}</div>
               ) : (
-                <table className="min-w-full border border-[#b5d6ea] dark:border-blue-900">
+                <table className="min-w-full border border-[#b5d6ea] dark:border-blue-900 text-sm">
                   <thead>
                     <tr className="bg-white dark:bg-gray-900">
-                      <th className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">#</th>
-                      <th className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">Nombre</th>
-                      <th className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">Autor</th>
-                      <th className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">ISBN</th>
-                      <th className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">Ficha Bibliográfica</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">#</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Autor</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Año</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Título</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Editorial</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Lugar</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">ISBN</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Materia</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Carrera</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Ficha</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredLibros.length === 0 ? (
-                      <tr><td colSpan="5" className="text-center py-4">No hay libros registrados.</td></tr>
+                    {filteredItems.length === 0 ? (
+                      <tr><td colSpan="10" className="text-center py-4">No hay registros.</td></tr>
                     ) : (
-                      filteredLibros.map((libro, idx) => (
-                        <tr key={libro.libro_id} className="hover:bg-blue-50 dark:hover:bg-gray-700">
-                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{idx + 1}</td>
-                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{libro.nombre}</td>
-                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{libro.autor}</td>
-                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{libro.isbn}</td>
-                          <td className="border border-[#b5d6ea] px-3 py-2 dark:border-blue-900">{libro.ficha}</td>
-                        </tr>
-                      ))
+                      filteredItems.map((item, idx) => {
+                        const carreraNombre = item.materia?.carrera?.nombre || '—';
+                        const materiaNombre = item.materia?.nombre || '—';
+                        return (
+                          <tr key={item.id} className="hover:bg-blue-50 dark:hover:bg-gray-700">
+                            <td className="border px-2 py-1 dark:border-blue-900">{idx + 1}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.autor}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.anio_publicacion}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.titulo}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.editorial}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.lugar_publicacion || '—'}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{item.isbn || '—'}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{materiaNombre}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{carreraNombre}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900 max-w-[260px] whitespace-pre-line">{construirFicha(item)}</td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
