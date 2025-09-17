@@ -40,6 +40,8 @@ const LibrosRegistro = () => {
   const [tocar, setTocar] = useState({});
   const [filtro, setFiltro] = useState('');
   const [orden, setOrden] = useState('reciente');
+  const [enviando, setEnviando] = useState(false);
+  const [mensaje, setMensaje] = useState(null); // { tipo: 'ok'|'error', texto: string }
 
   // ---------------- Estados para selección jerárquica Facultad -> Carrera -> Materia ----------------
   const [facultades, setFacultades] = useState([]);
@@ -174,8 +176,25 @@ const LibrosRegistro = () => {
     const errs = validar(form);
     setErrores(errs);
     if (Object.keys(errs).length > 0) return;
-    // Ya no almacenamos en una lista; solo se podría enviar a backend en el futuro
-    resetForm();
+    setEnviando(true);
+    setMensaje(null);
+    fetch('http://localhost:8000/api/bibliografia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    })
+      .then(r => r.json().then(body => ({ ok: r.ok, body })))
+      .then(({ ok, body }) => {
+        if (!ok || !body.success) {
+          throw new Error(body.message || 'Error al registrar');
+        }
+        setMensaje({ tipo: 'ok', texto: body.message || 'Registrado correctamente' });
+        resetForm();
+      })
+      .catch(err => {
+        setMensaje({ tipo: 'error', texto: err.message || 'Error inesperado' });
+      })
+      .finally(() => setEnviando(false));
   };
 
   return (
@@ -223,6 +242,9 @@ const LibrosRegistro = () => {
             {/* Bloque Formulario */}
             <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Registro Bibliográfico</div>
             <form onSubmit={onAdd} className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+              {mensaje && (
+                <div className={`text-sm px-3 py-2 rounded border ${mensaje.tipo === 'ok' ? 'bg-green-50 border-green-300 text-green-700 dark:bg-green-900/30 dark:border-green-600 dark:text-green-300' : 'bg-red-50 border-red-300 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-300'}`}>{mensaje.texto}</div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {/* Selección jerárquica */}
                 <div>
@@ -318,8 +340,8 @@ const LibrosRegistro = () => {
                 </div>
               </div>
               <div className="flex justify-center gap-4">
-                <button type="submit" className="bg-[#3578b3] text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">Agregar</button>
-                <button type="button" onClick={resetForm} className="border font-medium px-10 py-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-600">Limpiar</button>
+                <button type="submit" disabled={enviando} className="bg-[#3578b3] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">{enviando ? 'Guardando...' : 'Agregar'}</button>
+                <button type="button" disabled={enviando} onClick={resetForm} className="border font-medium px-10 py-2 rounded hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed dark:hover:bg-gray-700 dark:border-gray-600">Limpiar</button>
               </div>
             </form>
           </div>

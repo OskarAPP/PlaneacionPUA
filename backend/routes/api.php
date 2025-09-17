@@ -77,3 +77,4 @@ Route::get('/carreras/{carrera_id}/planestudio', [CarreraController::class, 'get
 Route::get('/competenciaespecifica', [\App\Http\Controllers\CompetenciaEspecificaController::class, 'index']);
 // Bibliografia
 Route::get('/bibliografia', [\App\Http\Controllers\BibliografiaController::class, 'index']);
+Route::post('/bibliografia', [\App\Http\Controllers\BibliografiaController::class, 'store']);

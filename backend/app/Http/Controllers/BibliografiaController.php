@@ -38,4 +38,45 @@ class BibliografiaController extends Controller
             })
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'materia_id' => 'required|integer|exists:materia,materia_id',
+            'autor' => 'required|string|max:255',
+            'anio_publicacion' => 'required|integer|min:1800|max:' . date('Y'),
+            'titulo' => 'required|string|max:255',
+            'editorial' => 'required|string|max:255',
+            'lugar_publicacion' => 'nullable|string|max:255',
+            'isbn' => 'nullable|string|max:30'
+        ]);
+
+        $bibliografia = Bibliografia::create($data);
+        $bibliografia->load(['materia.carrera']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Referencia bibliográfica registrada correctamente',
+            'data' => [
+                'id' => $bibliografia->id,
+                'materia_id' => $bibliografia->materia_id,
+                'autor' => $bibliografia->autor,
+                'anio_publicacion' => $bibliografia->anio_publicacion,
+                'titulo' => $bibliografia->titulo,
+                'editorial' => $bibliografia->editorial,
+                'lugar_publicacion' => $bibliografia->lugar_publicacion,
+                'isbn' => $bibliografia->isbn,
+                'ficha' => $bibliografia->ficha,
+                'materia' => $bibliografia->materia ? [
+                    'materia_id' => $bibliografia->materia->materia_id,
+                    'nombre' => $bibliografia->materia->nombre,
+                    'carrera' => $bibliografia->materia->carrera ? [
+                        'carrera_id' => $bibliografia->materia->carrera->carrera_id,
+                        'nombre' => $bibliografia->materia->carrera->nombre,
+                        'facultad_id' => $bibliografia->materia->carrera->facultad_id,
+                    ] : null,
+                ] : null,
+            ]
+        ], 201);
+    }
 }
