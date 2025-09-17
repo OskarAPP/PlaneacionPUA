@@ -152,6 +152,16 @@ const Sidebar = ({
               >
                 Libros
               </a>
+              <a
+                href="/librosregistro"
+                className={`block p-2 text-sm rounded-md transition-colors
+                  ${activeSection === 'librosregistro'
+                    ? 'bg-blue-700 text-white dark:bg-blue-400 dark:text-gray-900 font-bold shadow'
+                    : 'text-blue-700 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-gray-700'}
+                `}
+              >
+                Registrar bibliografía
+              </a>
             </div>
           )}
         </div>
