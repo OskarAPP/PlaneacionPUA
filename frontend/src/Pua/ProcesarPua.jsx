@@ -106,7 +106,7 @@ const ProcesarPua = () => {
   const accordionData = [
     { title: "Datos del pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
     { title: "Competencias del Perfil de Egreso", content: <CompetenciasPerfilEgresoTabs /> },
-    { title: "Bibliografía sugerida", content: <BibliografiaSugerida /> },
+    { title: "Bibliografía sugerida", content: <BibliografiaSugerida materiaId={materiaIdSeleccionada} /> },
     { title: "Comité Curricular", content: <ComiteCurricular /> },
     { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
     { title: "Evaluación Final", content: <EvaluacionFinal /> },

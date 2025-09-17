@@ -6,11 +6,17 @@ use Illuminate\Http\Request;
 
 class BibliografiaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $lista = Bibliografia::with(['materia.carrera' => function($q){ $q->select('carrera_id','nombre','facultad_id'); }])
-            ->with(['materia' => function($q){ $q->select('materia_id','nombre','carrera_id'); }])
-            ->get();
+        $query = Bibliografia::query()
+            ->with(['materia.carrera' => function($q){ $q->select('carrera_id','nombre','facultad_id'); }])
+            ->with(['materia' => function($q){ $q->select('materia_id','nombre','carrera_id'); }]);
+
+        if ($request->has('materia_id') && $request->query('materia_id')) {
+            $query->where('materia_id', $request->query('materia_id'));
+        }
+
+        $lista = $query->get();
 
         return response()->json([
             'success' => true,
