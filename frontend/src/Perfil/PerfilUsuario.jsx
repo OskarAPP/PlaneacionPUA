@@ -304,7 +304,9 @@ const PerfilUsuario = () => {
                   {docente?.facultades && docente.facultades.length > 0 ? (
                     <ul className="list-disc list-inside ml-2">
                       {docente.facultades.map((fac, idx) => (
-                        <li key={idx} className="text-gray-800 dark:text-gray-100 text-sm">{fac}</li>
+                        <li key={(fac && fac.facultad_id) ?? idx} className="text-gray-800 dark:text-gray-100 text-sm">
+                          {typeof fac === 'string' ? fac : (fac?.nombre ?? 'Sin nombre')}
+                        </li>
                       ))}
                     </ul>
                   ) : (
@@ -317,7 +319,9 @@ const PerfilUsuario = () => {
                   {docente?.carreras && docente.carreras.length > 0 ? (
                     <ul className="list-disc list-inside ml-2">
                       {docente.carreras.map((car, idx) => (
-                        <li key={idx} className="text-gray-800 dark:text-gray-100 text-sm">{car}</li>
+                        <li key={(car && car.carrera_id) ?? idx} className="text-gray-800 dark:text-gray-100 text-sm">
+                          {typeof car === 'string' ? car : (car?.nombre ?? 'Sin nombre')}
+                        </li>
                       ))}
                     </ul>
                   ) : (
