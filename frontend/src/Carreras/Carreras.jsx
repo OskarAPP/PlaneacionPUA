@@ -127,15 +127,16 @@ const Carreras = () => {
                     <th className="px-3 py-2 font-bold">Carrera</th>
                     <th className="px-3 py-2 font-bold">Facultad</th>
                     <th className="px-3 py-2 font-bold">Plan de Estudios</th>
+                    <th className="px-3 py-2 font-bold">Descripción del Plan</th>
                   </tr>
                 </thead>
                 <tbody className="text-blue-900 dark:text-blue-200">
                   {loading ? (
-                    <tr><td colSpan="4" className="text-center py-4 text-blue-700 dark:text-blue-300">Cargando...</td></tr>
+                    <tr><td colSpan="5" className="text-center py-4 text-blue-700 dark:text-blue-300">Cargando...</td></tr>
                   ) : error ? (
-                    <tr><td colSpan="4" className="text-center py-4 text-red-600 dark:text-red-400">{error}</td></tr>
+                    <tr><td colSpan="5" className="text-center py-4 text-red-600 dark:text-red-400">{error}</td></tr>
                   ) : filteredCarreras.length === 0 ? (
-                    <tr><td colSpan="4" className="text-center py-4">No hay carreras registradas.</td></tr>
+                    <tr><td colSpan="5" className="text-center py-4">No hay carreras registradas.</td></tr>
                   ) : (
                     filteredCarreras.map((carrera, idx) => (
                       <tr key={carrera.carrera_id} className="border-b hover:bg-blue-50 dark:border-gray-700 dark:hover:bg-gray-900">
@@ -143,6 +144,7 @@ const Carreras = () => {
                         <td className="px-3 py-2">{carrera.nombre}</td>
                         <td className="px-3 py-2">{carrera.facultad ? carrera.facultad.nombre : '-'}</td>
                         <td className="px-3 py-2">{carrera.plan_estudio ? (carrera.plan_estudio.nombre || '-') : '-'}</td>
+                        <td className="px-3 py-2">{carrera.plan_estudio ? (carrera.plan_estudio.descripcion || '-') : '-'}</td>
                       </tr>
                     ))
                   )}
