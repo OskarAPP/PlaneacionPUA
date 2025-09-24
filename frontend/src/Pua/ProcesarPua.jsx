@@ -28,6 +28,8 @@ const ProcesarPua = () => {
   const [materiaData, setMateriaData] = useState(null);
   const [planEstudio, setPlanEstudio] = useState(null);
   const [facultadSeleccionada, setFacultadSeleccionada] = useState(""); // Nuevo estado para facultad seleccionada
+  // Cache local de nombres de plan por carrera
+  const [planesPorCarrera, setPlanesPorCarrera] = useState({}); // { [carrera_id]: nombrePlan }
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
@@ -79,6 +81,34 @@ const ProcesarPua = () => {
       })
       .catch(() => setPlanEstudio(null));
   }, [carreraSeleccionada]);
+
+  // Prefetch: cargar nombres de planes para las carreras visibles en el combo
+  useEffect(() => {
+    const visibles = (docente?.carreras_full || []).filter(
+      c => !facultadSeleccionada || String(c.facultad_id) === String(facultadSeleccionada)
+    );
+    const faltantes = visibles.filter(c => !planesPorCarrera[String(c.carrera_id)]);
+    if (faltantes.length === 0) return;
+    let cancelado = false;
+    Promise.all(
+      faltantes.map(c =>
+        fetch(`http://localhost:8000/api/carreras/${c.carrera_id}/planestudio`)
+          .then(r => (r.ok ? r.json() : null))
+          .then(d => ({ id: String(c.carrera_id), nombre: d?.plan_estudio?.nombre || "" }))
+          .catch(() => ({ id: String(c.carrera_id), nombre: "" }))
+      )
+    ).then(resultados => {
+      if (cancelado) return;
+      setPlanesPorCarrera(prev => {
+        const next = { ...prev };
+        resultados.forEach(({ id, nombre }) => {
+          if (nombre && !next[id]) next[id] = nombre;
+        });
+        return next;
+      });
+    });
+    return () => { cancelado = true; };
+  }, [docente?.carreras_full, facultadSeleccionada]);
 
   // Sincroniza carrera y materia cuando cambia la facultad
   useEffect(() => {
@@ -192,7 +222,7 @@ const ProcesarPua = () => {
                         .filter(carrera => !facultadSeleccionada || String(carrera.facultad_id) === String(facultadSeleccionada))
                         .map((carrera) => (
                           <option key={carrera.carrera_id} value={carrera.carrera_id}>
-                              {carrera.nombre}
+                              {carrera.nombre}{planesPorCarrera[String(carrera.carrera_id)] ? ` — ${planesPorCarrera[String(carrera.carrera_id)]}` : ""}
                           </option>
                         ))
                     ) : (
