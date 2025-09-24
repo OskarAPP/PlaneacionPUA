@@ -142,7 +142,7 @@ const Carreras = () => {
                         <td className="px-3 py-2">{idx + 1}</td>
                         <td className="px-3 py-2">{carrera.nombre}</td>
                         <td className="px-3 py-2">{carrera.facultad ? carrera.facultad.nombre : '-'}</td>
-                        <td className="px-3 py-2">{carrera.plan_estudio ? carrera.plan_estudio.descripcion : '-'}</td>
+                        <td className="px-3 py-2">{carrera.plan_estudio ? (carrera.plan_estudio.nombre || '-') : '-'}</td>
                       </tr>
                     ))
                   )}
@@ -160,7 +160,7 @@ const Carreras = () => {
           </div>
         </footer>
       </div>
-      <style jsx global>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
           background: #fff;
