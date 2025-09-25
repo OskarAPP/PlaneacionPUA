@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Servicio para tu backend Laravel
+  app:
+    build:
+      context: ./backend # ✅ Correcto, apunta a tu carpeta 'backend'
+      dockerfile: Dockerfile
+    container_name: pua_backend
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - db
+
+  # Servicio del servidor web Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: pua_webserver
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/var/www/backend
+      # Apuntamos a la carpeta 'build' que generarás en tu frontend
+      - ./frontend/build:/var/www/frontend 
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  # Servicio de la Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: pua_database
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: pua_db # Puedes poner el nombre que quieras
+      MYSQL_ROOT_PASSWORD: tu_password_muy_seguro
+    volumes:
+      - dbdata:/var/lib/mysql
+      # 👇 ¡Aquí la magia! Montamos tu archivo de esquema para que se importe al iniciar
+      - ./pua_schema.txt:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  dbdata:
