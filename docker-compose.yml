@@ -22,7 +22,7 @@ services:
     volumes:
       - ./backend:/var/www/backend
       # Apuntamos a la carpeta 'build' que generarás en tu frontend
-      - ./frontend/build:/var/www/frontend 
+      - ./frontend/dist:/var/www/frontend 
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
