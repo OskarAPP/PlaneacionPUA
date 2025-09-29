@@ -628,7 +628,7 @@ const Docentes = () => {
         </header>
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-          <div className="w-full max-w-5xl">
+          <div className="w-full max-w-7xl">
             {/* Barra de búsqueda */}
             <div className="bg-blue-700 dark:bg-blue-900 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
             <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
@@ -668,6 +668,7 @@ const Docentes = () => {
                     <th className="px-3 py-2 font-bold">Facultad</th>
                     <th className="px-3 py-2 font-bold">Carrera</th>
                     <th className="px-3 py-2 font-bold">Materias</th>
+                    <th className="px-3 py-2 font-bold">Cargo</th>
                   </tr>
                 </thead>
                 <tbody className="text-blue-900 dark:text-blue-200">
@@ -728,6 +729,19 @@ const Docentes = () => {
                             Agregar Materia
                           </button>
                         </div>
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        {/* Icono de tuerca (sin funcionalidad por ahora) */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="w-5 h-5 text-gray-500 dark:text-gray-300 inline-block"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <path d="M19.14 12.936a7.967 7.967 0 0 0 .06-.936 7.967 7.967 0 0 0-.06-.936l2.037-1.59a.5.5 0 0 0 .12-.638l-1.93-3.343a.5.5 0 0 0-.607-.22l-2.4.966a7.997 7.997 0 0 0-1.62-.936l-.36-2.55A.5.5 0 0 0 12.9 1h-3.8a.5.5 0 0 0-.496.427l-.36 2.55a7.997 7.997 0 0 0-1.62.936l-2.4-.966a.5.5 0 0 0-.607.22L.686 7.04a.5.5 0 0 0 .12.638l2.037 1.59c-.04.308-.06.62-.06.936s.02.628.06.936L.806 12.73a.5.5 0 0 0-.12.638l1.93 3.343a.5.5 0 0 0 .607.22l2.4-.966c.504.39 1.05.715 1.62.936l.36 2.55A.5.5 0 0 0 9.1 20.9h3.8a.5.5 0 0 0 .496-.427l.36-2.55a7.997 7.997 0 0 0 1.62-.936l2.4.966a.5.5 0 0 0 .607-.22l1.93-3.343a.5.5 0 0 0-.12-.638l-2.037-1.59ZM11 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
+                        </svg>
                       </td>
                     </tr>
                   ))}
