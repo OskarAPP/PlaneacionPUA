@@ -66,6 +66,15 @@ const Docentes = () => {
   const [materiasDocenteNombre, setMateriasDocenteNombre] = useState("");
   const [materiasDocenteError, setMateriasDocenteError] = useState("");
 
+  // Modal de Cargo (ventana flotante al hacer clic en el engranaje)
+  const [cargoModalOpen, setCargoModalOpen] = useState(false);
+  const [cargos, setCargos] = useState([]);
+  const [selectedCargo, setSelectedCargo] = useState("");
+  const [selectedAdminCargo, setSelectedAdminCargo] = useState("");
+  const [roles, setRoles] = useState([]);
+  const [cargoModalError, setCargoModalError] = useState("");
+  const [cargoModalLoading, setCargoModalLoading] = useState(false);
+
   // Abrir modal para agregar materia
   const handleOpenAddMateriaModal = async (docente) => {
     setSelectedDocente(docente);
@@ -291,6 +300,40 @@ const Docentes = () => {
     setDocenteNombreModal(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
     setViewFacModalOpen(true);
   };
+
+  // Abrir modal de Cargo
+  const handleOpenCargoModal = (docente) => {
+    setSelectedDocente(docente);
+    // Prefill con cargo y rol actuales si existen
+    setSelectedCargo(docente.cargo_id || "");
+    setSelectedAdminCargo(docente.rol_id || "");
+    setCargoModalError("");
+    setCargoModalOpen(true);
+  };
+
+  const handleCloseCargoModal = () => {
+    setCargoModalOpen(false);
+    setSelectedCargo("");
+    setSelectedAdminCargo("");
+    setCargoModalError("");
+  };
+
+  // Cargar lista de cargos cuando se abre el modal (para uso futuro)
+  useEffect(() => {
+    if (!cargoModalOpen) return;
+    setCargoModalLoading(true);
+    Promise.all([
+      fetch('http://localhost:8000/api/cargos').then(r => r.json()).catch(() => []),
+      fetch('http://localhost:8000/api/roles').then(r => r.json()).catch(() => [])
+    ])
+      .then(([cargosData, rolesData]) => {
+        if (Array.isArray(cargosData)) setCargos(cargosData);
+        else if (Array.isArray(cargosData.cargos)) setCargos(cargosData.cargos); else setCargos([]);
+        if (Array.isArray(rolesData)) setRoles(rolesData);
+        else if (Array.isArray(rolesData.roles)) setRoles(rolesData.roles); else setRoles([]);
+      })
+      .finally(() => setCargoModalLoading(false));
+  }, [cargoModalOpen]);
   // Cerrar modal de ver facultades
   const handleCloseViewFacModal = () => {
     setViewFacModalOpen(false);
@@ -731,23 +774,88 @@ const Docentes = () => {
                         </div>
                       </td>
                       <td className="px-3 py-2 text-center">
-                        {/* Icono de tuerca (sin funcionalidad por ahora) */}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-5 h-5 text-gray-500 dark:text-gray-300 inline-block"
-                          aria-hidden="true"
-                          focusable="false"
+                        <button
+                          type="button"
+                          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                          onClick={() => handleOpenCargoModal(docente)}
+                          title="Configurar cargo"
+                          aria-label="Configurar cargo"
                         >
-                          <path d="M19.14 12.936a7.967 7.967 0 0 0 .06-.936 7.967 7.967 0 0 0-.06-.936l2.037-1.59a.5.5 0 0 0 .12-.638l-1.93-3.343a.5.5 0 0 0-.607-.22l-2.4.966a7.997 7.997 0 0 0-1.62-.936l-.36-2.55A.5.5 0 0 0 12.9 1h-3.8a.5.5 0 0 0-.496.427l-.36 2.55a7.997 7.997 0 0 0-1.62.936l-2.4-.966a.5.5 0 0 0-.607.22L.686 7.04a.5.5 0 0 0 .12.638l2.037 1.59c-.04.308-.06.62-.06.936s.02.628.06.936L.806 12.73a.5.5 0 0 0-.12.638l1.93 3.343a.5.5 0 0 0 .607.22l2.4-.966c.504.39 1.05.715 1.62.936l.36 2.55A.5.5 0 0 0 9.1 20.9h3.8a.5.5 0 0 0 .496-.427l.36-2.55a7.997 7.997 0 0 0 1.62-.936l2.4.966a.5.5 0 0 0 .607-.22l1.93-3.343a.5.5 0 0 0-.12-.638l-2.037-1.59ZM11 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-5 h-5 text-gray-500 dark:text-gray-300"
+                            aria-hidden="true"
+                            focusable="false"
+                          >
+                            <path d="M19.14 12.936a7.967 7.967 0 0 0 .06-.936 7.967 7.967 0 0 0-.06-.936l2.037-1.59a.5.5 0 0 0 .12-.638l-1.93-3.343a.5.5 0 0 0-.607-.22l-2.4.966a7.997 7.997 0 0 0-1.62-.936l-.36-2.55A.5.5 0 0 0 12.9 1h-3.8a.5.5 0 0 0-.496.427l-.36 2.55a7.997 7.997 0 0 0-1.62.936l-2.4-.966a.5.5 0 0 0-.607.22L.686 7.04a.5.5 0 0 0 .12.638l2.037 1.59c-.04.308-.06.62-.06.936s.02.628.06.936L.806 12.73a.5.5 0 0 0-.12.638l1.93 3.343a.5.5 0 0 0 .607.22l2.4-.966c.504.39 1.05.715 1.62.936l.36 2.55A.5.5 0 0 0 9.1 20.9h3.8a.5.5 0 0 0 .496-.427l.36-2.55a7.997 7.997 0 0 0 1.62-.936l2.4.966a.5.5 0 0 0 .607-.22l1.93-3.343a.5.5 0 0 0-.12-.638l-2.037-1.59ZM11 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
+                          </svg>
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            {/* Modal de Cargo */}
+            {cargoModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                  <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseCargoModal}>&times;</button>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Cargo</h2>
+                  <div className="mb-3 text-sm text-gray-700 dark:text-gray-200">
+                    {selectedDocente ? (
+                      <>
+                        <div className="font-medium">Docente</div>
+                        <div>{selectedDocente.nombre} {selectedDocente.apellido_paterno} {selectedDocente.apellido_materno || ''}</div>
+                      </>
+                    ) : null}
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Selecciona un cargo:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      value={selectedCargo}
+                      onChange={e => setSelectedCargo(e.target.value)}
+                      disabled={cargoModalLoading || cargos.length === 0}
+                    >
+                      <option value="">Seleccione...</option>
+                      {cargos.map((c) => (
+                        <option key={c.id || c.cargo_id || c.nombre} value={c.id || c.cargo_id || c.nombre}>
+                          {c.nombre || c.descripcion || String(c.id || c.cargo_id)}
+                        </option>
+                      ))}
+                    </select>
+                    {cargoModalError && (
+                      <div className="bg-red-100 text-red-700 px-3 py-2 rounded mt-2 text-center text-sm">{cargoModalError}</div>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Cargo administrativo:</label>
+                    <select
+                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      value={selectedAdminCargo}
+                      onChange={e => setSelectedAdminCargo(e.target.value)}
+                      disabled={cargoModalLoading || roles.length === 0}
+                    >
+                      <option value="">Seleccione...</option>
+                      {roles.map((r) => (
+                        <option key={`rol-${r.rol_id || r.id || r.nombre}`} value={r.rol_id || r.id || r.nombre}>
+                          {r.nombre || String(r.rol_id || r.id)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleCloseCargoModal}>Cerrar</button>
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded opacity-60 cursor-not-allowed" title="Próximamente" disabled>
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Modal para agregar materia */}
             {addMateriaModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">

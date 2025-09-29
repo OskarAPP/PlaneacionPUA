@@ -58,12 +58,16 @@ const RegistroDocentes = () => {
     fetch('http://localhost:8000/api/cargos')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setCargos(data);
+        if (Array.isArray(data)) {
+          setCargos(data);
+        }
       });
     fetch('http://localhost:8000/api/roles')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setRoles(data);
+        if (Array.isArray(data)) {
+          setRoles(data);
+        }
       });
   }, []);
 
@@ -93,7 +97,7 @@ const RegistroDocentes = () => {
     setError("");
     setLoading(true);
     // Validación mínima
-    if (!form.nombre || !form.apellido_paterno || !form.correo || !form.contrasena || !form.facultad_id || !form.cargo_id || !form.rol_id) {
+    if (!form.nombre || !form.apellido_paterno || !form.correo || !form.contrasena || !form.facultad_id) {
       setError("Por favor, completa los campos obligatorios.");
       setLoading(false);
       return;
@@ -108,17 +112,20 @@ const RegistroDocentes = () => {
     try {
       const res = await fetch('http://localhost:8000/api/personal', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
           nombre: form.nombre,
           apellido_paterno: form.apellido_paterno,
           apellido_materno: form.apellido_materno,
           facultad_id: form.facultad_id,
           titulo: form.titulo,
-          cargo_id: form.cargo_id,
+          cargo_id: form.cargo_id || null,
           correo: form.correo,
           contrasena: form.contrasena,
-          rol_id: form.rol_id
+          rol_id: form.rol_id || null
         })
       });
       const data = await res.json();
@@ -241,21 +248,27 @@ const RegistroDocentes = () => {
                 </div>
                 <div>
                   <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Cargo: <span className="text-red-500">*</span></label>
-                  <select name="cargo_id" value={form.cargo_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required>
+                  <select name="cargo_id" value={form.cargo_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
                     <option value="">Seleccione cargo...</option>
                     {cargos.map(cargo => (
                       <option key={cargo.cargo_id} value={cargo.cargo_id}>{cargo.nombre}</option>
                     ))}
                   </select>
+                  {cargos.length === 0 && (
+                    <p className="text-xs text-red-600 mt-1">No hay cargos disponibles. Puede dejar el campo vacío o contacte al administrador.</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Rol: <span className="text-red-500">*</span></label>
-                  <select name="rol_id" value={form.rol_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" required>
+                  <select name="rol_id" value={form.rol_id} onChange={handleChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
                     <option value="">Seleccione rol...</option>
                     {roles.map(rol => (
                       <option key={rol.rol_id} value={rol.rol_id}>{rol.nombre}</option>
                     ))}
                   </select>
+                  {roles.length === 0 && (
+                    <p className="text-xs text-red-600 mt-1">No hay roles disponibles. Puede dejar el campo vacío o contacte al administrador.</p>
+                  )}
                 </div>
               </div>
               <div className="flex justify-center mt-4">
@@ -273,7 +286,7 @@ const RegistroDocentes = () => {
           </div>
         </footer>
       </div>
-      <style jsx global>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
           background: #fff;

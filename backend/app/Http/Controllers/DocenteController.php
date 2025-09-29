@@ -79,6 +79,24 @@ class DocenteController extends Controller
                     $acceso = \App\Models\Acceso::find($docente->acceso_id);
                     $correo = $acceso ? $acceso->correo : null;
                 }
+                // Obtener rol (desde acceso)
+                $rolId = null;
+                $rolNombre = null;
+                if ($docente->acceso_id) {
+                    $acceso = \App\Models\Acceso::find($docente->acceso_id);
+                    if ($acceso && $acceso->rol_id) {
+                        $rolId = $acceso->rol_id;
+                        $rol = \App\Models\Rol::find($rolId);
+                        $rolNombre = $rol ? $rol->nombre : null;
+                    }
+                }
+                // Obtener cargo
+                $cargoId = $docente->cargo_id ?? null;
+                $cargoNombre = null;
+                if ($cargoId) {
+                    $cargo = \App\Models\Cargo::find($cargoId);
+                    $cargoNombre = $cargo ? $cargo->nombre : null;
+                }
                 return [
                     'docente_id' => $docente->docente_id,
                     'titulo' => $docente->titulo,
@@ -86,6 +104,10 @@ class DocenteController extends Controller
                     'apellido_paterno' => $docente->apellido_paterno,
                     'apellido_materno' => $docente->apellido_materno,
                     'correo' => $correo,
+                    'cargo_id' => $cargoId,
+                    'cargo_nombre' => $cargoNombre,
+                    'rol_id' => $rolId,
+                    'rol_nombre' => $rolNombre,
                     'facultades' => $docente->facultades->pluck('nombre')->toArray(),
                     'carreras' => $docente->carreras->pluck('nombre')->toArray(),
                 ];

@@ -19,7 +19,8 @@ class PersonalController extends Controller
             'apellido_materno' => 'nullable|string',
             'facultad_id' => 'required|integer', // Solo para la relación pivote
             'titulo' => 'nullable|string',
-            'cargo_id' => 'required|integer',
+            // Permitir registrar sin cargo
+            'cargo_id' => 'nullable|integer|exists:cargo,cargo_id',
             'correo' => 'required|email|unique:acceso,correo',
             'contrasena' => 'required|string',
             'rol_id' => 'required|integer|exists:rol,rol_id',
@@ -38,7 +39,7 @@ class PersonalController extends Controller
             'apellido_paterno' => $validated['apellido_paterno'],
             'apellido_materno' => $validated['apellido_materno'] ?? null,
             'titulo' => $validated['titulo'] ?? null,
-            'cargo_id' => $validated['cargo_id'],
+            'cargo_id' => $validated['cargo_id'] ?? null,
             'acceso_id' => $acceso->acceso_id,
             'facultad_id' => $validated['facultad_id']
         ]);
