@@ -318,6 +318,42 @@ const Docentes = () => {
     setCargoModalError("");
   };
 
+  const handleGuardarCargoRol = async () => {
+    if (!selectedDocente) return;
+    setCargoModalLoading(true);
+    setCargoModalError("");
+    try {
+      // Ejecutar ambas actualizaciones en serie
+      const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+      const updates = [];
+      // Actualizar cargo (puede ser vacío)
+      updates.push(
+        fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/cargo`, {
+          method: 'PATCH', headers, body: JSON.stringify({ cargo_id: selectedCargo || null })
+        }).then(r => r.json())
+      );
+      // Actualizar rol (puede ser vacío)
+      updates.push(
+        fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/rol`, {
+          method: 'PATCH', headers, body: JSON.stringify({ rol_id: selectedAdminCargo || null })
+        }).then(r => r.json())
+      );
+      const [cargoRes, rolRes] = await Promise.all(updates);
+      if ((cargoRes && cargoRes.success !== false) && (rolRes && rolRes.success !== false)) {
+        // Refrescar lista de docentes para reflejar cambios
+        const res = await fetch('http://localhost:8000/api/docentes');
+        const data = await res.json();
+        if (data.success) setDocentesData(data.docentes);
+        handleCloseCargoModal();
+      } else {
+        setCargoModalError((cargoRes && cargoRes.message) || (rolRes && rolRes.message) || 'No se pudieron guardar los cambios.');
+      }
+    } catch (e) {
+      setCargoModalError('Error de conexión al guardar.');
+    }
+    setCargoModalLoading(false);
+  };
+
   // Cargar lista de cargos cuando se abre el modal (para uso futuro)
   useEffect(() => {
     if (!cargoModalOpen) return;
@@ -848,9 +884,9 @@ const Docentes = () => {
                     </select>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleCloseCargoModal}>Cerrar</button>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded opacity-60 cursor-not-allowed" title="Próximamente" disabled>
-                      Guardar
+                    <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleCloseCargoModal} disabled={cargoModalLoading}>Cerrar</button>
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-60" onClick={handleGuardarCargoRol} disabled={cargoModalLoading}>
+                      {cargoModalLoading ? 'Guardando...' : 'Guardar'}
                     </button>
                   </div>
                 </div>

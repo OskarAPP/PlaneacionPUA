@@ -268,4 +268,61 @@ class DocenteController extends Controller
             ->get();
         return response()->json($materias);
     }
+    
+    // Actualizar cargo del docente (nullable)
+    public function actualizarCargo(Request $request, $docente_id)
+    {
+        $request->validate([
+            'cargo_id' => 'nullable|integer|exists:cargo,cargo_id',
+        ]);
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json(['success' => false, 'message' => 'Docente no encontrado.'], 404);
+        }
+        $docente->cargo_id = $request->input('cargo_id');
+        $docente->save();
+        $cargoNombre = null;
+        if ($docente->cargo_id) {
+            $cargo = \App\Models\Cargo::find($docente->cargo_id);
+            $cargoNombre = $cargo ? $cargo->nombre : null;
+        }
+        return response()->json([
+            'success' => true,
+            'docente_id' => $docente->docente_id,
+            'cargo_id' => $docente->cargo_id,
+            'cargo_nombre' => $cargoNombre,
+        ]);
+    }
+
+    // Actualizar rol (cargo administrativo) del docente a través de su acceso
+    public function actualizarRol(Request $request, $docente_id)
+    {
+        $request->validate([
+            'rol_id' => 'nullable|integer|exists:rol,rol_id',
+        ]);
+        $docente = Docente::find($docente_id);
+        if (!$docente) {
+            return response()->json(['success' => false, 'message' => 'Docente no encontrado.'], 404);
+        }
+        if (!$docente->acceso_id) {
+            return response()->json(['success' => false, 'message' => 'El docente no tiene acceso asociado.'], 422);
+        }
+        $acceso = \App\Models\Acceso::find($docente->acceso_id);
+        if (!$acceso) {
+            return response()->json(['success' => false, 'message' => 'Acceso no encontrado.'], 404);
+        }
+        $acceso->rol_id = $request->input('rol_id');
+        $acceso->save();
+        $rolNombre = null;
+        if ($acceso->rol_id) {
+            $rol = \App\Models\Rol::find($acceso->rol_id);
+            $rolNombre = $rol ? $rol->nombre : null;
+        }
+        return response()->json([
+            'success' => true,
+            'docente_id' => $docente->docente_id,
+            'rol_id' => $acceso->rol_id,
+            'rol_nombre' => $rolNombre,
+        ]);
+    }
 }
