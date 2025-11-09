@@ -21,42 +21,162 @@ const Libros = () => {
   const [sortOrder, setSortOrder] = useState("az");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [sheetOption, setSheetOption] = useState('A-GENERAL');
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Generador de ficha bibliográfica
+  const sheetOptions = [
+    { value: 'A-GENERAL', label: 'A-GENERAL' },
+    { value: 'ACERVO GRAL. ACT. 1', label: 'ACERVO GRAL. ACT. 1' },
+    { value: 'A-CONSULTA', label: 'A-CONSULTA' },
+    { value: 'all', label: 'Todas las hojas' },
+  ];
+
   const construirFicha = (item) => {
     if (!item) return "";
+    if (item.ficha) return item.ficha;
     const autor = item.autor || "Autor desconocido";
-    const anio = item.anio_publicacion || "s.f.";
-    const titulo = item.titulo || item.nombre || "Título";
-    const editorial = item.editorial || "Editorial";
-    const lugar = item.lugar_publicacion ? `${item.lugar_publicacion}.` : "";
-    const isbn = item.isbn ? `ISBN: ${item.isbn}.` : "";
-    return `${autor} (${anio}). ${titulo}. ${editorial}. ${lugar} ${isbn}`.replace(/\s+/g,' ').trim();
+    const anio = item.anio || "s.f.";
+    const titulo = item.titulo || "Título";
+    const editorial = item.editorial ? `${item.editorial}.` : "";
+    const vol = item.vol_ejem ? `${item.vol_ejem}.` : "";
+    const isbn = item.isbn || item.isbn_extra ? `ISBN: ${item.isbn || item.isbn_extra}.` : "";
+    return `${autor} (${anio}). ${titulo}. ${editorial} ${vol} ${isbn}`.replace(/\s+/g,' ').trim();
   };
 
-  useEffect(() => {
+  const loadBibliografia = React.useCallback(() => {
     setLoading(true);
+    setError('');
     fetch('http://localhost:8000/api/bibliografia')
-      .then(res => res.ok ? res.json() : Promise.reject('Error al cargar bibliografía'))
-      .then(data => {
-        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+      .then(async (res) => {
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          throw new Error(text || 'Respuesta no válida del servidor');
+        }
+        const body = await res.json();
+        return { ok: res.ok, body };
+      })
+      .then(({ ok, body }) => {
+        if (!ok || body.success === false) {
+          throw new Error(body.message || 'Error al cargar bibliografía');
+        }
+        const arr = Array.isArray(body?.data) ? body.data : Array.isArray(body) ? body : [];
         setBibliografia(arr);
         setLoading(false);
       })
-      .catch(() => {
-        setError('No se pudo cargar la bibliografía');
+      .catch((err) => {
+        setError(err.message || 'No se pudo cargar la bibliografía');
         setLoading(false);
       });
   }, []);
 
+  useEffect(() => {
+    loadBibliografia();
+  }, [loadBibliografia]);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+  };
+
+  const handleImport = (event) => {
+    event.preventDefault();
+    if (!selectedFile) {
+      setImportResult({ type: 'error', message: 'Selecciona un archivo XLSX antes de importar.', summary: null });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    if (sheetOption) {
+      formData.append('sheet', sheetOption);
+    }
+
+    setImporting(true);
+    setImportResult(null);
+
+    fetch('http://localhost:8000/api/bibliografia/import', {
+      method: 'POST',
+      body: formData,
+    })
+      .then(async (res) => {
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          throw new Error(text || 'Respuesta no válida del servidor');
+        }
+        const body = await res.json();
+        return { ok: res.ok, body };
+      })
+      .then(({ ok, body }) => {
+        if (!ok || body.success === false) {
+          throw new Error(body.message || 'No se pudo importar el archivo');
+        }
+        setImportResult({ type: 'ok', message: body.message || 'Importación finalizada', summary: body.summary || null });
+        setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        loadBibliografia();
+      })
+      .catch(err => {
+        setImportResult({ type: 'error', message: err.message || 'Error al importar', summary: null });
+      })
+      .finally(() => setImporting(false));
+  };
+
+  const renderImportSummary = (summary) => {
+    if (!summary) return null;
+    const skippedEntries = Object.entries(summary.skipped_rows || {});
+    return (
+      <div className="mt-3 text-xs bg-white/70 dark:bg-gray-900 border border-blue-100 dark:border-blue-700 rounded p-3 space-y-2">
+        <div className="flex gap-4">
+          <span><strong>Creado:</strong> {summary.created}</span>
+          <span><strong>Actualizado:</strong> {summary.updated}</span>
+        </div>
+        {summary.processed_sheets?.length > 0 && (
+          <div><strong>Hojas procesadas:</strong> {summary.processed_sheets.join(', ')}</div>
+        )}
+        {skippedEntries.length > 0 && (
+          <div>
+            <strong>Filas omitidas:</strong>
+            <ul className="list-disc pl-5 space-y-1">
+              {skippedEntries.map(([sheet, rows]) => (
+                <li key={sheet}>
+                  <span className="font-semibold">{sheet}:</span> {rows.map(r => `Fila ${r.row} (${r.motivo})`).join('; ')}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Filtrado y ordenamiento
   const filteredItems = bibliografia
-    .filter(i => (i.titulo || "").toLowerCase().includes(searchTerm.toLowerCase()) || (i.autor||"").toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(i => {
+      const needle = searchTerm.toLowerCase();
+      return (
+        (i.titulo || "").toLowerCase().includes(needle) ||
+        (i.autor || "").toLowerCase().includes(needle) ||
+        (i.editorial || "").toLowerCase().includes(needle) ||
+        (i.clasificacion || "").toLowerCase().includes(needle) ||
+        (i.isbn || "").toLowerCase().includes(needle) ||
+        (i.item || "").toLowerCase().includes(needle)
+      );
+    })
     .sort((a,b) => {
       const ta = (a.titulo||"").toLowerCase();
       const tb = (b.titulo||"").toLowerCase();
       return sortOrder === 'az' ? ta.localeCompare(tb) : tb.localeCompare(ta);
     });
+
+  const renderValue = (value) => {
+    if (value === null || value === undefined || value === '') return '—';
+    return value;
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -178,6 +298,46 @@ const Libros = () => {
                 </select>
               </div>
             </div>
+            <div className="bg-white border rounded-md p-4 mb-6 dark:bg-gray-800 dark:border-gray-700">
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Importar inventario bibliográfico</h3>
+              <form onSubmit={handleImport} className="flex flex-col lg:flex-row lg:items-end gap-3">
+                <div className="flex-1">
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Archivo XLSX</label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleFileChange}
+                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Hoja a importar</label>
+                  <select
+                    value={sheetOption}
+                    onChange={e => setSheetOption(e.target.value)}
+                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                  >
+                    {sheetOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  disabled={importing}
+                  className="px-6 py-2 bg-[#3578b3] text-white rounded font-semibold min-w-[140px] disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800"
+                >
+                  {importing ? 'Importando…' : 'Importar' }
+                </button>
+              </form>
+              {importResult && (
+                <div className={`mt-3 text-sm px-3 py-2 rounded border ${importResult.type === 'ok' ? 'bg-green-50 border-green-300 text-green-700 dark:bg-green-900/20 dark:border-green-700 dark:text-green-200' : 'bg-red-50 border-red-300 text-red-700 dark:bg-red-900/20 dark:border-red-700 dark:text-red-200'}`}>
+                  {importResult.message}
+                  {renderImportSummary(importResult.summary)}
+                </div>
+              )}
+            </div>
             {/* Lista de libros */}
             <div className="bg-[#d6edf9] text-[#1a3c5a] text-base font-semibold rounded-t-md px-4 py-2 text-center border border-[#b5d6ea] dark:bg-blue-950 dark:text-blue-200 dark:border-blue-900">Bibliografía</div>
             <div className="overflow-x-auto">
@@ -191,34 +351,46 @@ const Libros = () => {
                     <tr className="bg-white dark:bg-gray-900">
                       <th className="border px-2 py-2 dark:border-blue-900">#</th>
                       <th className="border px-2 py-2 dark:border-blue-900">Autor</th>
-                      <th className="border px-2 py-2 dark:border-blue-900">Año</th>
                       <th className="border px-2 py-2 dark:border-blue-900">Título</th>
                       <th className="border px-2 py-2 dark:border-blue-900">Editorial</th>
-                      <th className="border px-2 py-2 dark:border-blue-900">Lugar</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Edición</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Clasificación</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Cutter</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Año</th>
                       <th className="border px-2 py-2 dark:border-blue-900">ISBN</th>
-                      <th className="border px-2 py-2 dark:border-blue-900">Materia</th>
-                      <th className="border px-2 py-2 dark:border-blue-900">Carrera</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Vol./Ejem.</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Item</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">ISBN extra</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Obsoletos</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Vol. obsoletos</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Cantidad total</th>
+                      <th className="border px-2 py-2 dark:border-blue-900">Observación</th>
                       <th className="border px-2 py-2 dark:border-blue-900">Ficha</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredItems.length === 0 ? (
-                      <tr><td colSpan="10" className="text-center py-4">No hay registros.</td></tr>
+                      <tr><td colSpan="17" className="text-center py-4">No hay registros.</td></tr>
                     ) : (
                       filteredItems.map((item, idx) => {
-                        const carreraNombre = item.materia?.carrera?.nombre || '—';
-                        const materiaNombre = item.materia?.nombre || '—';
                         return (
                           <tr key={item.id} className="hover:bg-blue-50 dark:hover:bg-gray-700">
                             <td className="border px-2 py-1 dark:border-blue-900">{idx + 1}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.autor}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.anio_publicacion}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.titulo}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.editorial}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.lugar_publicacion || '—'}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{item.isbn || '—'}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{materiaNombre}</td>
-                            <td className="border px-2 py-1 dark:border-blue-900">{carreraNombre}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.autor)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.titulo)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.editorial)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.edicion)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.clasificacion)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.cutter)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.anio)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.isbn)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.vol_ejem)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.item)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.isbn_extra)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.ti_obsoletos)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.volum_obsol)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.cant_total)}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.observacion)}</td>
                             <td className="border px-2 py-1 dark:border-blue-900 max-w-[260px] whitespace-pre-line">{construirFicha(item)}</td>
                           </tr>
                         );
@@ -239,30 +411,6 @@ const Libros = () => {
           </div>
         </footer>
       </div>
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          background: #fff;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #2563eb;
-          border-radius: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #fff;
-        }
-        @media (prefers-color-scheme: dark) {
-          .custom-scrollbar::-webkit-scrollbar {
-            background: #1a202c;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #2563eb;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1a202c;
-          }
-        }
-      `}</style>
     </div>
   );
 }

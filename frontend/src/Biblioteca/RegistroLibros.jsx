@@ -1,20 +1,22 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Sidebar from '../Components/Sidebar';
 
-// Componente de Registro Local de Bibliografía (sin backend)
-// Objetivo: permitir capturar referencias y generar la ficha bibliográfica localmente.
-// Futuro backend: POST a /api/bibliografia con los mismos campos.
-
-const anioActual = new Date().getFullYear();
-
 const camposIniciales = {
-  materia_id: '', // Seleccionable cuando haya catálogo
-  autor: '',
-  anio_publicacion: '',
   titulo: '',
+  autor: '',
   editorial: '',
-  lugar_publicacion: '',
-  isbn: ''
+  edicion: '',
+  clasificacion: '',
+  cutter: '',
+  anio: '',
+  isbn: '',
+  vol_ejem: '',
+  item: '',
+  isbn_extra: '',
+  ti_obsoletos: '',
+  volum_obsol: '',
+  cant_total: '',
+  observacion: '',
 };
 
 const LibrosRegistro = () => {
@@ -35,123 +37,69 @@ const LibrosRegistro = () => {
 
   // ---------------- Lógica de formulario local ----------------
   const [form, setForm] = useState(camposIniciales);
-  // Eliminados registros locales porque ya no habrá tabla
   const [errores, setErrores] = useState({});
   const [tocar, setTocar] = useState({});
-  const [filtro, setFiltro] = useState('');
-  const [orden, setOrden] = useState('reciente');
   const [enviando, setEnviando] = useState(false);
-  const [mensaje, setMensaje] = useState(null); // { tipo: 'ok'|'error', texto: string }
+  const [mensaje, setMensaje] = useState(null);
 
-  // ---------------- Estados para selección jerárquica Facultad -> Carrera -> Materia ----------------
-  const [facultades, setFacultades] = useState([]);
-  const [carreras, setCarreras] = useState([]); // se llenará tras seleccionar facultad
-  const [materias, setMaterias] = useState([]); // se llenará tras seleccionar carrera
-  const [selectedFacultad, setSelectedFacultad] = useState('');
-  const [selectedCarrera, setSelectedCarrera] = useState('');
-  const [loadingFacultades, setLoadingFacultades] = useState(false);
-  const [errorFacultades, setErrorFacultades] = useState('');
-  const [loadingCarreras, setLoadingCarreras] = useState(false);
-  const [errorCarreras, setErrorCarreras] = useState('');
-  const [loadingMaterias, setLoadingMaterias] = useState(false);
-  const [errorMaterias, setErrorMaterias] = useState('');
-
-  // Cargar facultades al montar
   useEffect(() => {
-    setLoadingFacultades(true);
-    fetch('http://localhost:8000/api/facultades')
-      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener facultades'))
-      .then(data => {
-        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
-        setFacultades(arr);
-        setLoadingFacultades(false);
-      })
-      .catch(() => {
-        setErrorFacultades('No se pudieron cargar las facultades');
-        setLoadingFacultades(false);
+    function handleClickOutside(event) {
+      [cuentaRef, docentesRef, carrerasRef, materiasRef, academiasRef, facultadRef, compeGenRef, compeEspecRef, bibliotecaRef].forEach(ref => {
+        if (!ref.current) return;
+        const key = ref.current.dataset?.key;
+        if (key && !ref.current.contains(event.target)) {
+          setDropdownOpen(prev => ({ ...prev, [key]: false }));
+        }
       });
+      if (cuentaRef.current && !cuentaRef.current.contains(event.target)) {
+        setCuentaOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Efecto: cuando cambia la facultad cargar carreras
   useEffect(() => {
-    if (!selectedFacultad) {
-      setCarreras([]);
-      setSelectedCarrera('');
-      setMaterias([]);
-      setForm(prev => ({ ...prev, materia_id: '' }));
-      return;
+    function handleSidebarClickOutside(event) {
+      const sidebar = document.querySelector('aside');
+      if (sidebarOpen && sidebar && !sidebar.contains(event.target)) {
+        setSidebarOpen(false);
+      }
     }
-    setLoadingCarreras(true);
-    setErrorCarreras('');
-    fetch(`http://localhost:8000/api/carreras/facultad/${selectedFacultad}`)
-      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener carreras'))
-      .then(data => {
-        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
-        setCarreras(arr);
-        setLoadingCarreras(false);
-        // Reset inferiores
-        setSelectedCarrera('');
-        setMaterias([]);
-        setForm(prev => ({ ...prev, materia_id: '' }));
-      })
-      .catch(() => {
-        setErrorCarreras('No se pudieron cargar las carreras');
-        setLoadingCarreras(false);
-      });
-  }, [selectedFacultad]);
+    document.addEventListener('mousedown', handleSidebarClickOutside);
+    return () => document.removeEventListener('mousedown', handleSidebarClickOutside);
+  }, [sidebarOpen]);
 
-  // Efecto: cuando cambia la carrera cargar materias
-  useEffect(() => {
-    if (!selectedCarrera) {
-      setMaterias([]);
-      setForm(prev => ({ ...prev, materia_id: '' }));
-      return;
-    }
-    setLoadingMaterias(true);
-    setErrorMaterias('');
-    fetch(`http://localhost:8000/api/materias/carrera/${selectedCarrera}`)
-      .then(r => r.ok ? r.json() : Promise.reject('Error al obtener materias'))
-      .then(data => {
-        const arr = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
-        setMaterias(arr);
-        setLoadingMaterias(false);
-        setForm(prev => ({ ...prev, materia_id: '' }));
-      })
-      .catch(() => {
-        setErrorMaterias('No se pudieron cargar las materias');
-        setLoadingMaterias(false);
-      });
-  }, [selectedCarrera]);
-
-  // Validaciones simples
   const validar = (f) => {
     const e = {};
-    if (!f.materia_id) e.materia_id = 'Materia requerida';
     if (!f.autor.trim()) e.autor = 'Autor requerido';
     if (!f.titulo.trim()) e.titulo = 'Título requerido';
-    if (!f.editorial.trim()) e.editorial = 'Editorial requerida';
-    if (!f.anio_publicacion) e.anio_publicacion = 'Año requerido';
-    else if (Number(f.anio_publicacion) < 1800 || Number(f.anio_publicacion) > anioActual) e.anio_publicacion = 'Año inválido';
-    if (f.isbn && !/^([0-9]-?){10,13}$/.test(f.isbn.replace(/\s+/g,''))) e.isbn = 'ISBN no válido (solo dígitos y guiones)';
+    if (f.anio) {
+      const valor = Number(f.anio);
+      const limiteSuperior = new Date().getFullYear() + 1;
+      if (Number.isNaN(valor) || valor < 1901 || valor > limiteSuperior) {
+        e.anio = 'Año inválido (≥1901)';
+      }
+    }
+    if (f.cant_total) {
+      const valor = Number(f.cant_total);
+      if (Number.isNaN(valor) || valor < 0) {
+        e.cant_total = 'Cantidad inválida';
+      }
+    }
     return e;
   };
 
   const ficha = useMemo(() => {
     if (!form.autor && !form.titulo) return '';
     const autor = form.autor || 'Autor desconocido';
-    const anio = form.anio_publicacion || 's.f.';
+    const anio = form.anio || 's.f.';
     const titulo = form.titulo ? `${form.titulo}.` : '';
     const editorial = form.editorial ? `${form.editorial}.` : '';
-    const lugar = form.lugar_publicacion ? `${form.lugar_publicacion}.` : '';
-    const isbn = form.isbn ? `ISBN: ${form.isbn}.` : '';
-    return `${autor} (${anio}). ${titulo} ${editorial} ${lugar} ${isbn}`.replace(/\s+/g,' ').trim();
+    const volumen = form.vol_ejem ? `${form.vol_ejem}.` : '';
+    const isbn = form.isbn || form.isbn_extra ? `ISBN: ${form.isbn || form.isbn_extra}.` : '';
+    return `${autor} (${anio}). ${titulo} ${editorial} ${volumen} ${isbn}`.replace(/\s+/g, ' ').trim();
   }, [form]);
-
-  // Materias filtradas localmente (si la lista fuera grande se podría migrar a búsqueda server-side)
-  const materiasFiltradas = useMemo(() => {
-    if (!filtro.trim()) return materias;
-    return materias.filter(m => (m.nombre || '').toLowerCase().includes(filtro.toLowerCase()));
-  }, [filtro, materias]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -171,24 +119,49 @@ const LibrosRegistro = () => {
     setErrores({});
   };
 
-  const onAdd = (e) => {
+  const sanitizePayload = () => {
+    const payload = {};
+    Object.entries(form).forEach(([key, value]) => {
+      if (value === null || value === undefined) return;
+      const trimmed = typeof value === 'string' ? value.trim() : value;
+      if (trimmed === '') return;
+      if (key === 'anio' || key === 'cant_total') {
+        const numero = Number(trimmed);
+        if (!Number.isNaN(numero)) payload[key] = numero;
+        return;
+      }
+      payload[key] = trimmed;
+    });
+    return payload;
+  };
+
+  const onSubmit = (e) => {
     e.preventDefault();
     const errs = validar(form);
     setErrores(errs);
     if (Object.keys(errs).length > 0) return;
     setEnviando(true);
     setMensaje(null);
+    const payload = sanitizePayload();
     fetch('http://localhost:8000/api/bibliografia', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
     })
-      .then(r => r.json().then(body => ({ ok: r.ok, body })))
-      .then(({ ok, body }) => {
-        if (!ok || !body.success) {
-          throw new Error(body.message || 'Error al registrar');
+      .then(async (res) => {
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          throw new Error(text || 'Respuesta no válida del servidor');
         }
-        setMensaje({ tipo: 'ok', texto: body.message || 'Registrado correctamente' });
+        const body = await res.json();
+        return { ok: res.ok, body };
+      })
+      .then(({ ok, body }) => {
+        if (!ok || body.success === false) {
+          throw new Error(body.message || 'No se pudo registrar');
+        }
+        setMensaje({ tipo: 'ok', texto: body.message || 'Registro creado correctamente' });
         resetForm();
       })
       .catch(err => {
@@ -241,106 +214,82 @@ const LibrosRegistro = () => {
           <div className="w-full max-w-5xl">
             {/* Bloque Formulario */}
             <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Registro Bibliográfico</div>
-            <form onSubmit={onAdd} className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+            <form onSubmit={onSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
               {mensaje && (
                 <div className={`text-sm px-3 py-2 rounded border ${mensaje.tipo === 'ok' ? 'bg-green-50 border-green-300 text-green-700 dark:bg-green-900/30 dark:border-green-600 dark:text-green-300' : 'bg-red-50 border-red-300 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-300'}`}>{mensaje.texto}</div>
               )}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {/* Selección jerárquica */}
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Facultad</label>
-                  <select
-                    value={selectedFacultad}
-                    onChange={e => setSelectedFacultad(e.target.value)}
-                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-                  >
-                    <option value="">-- Seleccione --</option>
-                    {loadingFacultades && <option>Cargando...</option>}
-                    {!loadingFacultades && errorFacultades && <option>{errorFacultades}</option>}
-                    {!loadingFacultades && !errorFacultades && facultades.map(f => (
-                      <option key={f.facultad_id} value={f.facultad_id}>{f.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Carrera</label>
-                  <select
-                    value={selectedCarrera}
-                    onChange={e => setSelectedCarrera(e.target.value)}
-                    disabled={!selectedFacultad || loadingCarreras}
-                    className="w-full border rounded px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-                  >
-                    <option value="">-- Seleccione --</option>
-                    {loadingCarreras && <option>Cargando...</option>}
-                    {!loadingCarreras && errorCarreras && <option>{errorCarreras}</option>}
-                    {!loadingCarreras && !errorCarreras && carreras.map(c => (
-                      <option key={c.carrera_id} value={c.carrera_id}>{c.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="md:col-span-1 lg:col-span-2">
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Materia *</label>
-                  {selectedCarrera && materias.length > 8 && (
-                    <input
-                      placeholder="Filtrar materias..."
-                      value={filtro}
-                      onChange={e => setFiltro(e.target.value)}
-                      className="mb-1 w-full border rounded px-2 py-1 text-xs dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-                    />
-                  )}
-                  <select
-                    name="materia_id"
-                    value={form.materia_id}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    disabled={!selectedCarrera || loadingMaterias}
-                    className="w-full border rounded px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-                  >
-                    <option value="">-- Seleccione --</option>
-                    {loadingMaterias && <option>Cargando...</option>}
-                    {!loadingMaterias && errorMaterias && <option>{errorMaterias}</option>}
-                    {!loadingMaterias && !errorMaterias && materiasFiltradas.map(m => (
-                      <option key={m.materia_id} value={m.materia_id}>{m.nombre}</option>
-                    ))}
-                  </select>
-                  {tocar.materia_id && errores.materia_id && <p className="text-red-600 text-xs mt-1">{errores.materia_id}</p>}
-                </div>
-                <div className="md:col-span-2 lg:col-span-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="md:col-span-2 lg:col-span-3">
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Autor *</label>
                   <input name="autor" value={form.autor} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
                   {tocar.autor && errores.autor && <p className="text-red-600 text-xs mt-1">{errores.autor}</p>}
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Año *</label>
-                  <input name="anio_publicacion" type="number" value={form.anio_publicacion} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
-                  {tocar.anio_publicacion && errores.anio_publicacion && <p className="text-red-600 text-xs mt-1">{errores.anio_publicacion}</p>}
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">ISBN</label>
-                  <input name="isbn" value={form.isbn} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
-                  {tocar.isbn && errores.isbn && <p className="text-red-600 text-xs mt-1">{errores.isbn}</p>}
-                </div>
-                <div className="md:col-span-2 lg:col-span-4">
+                <div className="md:col-span-2 lg:col-span-3">
                   <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Título *</label>
                   <input name="titulo" value={form.titulo} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
                   {tocar.titulo && errores.titulo && <p className="text-red-600 text-xs mt-1">{errores.titulo}</p>}
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Editorial *</label>
-                  <input name="editorial" value={form.editorial} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
-                  {tocar.editorial && errores.editorial && <p className="text-red-600 text-xs mt-1">{errores.editorial}</p>}
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Editorial</label>
+                  <input name="editorial" value={form.editorial} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Lugar de publicación</label>
-                  <input name="lugar_publicacion" value={form.lugar_publicacion} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Edición</label>
+                  <input name="edicion" value={form.edicion} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
                 </div>
-                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-2">
-                  <label className="block text-gray-700 font-semibold dark:text-gray-200">Vista previa ficha</label>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Clasificación</label>
+                  <input name="clasificacion" value={form.clasificacion} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Cutter</label>
+                  <input name="cutter" value={form.cutter} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Año</label>
+                  <input name="anio" type="number" value={form.anio} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  {tocar.anio && errores.anio && <p className="text-red-600 text-xs mt-1">{errores.anio}</p>}
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">ISBN</label>
+                  <input name="isbn" value={form.isbn} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vol./Ejem.</label>
+                  <input name="vol_ejem" value={form.vol_ejem} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Item</label>
+                  <input name="item" value={form.item} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">ISBN extra</label>
+                  <input name="isbn_extra" value={form.isbn_extra} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">TI. obsoletos</label>
+                  <input name="ti_obsoletos" value={form.ti_obsoletos} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vol. obsoletos</label>
+                  <input name="volum_obsol" value={form.volum_obsol} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Cantidad total</label>
+                  <input name="cant_total" type="number" value={form.cant_total} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  {tocar.cant_total && errores.cant_total && <p className="text-red-600 text-xs mt-1">{errores.cant_total}</p>}
+                </div>
+                <div className="md:col-span-2 lg:col-span-3">
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Observación</label>
+                  <textarea name="observacion" value={form.observacion} onChange={onChange} rows={3} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                </div>
+                <div className="md:col-span-2 lg:col-span-3">
+                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vista previa ficha</label>
                   <div className="text-xs bg-gray-50 dark:bg-gray-900 border rounded px-3 py-2 dark:border-gray-700 min-h-[46px] whitespace-pre-wrap">{ficha || '—'}</div>
                 </div>
               </div>
               <div className="flex justify-center gap-4">
-                <button type="submit" disabled={enviando} className="bg-[#3578b3] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">{enviando ? 'Guardando...' : 'Agregar'}</button>
+                <button type="submit" disabled={enviando} className="bg-[#3578b3] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">{enviando ? 'Guardando...' : 'Guardar'}</button>
                 <button type="button" disabled={enviando} onClick={resetForm} className="border font-medium px-10 py-2 rounded hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed dark:hover:bg-gray-700 dark:border-gray-600">Limpiar</button>
               </div>
             </form>
@@ -357,16 +306,6 @@ const LibrosRegistro = () => {
         </footer>
       </div>
 
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; background: #fff; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #fff; }
-        @media (prefers-color-scheme: dark) {
-          .custom-scrollbar::-webkit-scrollbar { background: #1a202c; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: #2563eb; }
-          .custom-scrollbar::-webkit-scrollbar-track { background: #1a202c; }
-        }
-      `}</style>
     </div>
   );
 };

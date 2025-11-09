@@ -9,6 +9,7 @@ const PanelAcceso = () => {
   const [greeting, setGreeting] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [notificaciones, setNotificaciones] = useState([]);
+  const [notifModalOpen, setNotifModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const estadisticasRef = useRef(null);
   const cuentaRef = useRef(null);
@@ -29,6 +30,22 @@ const PanelAcceso = () => {
     const interval = setInterval(fetchNotificaciones, 10000); // Actualiza cada 10 segundos
     return () => clearInterval(interval);
   }, []);
+
+  // Ordenar por prioridad (Urgente > Importante > resto) y por fecha desc
+  const prioridadValor = (tipo) => {
+    const t = (tipo || '').toString().toLowerCase();
+    if (t.includes('urgente')) return 0;
+    if (t.includes('importante')) return 1;
+    return 2;
+  };
+  const sortedNotifs = [...notificaciones].sort((a, b) => {
+    const pa = prioridadValor(a.tipo); const pb = prioridadValor(b.tipo);
+    if (pa !== pb) return pa - pb;
+    const da = new Date(a.fecha || a.created_at || 0).getTime();
+    const db = new Date(b.fecha || b.created_at || 0).getTime();
+    return db - da;
+  });
+  const top3Notifs = sortedNotifs.slice(0, 3);
 
   // Saludo dinámico
   useEffect(() => {
@@ -157,40 +174,39 @@ const PanelAcceso = () => {
                   </button>
                 </div>
                 {/* Dropdown de usuario */}
-                <div
-                  className="absolute right-0 top-10 z-50 w-40 text-base list-none bg-white dark:bg-gray-900 divide-gray-100 dark:divide-gray-800 rounded-lg shadow-lg hidden group-hover:block border border-gray-200 dark:border-gray-700"
-                >
-                  <ul className="py-2" role="none">
-                    <li>
-                      <a
-                        href="perfilusuario"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                        role="menuitem"
-                      >
-                        <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
-                        </svg>
-                        Perfil
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/logout"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                      >
-                        <svg className="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
-                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h11M4 8l3 3m-3-3l3-3m-7 7h7a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H3"/>
-                        </svg>
-                        Cerrar sesión
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </nav>
+
+      {notifModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+            <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={() => setNotifModalOpen(false)}>&times;</button>
+            <h2 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300">Todas las notificaciones</h2>
+            <div className="max-h-[60vh] overflow-auto pr-2 space-y-3">
+              {sortedNotifs.length === 0 ? (
+                <div className="text-gray-500 text-center">No hay notificaciones.</div>
+              ) : (
+                sortedNotifs.map((notif, idx) => (
+                  <div key={idx} className="flex items-start gap-3 border-b pb-3">
+                    <span className={`inline-block w-2 h-2 mt-2 rounded-full ${getNotifColor(notif.tipo)}`}></span>
+                    <div>
+                      <div className="font-semibold text-blue-700 dark:text-blue-300">{notif.tipo}</div>
+                      <div className="text-gray-700 dark:text-gray-200 text-sm">{notif.mensaje}</div>
+                      <div className="text-xs text-gray-400">{formatFecha(notif.fecha)}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="flex justify-end mt-4">
+              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onClick={() => setNotifModalOpen(false)}>Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SIDEBAR */}
       <aside 
@@ -359,12 +375,18 @@ const PanelAcceso = () => {
                   </div>
 
                   <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full dark:bg-gray-800/30">
-                    <h3 className="font-extrabold text-2xl text-white mb-3">Notificaciones Nuevas</h3>
-                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] dark:bg-gray-900/80">
-                      {notificaciones.length === 0 ? (
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-extrabold text-2xl text-white">Notificaciones Nuevas</h3>
+                      <button
+                        onClick={() => setNotifModalOpen(true)}
+                        className="text-sm text-black/90 underline hover:text-blue-500"
+                      >Ver todas</button>
+                    </div>
+                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] dark:bg-gray-900/80 cursor-pointer" onClick={() => setNotifModalOpen(true)}>
+                      {top3Notifs.length === 0 ? (
                         <div className="text-gray-500 text-center">No hay notificaciones recientes.</div>
                       ) : (
-                        notificaciones.map((notif, idx) => (
+                        top3Notifs.map((notif, idx) => (
                           <div key={idx} className="flex items-start gap-2">
                             <span className={`inline-block w-2 h-2 mt-2 rounded-full ${getNotifColor(notif.tipo)}`}></span>
                             <div>
