@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { genericas, especificas } from "../constants/puaConstants";
+import React, { useState, useEffect, useMemo } from "react";
 
-const CompetenciasPerfilEgresoTabs = () => {
+const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
   const [tab, setTab] = useState(0);
   const [selectedGenericas, setSelectedGenericas] = useState([]);
-  const [selectedEspecificas, setSelectedEspecificas] = useState([0, 1, 2]);
+  const [selectedEspecificas, setSelectedEspecificas] = useState([]);
   const [competenciasGenericas, setCompetenciasGenericas] = useState([]);
   const [competenciasEspecificas, setCompetenciasEspecificas] = useState([]);
-  const [carreraSeleccionada, setCarreraSeleccionada] = useState("");
-  const [facultadSeleccionada, setFacultadSeleccionada] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:8000/api/competenciasgenericas")
@@ -46,14 +43,26 @@ const CompetenciasPerfilEgresoTabs = () => {
   };
 
   // Específicas handlers
-  const handleCheckEsp = idx => {
-    setSelectedEspecificas(selectedEspecificas.includes(idx)
-      ? selectedEspecificas.filter(i => i !== idx)
-      : [...selectedEspecificas, idx]);
+  const handleCheckEsp = id => {
+    setSelectedEspecificas(selectedEspecificas.includes(id)
+      ? selectedEspecificas.filter(i => i !== id)
+      : [...selectedEspecificas, id]);
   };
-  const handleRemoveEsp = idx => {
-    setSelectedEspecificas(selectedEspecificas.filter(i => i !== idx));
+  const handleRemoveEsp = id => {
+    setSelectedEspecificas(selectedEspecificas.filter(i => i !== id));
   };
+
+  const filteredEspecificas = useMemo(() => {
+    return competenciasEspecificas.filter((competencia) => {
+      if (carreraId) {
+        return String(competencia.carrera_id) === String(carreraId);
+      }
+      if (facultadId) {
+        return String(competencia.facultad_id) === String(facultadId);
+      }
+      return true;
+    });
+  }, [competenciasEspecificas, carreraId, facultadId]);
 
   return (
     <div>
@@ -100,18 +109,16 @@ const CompetenciasPerfilEgresoTabs = () => {
           <>
             <div className="flex-1">
               <div className="bg-white border rounded p-2">
-                {competenciasEspecificas
-                  .filter(e => {
-                    if (carreraSeleccionada) return e.carrera_id == carreraSeleccionada;
-                    if (facultadSeleccionada) return e.facultad_id == facultadSeleccionada;
-                    return true;
-                  })
-                  .map((e, idx) => (
-                    <label key={e.competencia_esp_id || idx} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
-                      <input type="checkbox" checked={selectedEspecificas.includes(idx)} onChange={() => handleCheckEsp(idx)} />
-                      <span className="text-gray-800">{e.nombre}</span>
-                    </label>
-                  ))}
+                {filteredEspecificas.map((e) => (
+                  <label key={e.competencia_esp_id || e.id} className="flex items-center gap-2 px-2 py-1 border-b last:border-b-0 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedEspecificas.includes(e.competencia_esp_id)}
+                      onChange={() => handleCheckEsp(e.competencia_esp_id)}
+                    />
+                    <span className="text-gray-800">{e.nombre}</span>
+                  </label>
+                ))}
               </div>
             </div>
             <div className="flex flex-col justify-center items-center">
@@ -121,14 +128,18 @@ const CompetenciasPerfilEgresoTabs = () => {
             </div>
             <div className="flex-1">
               <div className="bg-white border rounded p-2 min-h-[120px]">
-                {selectedEspecificas.map(idx => (
-                  <div key={competenciasEspecificas[idx]?.competencia_esp_id || idx} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
-                    <span className="text-gray-800">{competenciasEspecificas[idx]?.nombre}</span>
-                    <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemoveEsp(idx)}>
-                      ×
-                    </button>
-                  </div>
-                ))}
+                {selectedEspecificas.map(id => {
+                  const competencia = competenciasEspecificas.find(c => String(c.competencia_esp_id) === String(id));
+                  if (!competencia) return null;
+                  return (
+                    <div key={competencia.competencia_esp_id} className="flex items-center justify-between px-2 py-1 border-b last:border-b-0">
+                      <span className="text-gray-800">{competencia.nombre}</span>
+                      <button type="button" className="text-gray-400 hover:text-red-600 ml-2" onClick={() => handleRemoveEsp(competencia.competencia_esp_id)}>
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </>

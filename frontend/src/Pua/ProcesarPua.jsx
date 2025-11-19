@@ -30,6 +30,9 @@ const ProcesarPua = () => {
   const [facultadSeleccionada, setFacultadSeleccionada] = useState(""); // Nuevo estado para facultad seleccionada
   // Cache local de nombres de plan por carrera
   const [planesPorCarrera, setPlanesPorCarrera] = useState({}); // { [carrera_id]: nombrePlan }
+  const [carrerasDisponibles, setCarrerasDisponibles] = useState([]);
+  const [carrerasLoading, setCarrerasLoading] = useState(false);
+  const [carrerasError, setCarrerasError] = useState('');
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
@@ -84,7 +87,11 @@ const ProcesarPua = () => {
 
   // Prefetch: cargar nombres de planes para las carreras visibles en el combo
   useEffect(() => {
-    const visibles = (docente?.carreras_full || []).filter(
+    const baseCarreras = facultadSeleccionada
+      ? (carrerasDisponibles || [])
+      : (docente?.carreras_full || []);
+
+    const visibles = baseCarreras.filter(
       c => !facultadSeleccionada || String(c.facultad_id) === String(facultadSeleccionada)
     );
     const faltantes = visibles.filter(c => !planesPorCarrera[String(c.carrera_id)]);
@@ -108,7 +115,7 @@ const ProcesarPua = () => {
       });
     });
     return () => { cancelado = true; };
-  }, [docente?.carreras_full, facultadSeleccionada]);
+  }, [docente?.carreras_full, facultadSeleccionada, carrerasDisponibles]);
 
   // Sincroniza carrera y materia cuando cambia la facultad
   useEffect(() => {
@@ -121,6 +128,40 @@ const ProcesarPua = () => {
       setPlanEstudio(null);
     }
   }, [facultadSeleccionada]);
+
+  // Actualiza el listado de carreras según la facultad seleccionada
+  useEffect(() => {
+    if (!facultadSeleccionada) {
+      setCarrerasDisponibles(docente?.carreras_full || []);
+      setCarrerasLoading(false);
+      setCarrerasError('');
+      return;
+    }
+
+    let cancelado = false;
+    setCarrerasLoading(true);
+    setCarrerasError('');
+    setCarrerasDisponibles([]);
+
+    fetch(`http://localhost:8000/api/carreras/facultad/${facultadSeleccionada}`)
+      .then(res => {
+        if (!res.ok) throw new Error('No se pudieron cargar las carreras de la facultad');
+        return res.json();
+      })
+      .then(data => {
+        if (cancelado) return;
+        const lista = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+        setCarrerasDisponibles(lista);
+        setCarrerasLoading(false);
+      })
+      .catch(err => {
+        if (cancelado) return;
+        setCarrerasError(err.message || 'Error al cargar carreras');
+        setCarrerasLoading(false);
+      });
+
+    return () => { cancelado = true; };
+  }, [facultadSeleccionada, docente?.carreras_full]);
 
   // Funciones para manejar eventos
   const handleAgregarSubcompetencia = () => {
@@ -135,7 +176,12 @@ const ProcesarPua = () => {
   // Definir accordionData DENTRO del componente y pasar materiaData y planEstudio
   const accordionData = [
     { title: "Datos del pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
-    { title: "Competencias del Perfil de Egreso", content: <CompetenciasPerfilEgresoTabs /> },
+    { title: "Competencias del Perfil de Egreso", content: (
+        <CompetenciasPerfilEgresoTabs
+          carreraId={carreraSeleccionada}
+          facultadId={facultadSeleccionada}
+        />
+      ) },
     { title: "Bibliografía sugerida", content: <BibliografiaSugerida materiaId={materiaIdSeleccionada} /> },
     { title: "Comité Curricular", content: <ComiteCurricular /> },
     { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
@@ -209,25 +255,24 @@ const ProcesarPua = () => {
                     onChange={e => {
                       const carreraId = e.target.value;
                       setCarreraSeleccionada(carreraId);
-                      // Buscar la facultad correspondiente a la carrera seleccionada
-                      const carreraObj = docente?.carreras_full?.find(c => c.carrera_id === carreraId);
+                      const fuente = [...(carrerasDisponibles || []), ...(docente?.carreras_full || [])];
+                      const carreraObj = fuente.find(c => String(c.carrera_id) === String(carreraId));
                       if (carreraObj && carreraObj.facultad_id) {
-                        setFacultadSeleccionada(carreraObj.facultad_id);
+                        setFacultadSeleccionada(String(carreraObj.facultad_id));
                       }
                     }}
                   >
                     <option value="">Seleccione una carrera...</option>
-                    {docente && docente.carreras_full && docente.carreras_full.length > 0 ? (
-                      docente.carreras_full
-                        .filter(carrera => !facultadSeleccionada || String(carrera.facultad_id) === String(facultadSeleccionada))
-                        .map((carrera) => (
-                          <option key={carrera.carrera_id} value={carrera.carrera_id}>
-                              {carrera.nombre}{planesPorCarrera[String(carrera.carrera_id)] ? ` — ${planesPorCarrera[String(carrera.carrera_id)]}` : ""}
-                          </option>
-                        ))
-                    ) : (
-                      <option>Sin carreras registradas</option>
+                    {carrerasLoading && <option disabled>Cargando carreras...</option>}
+                    {carrerasError && <option disabled>{carrerasError}</option>}
+                    {!carrerasLoading && !carrerasError && (carrerasDisponibles?.length || 0) === 0 && (
+                      <option disabled>No hay carreras para esta facultad</option>
                     )}
+                    {!carrerasLoading && !carrerasError && (carrerasDisponibles || []).map((carrera) => (
+                      <option key={carrera.carrera_id} value={String(carrera.carrera_id)}>
+                        {carrera.nombre}{planesPorCarrera[String(carrera.carrera_id)] ? ` — ${planesPorCarrera[String(carrera.carrera_id)]}` : ""}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex-1 min-w-[200px]">
