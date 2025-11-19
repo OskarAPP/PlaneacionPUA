@@ -160,6 +160,82 @@ class BibliografiaController extends Controller
         ], 201);
     }
 
+    public function lookup(Request $request)
+    {
+        $validated = $request->validate([
+            'q' => 'nullable|string|max:255',
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:25',
+            'isbn' => 'nullable|string|max:30',
+            'item' => 'nullable|string|max:50',
+        ]);
+
+        $term = trim((string) ($validated['q'] ?? ''));
+        $perPage = max(5, min((int) ($validated['per_page'] ?? 10), 25));
+
+        $query = Bibliografia::query()->select([
+            'id',
+            'TITULO',
+            'AUTOR',
+            'AÑO',
+            'EDITORIAL',
+            'ISBN',
+            'ISBN_EXTRA',
+            'ITEM',
+            'VOL_EJEM',
+        ]);
+
+        if (!empty($validated['item'])) {
+            $query->where('ITEM', $validated['item']);
+        }
+
+        if (!empty($validated['isbn'])) {
+            $query->where(function ($q) use ($validated) {
+                $q->where('ISBN', $validated['isbn'])
+                    ->orWhere('ISBN_EXTRA', $validated['isbn']);
+            });
+        }
+
+        if ($term !== '') {
+            $like = "%{$term}%";
+            $query->where(function ($q) use ($like) {
+                $q->where('TITULO', 'like', $like)
+                    ->orWhere('AUTOR', 'like', $like)
+                    ->orWhere('EDITORIAL', 'like', $like)
+                    ->orWhere('ISBN', 'like', $like)
+                    ->orWhere('ISBN_EXTRA', 'like', $like)
+                    ->orWhere('ITEM', 'like', $like);
+            });
+        }
+
+        $paginator = $query->orderBy('TITULO')->paginate($perPage);
+        $items = $paginator->getCollection()->map(function (Bibliografia $registro) {
+            $api = $registro->toApiArray();
+            return [
+                'id' => $api['id'],
+                'titulo' => $api['titulo'],
+                'autor' => $api['autor'],
+                'anio' => $api['anio'],
+                'editorial' => $api['editorial'],
+                'isbn' => $api['isbn'],
+                'isbn_extra' => $api['isbn_extra'],
+                'item' => $api['item'] ?? null,
+                'ficha' => $api['ficha'],
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $items,
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+            ],
+        ]);
+    }
+
     public function import(Request $request)
     {
         $data = $request->validate([
