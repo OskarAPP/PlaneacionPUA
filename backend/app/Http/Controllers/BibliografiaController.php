@@ -72,15 +72,36 @@ class BibliografiaController extends Controller
 
     public function index(Request $request)
     {
-        $query = Bibliografia::query();
+        $perPage = max(5, min((int) $request->integer('per_page', 25), 100));
+        $order = strtolower($request->query('order', 'asc')) === 'desc' ? 'desc' : 'asc';
+
+        $selectColumns = array_values(Bibliografia::COLUMN_MAP);
+        $selectColumns[] = 'id';
+
+        $query = Bibliografia::query()->select($selectColumns);
+
+        if ($request->filled('item')) {
+            $query->where('ITEM', $request->query('item'));
+        }
+
+        if ($request->filled('isbn')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('ISBN', $request->query('isbn'))
+                    ->orWhere('ISBN_EXTRA', $request->query('isbn'));
+            });
+        }
 
         if ($request->filled('search')) {
             $term = $request->query('search');
             $query->where(function ($q) use ($term) {
-                $q->where('TITULO', 'like', "%{$term}%")
-                    ->orWhere('AUTOR', 'like', "%{$term}%")
-                    ->orWhere('EDITORIAL', 'like', "%{$term}%")
-                    ->orWhere('CLASIFICACION', 'like', "%{$term}%");
+                $like = "%{$term}%";
+                $q->where('TITULO', 'like', $like)
+                    ->orWhere('AUTOR', 'like', $like)
+                    ->orWhere('EDITORIAL', 'like', $like)
+                    ->orWhere('CLASIFICACION', 'like', $like)
+                    ->orWhere('ITEM', 'like', $like)
+                    ->orWhere('ISBN', 'like', $like)
+                    ->orWhere('ISBN_EXTRA', 'like', $like);
             });
         }
 
@@ -92,11 +113,20 @@ class BibliografiaController extends Controller
             $query->where('AÑO', $request->query('anio'));
         }
 
-        $lista = $query->orderBy('TITULO')->get();
+        $paginator = $query->orderBy('TITULO', $order)->paginate($perPage);
+        $paginator->getCollection()->transform(fn (Bibliografia $item) => $item->toApiArray());
 
         return response()->json([
             'success' => true,
-            'data' => $lista->map->toApiArray(),
+            'data' => $paginator->items(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+            ],
         ]);
     }
 

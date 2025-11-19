@@ -18,7 +18,11 @@ const Libros = () => {
   // Estado para los libros
   const [bibliografia, setBibliografia] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
+  const [meta, setMeta] = useState({ current_page: 1, last_page: 1, per_page: 25, total: 0, from: 0, to: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -26,6 +30,8 @@ const Libros = () => {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState(null);
   const fileInputRef = useRef(null);
+
+  const perPageOptions = [10, 25, 50, 100];
 
   const sheetOptions = [
     { value: 'A-GENERAL', label: 'A-GENERAL' },
@@ -49,7 +55,17 @@ const Libros = () => {
   const loadBibliografia = React.useCallback(() => {
     setLoading(true);
     setError('');
-    fetch('http://localhost:8000/api/bibliografia')
+
+    const params = new URLSearchParams({
+      page: String(page),
+      per_page: String(perPage),
+      order: sortOrder === 'az' ? 'asc' : 'desc',
+    });
+    if (debouncedSearch.trim()) {
+      params.append('search', debouncedSearch.trim());
+    }
+
+    fetch(`http://localhost:8000/api/bibliografia?${params.toString()}`)
       .then(async (res) => {
         const contentType = res.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
@@ -63,19 +79,32 @@ const Libros = () => {
         if (!ok || body.success === false) {
           throw new Error(body.message || 'Error al cargar bibliografía');
         }
-        const arr = Array.isArray(body?.data) ? body.data : Array.isArray(body) ? body : [];
+        const arr = Array.isArray(body?.data) ? body.data : [];
         setBibliografia(arr);
+        setMeta(body.meta || { current_page: page, last_page: page, per_page: perPage, total: arr.length, from: arr.length ? 1 : 0, to: arr.length });
         setLoading(false);
       })
       .catch((err) => {
         setError(err.message || 'No se pudo cargar la bibliografía');
         setLoading(false);
       });
-  }, []);
+  }, [page, perPage, debouncedSearch, sortOrder]);
 
   useEffect(() => {
     loadBibliografia();
   }, [loadBibliografia]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setPage(1);
+      setDebouncedSearch(searchTerm.trim());
+    }, 350);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [perPage, sortOrder]);
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
@@ -126,6 +155,18 @@ const Libros = () => {
       .finally(() => setImporting(false));
   };
 
+  const handlePerPageChange = (event) => {
+    setPerPage(Number(event.target.value));
+  };
+
+  const goToPage = (targetPage) => {
+    const lastPage = meta?.last_page ?? 1;
+    if (targetPage < 1 || targetPage > lastPage || targetPage === page) {
+      return;
+    }
+    setPage(targetPage);
+  };
+
   const renderImportSummary = (summary) => {
     if (!summary) return null;
     const skippedEntries = Object.entries(summary.skipped_rows || {});
@@ -154,24 +195,14 @@ const Libros = () => {
     );
   };
 
-  // Filtrado y ordenamiento
-  const filteredItems = bibliografia
-    .filter(i => {
-      const needle = searchTerm.toLowerCase();
-      return (
-        (i.titulo || "").toLowerCase().includes(needle) ||
-        (i.autor || "").toLowerCase().includes(needle) ||
-        (i.editorial || "").toLowerCase().includes(needle) ||
-        (i.clasificacion || "").toLowerCase().includes(needle) ||
-        (i.isbn || "").toLowerCase().includes(needle) ||
-        (i.item || "").toLowerCase().includes(needle)
-      );
-    })
-    .sort((a,b) => {
-      const ta = (a.titulo||"").toLowerCase();
-      const tb = (b.titulo||"").toLowerCase();
-      return sortOrder === 'az' ? ta.localeCompare(tb) : tb.localeCompare(ta);
-    });
+  const currentPage = meta?.current_page ?? page;
+  const lastPage = Math.max(meta?.last_page ?? 1, 1);
+  const totalRows = meta?.total ?? 0;
+  const effectivePerPage = meta?.per_page ?? perPage;
+  const rangeFrom = meta?.from ?? (totalRows === 0 ? 0 : (currentPage - 1) * effectivePerPage + 1);
+  const rangeTo = meta?.to ?? (rangeFrom ? rangeFrom - 1 + bibliografia.length : bibliografia.length);
+  const baseIndex = rangeFrom ? rangeFrom - 1 : (currentPage - 1) * effectivePerPage;
+  const rangeLabel = bibliografia.length === 0 ? '0' : `${rangeFrom}-${rangeTo}`;
 
   const renderValue = (value) => {
     if (value === null || value === undefined || value === '') return '—';
@@ -328,7 +359,7 @@ const Libros = () => {
                   disabled={importing}
                   className="px-6 py-2 bg-[#3578b3] text-white rounded font-semibold min-w-[140px] disabled:opacity-60 disabled:cursor-not-allowed hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800"
                 >
-                  {importing ? 'Importando…' : 'Importar' }
+                  {importing ? 'Importando...' : 'Importar' }
                 </button>
               </form>
               {importResult && (
@@ -369,13 +400,13 @@ const Libros = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredItems.length === 0 ? (
+                    {bibliografia.length === 0 ? (
                       <tr><td colSpan="17" className="text-center py-4">No hay registros.</td></tr>
                     ) : (
-                      filteredItems.map((item, idx) => {
+                      bibliografia.map((item, idx) => {
                         return (
                           <tr key={item.id} className="hover:bg-blue-50 dark:hover:bg-gray-700">
-                            <td className="border px-2 py-1 dark:border-blue-900">{idx + 1}</td>
+                            <td className="border px-2 py-1 dark:border-blue-900">{baseIndex + idx + 1}</td>
                             <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.autor)}</td>
                             <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.titulo)}</td>
                             <td className="border px-2 py-1 dark:border-blue-900">{renderValue(item.editorial)}</td>
@@ -400,6 +431,38 @@ const Libros = () => {
                 </table>
               )}
             </div>
+            {!loading && !error && (
+              <div className="border border-t-0 border-[#b5d6ea] rounded-b-md px-4 py-3 flex flex-col gap-3 dark:border-blue-900">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm">
+                  <span>Mostrando {rangeLabel} de {totalRows}</span>
+                  <div className="flex items-center gap-2">
+                    <span>Por página:</span>
+                    <select value={perPage} onChange={handlePerPageChange} className="border rounded px-2 py-1 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
+                      {perPageOptions.map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage <= 1}
+                    className="px-3 py-1 border rounded disabled:opacity-60 disabled:cursor-not-allowed dark:border-gray-600"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-sm">Página {currentPage} de {lastPage}</span>
+                  <button
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage >= lastPage}
+                    className="px-3 py-1 border rounded disabled:opacity-60 disabled:cursor-not-allowed dark:border-gray-600"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </main>
         {/* Footer */}
