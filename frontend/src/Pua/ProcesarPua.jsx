@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 // Importaciones de los componentes modulares
 import SidebarProcesarPua from "./components/SidebarProcesarPua";
@@ -174,7 +174,7 @@ const ProcesarPua = () => {
   };
 
   // Definir accordionData DENTRO del componente y pasar materiaData y planEstudio
-  const accordionData = [
+  const accordionData = useMemo(() => [
     { title: "Datos del pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
     { title: "Competencias del Perfil de Egreso", content: (
         <CompetenciasPerfilEgresoTabs
@@ -187,7 +187,7 @@ const ProcesarPua = () => {
     { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
     { title: "Evaluación Final", content: <EvaluacionFinal /> },
     { title: "Evaluación Por Competencias", content: <EvaluacionPorCompetencias /> },
-  ];
+  ], [materiaData, planEstudio, carreraSeleccionada, facultadSeleccionada, materiaIdSeleccionada]);
 
   return (
     <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
