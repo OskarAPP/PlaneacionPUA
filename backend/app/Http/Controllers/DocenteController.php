@@ -118,6 +118,58 @@ class DocenteController extends Controller
         ]);
     }
 
+    public function lookup(Request $request)
+    {
+        $validated = $request->validate([
+            'q' => 'required|string|min:2|max:100',
+            'limit' => 'sometimes|integer|min:1|max:25',
+        ]);
+
+        $term = $validated['q'];
+        $limit = $validated['limit'] ?? 10;
+
+        $docentes = Docente::query()
+            ->where(function($query) use ($term) {
+                $like = '%' . $term . '%';
+                $query->where('nombre', 'like', $like)
+                    ->orWhere('apellido_paterno', 'like', $like)
+                    ->orWhere('apellido_materno', 'like', $like)
+                    ->orWhere('titulo', 'like', $like);
+            })
+            ->orderBy('nombre')
+            ->orderBy('apellido_paterno')
+            ->limit($limit)
+            ->get();
+
+        $data = $docentes->map(function (Docente $docente) {
+            return [
+                'id' => $docente->docente_id,
+                'titulo' => $docente->titulo,
+                'nombre' => $docente->nombre,
+                'apellido_paterno' => $docente->apellido_paterno,
+                'apellido_materno' => $docente->apellido_materno,
+                'display' => $this->formatNombreCompleto($docente),
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    protected function formatNombreCompleto(Docente $docente): string
+    {
+        $partes = array_filter([
+            $docente->titulo,
+            $docente->nombre,
+            $docente->apellido_paterno,
+            $docente->apellido_materno,
+        ]);
+
+        return trim(preg_replace('/\s+/', ' ', implode(' ', $partes)));
+    }
+
     // Asociar una facultad a un docente (tabla pivote docentefacultad)
     public function agregarFacultad(Request $request, $docente_id)
     {
