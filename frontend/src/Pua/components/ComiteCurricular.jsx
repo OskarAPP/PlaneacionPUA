@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import useDocente from "../hooks/useDocente";
-
-const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const API_BASE_URL = RAW_API_URL.endsWith("/") ? RAW_API_URL.slice(0, -1) : RAW_API_URL;
+import { usePuaModulo } from "../context/PuaDocumentoContext";
+import { API_BASE_URL } from "../utils/api";
 const MIN_DOCENTE_CHARS = 2;
 
 const formatDocenteDisplay = (docente = {}) => {
@@ -167,28 +166,72 @@ const DocenteLookupInput = ({ etiqueta, value, onSelect }) => {
   );
 };
 
+const defaultFirmantes = {
+  presidente: null,
+  secretario: null,
+  coordinador: null,
+  secretarioAcademico: null,
+  director: null,
+};
+
+const defaultModuloData = {
+  responsable: null,
+  participanteExtra: null,
+  firmantes: defaultFirmantes,
+};
+
 const ComiteCurricular = () => {
   const today = new Date();
   const fechaActual = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
   const { docente } = useDocente();
-  const [firmantes, setFirmantes] = useState({
-    presidente: null,
-    secretario: null,
-    coordinador: null,
-    secretarioAcademico: null,
-    director: null,
-  });
-  const [participanteExtra, setParticipanteExtra] = useState(null);
+  const [moduloData, setModuloData] = usePuaModulo("comite_curricular", defaultModuloData);
 
-  const updateFirmante = (clave, docente) => {
-    setFirmantes((prev) => ({
-      ...prev,
-      [clave]: normalizeDocente(docente),
-    }));
+  const firmantes = moduloData.firmantes || defaultFirmantes;
+  const participanteExtra = moduloData.participanteExtra || null;
+  const responsable = moduloData.responsable || null;
+  const docenteActivo = useMemo(() => normalizeDocente(docente), [docente]);
+  const docenteDisplay = responsable?.display || docenteActivo?.display || "Cargando docente...";
+
+  useEffect(() => {
+    if (docenteActivo && !responsable?.id) {
+      setModuloData(prev => ({
+        ...defaultModuloData,
+        ...prev,
+        responsable: docenteActivo,
+        firmantes: {
+          ...defaultFirmantes,
+          ...(prev?.firmantes || {}),
+        },
+      }));
+    }
+  }, [docenteActivo, responsable?.id, setModuloData]);
+
+  const updateFirmante = (clave, docenteSeleccionado) => {
+    setModuloData(prev => {
+      const base = {
+        ...defaultModuloData,
+        ...prev,
+      };
+      base.firmantes = {
+        ...defaultFirmantes,
+        ...(prev?.firmantes || {}),
+        [clave]: normalizeDocente(docenteSeleccionado),
+      };
+      return base;
+    });
   };
 
-  const docenteActivo = normalizeDocente(docente);
-  const docenteDisplay = docenteActivo?.display || "Cargando docente...";
+  const updateParticipanteExtra = (docenteSeleccionado) => {
+    setModuloData(prev => ({
+      ...defaultModuloData,
+      ...prev,
+      participanteExtra: normalizeDocente(docenteSeleccionado),
+      firmantes: {
+        ...defaultFirmantes,
+        ...(prev?.firmantes || {}),
+      },
+    }));
+  };
 
   return (
     <div className="border rounded bg-gray-50 p-4">
@@ -210,7 +253,7 @@ const ComiteCurricular = () => {
                   <DocenteLookupInput
                     etiqueta="Agregar participante extra"
                     value={participanteExtra}
-                    onSelect={(docente) => setParticipanteExtra(docente)}
+                    onSelect={(docente) => updateParticipanteExtra(docente)}
                   />
                 </div>
               </td>

@@ -12,6 +12,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\PuaDocumentoController;
 
 // Mueve el endpoint de login a la API
 Route::get('/notificaciones', [NotificacionController::class, 'index']);
@@ -84,3 +85,14 @@ Route::get('/bibliografia', [\App\Http\Controllers\BibliografiaController::class
 Route::post('/bibliografia', [\App\Http\Controllers\BibliografiaController::class, 'store']);
 Route::post('/bibliografia/import', [\App\Http\Controllers\BibliografiaController::class, 'import']);
 Route::get('/bibliografia/search', [\App\Http\Controllers\BibliografiaController::class, 'lookup']);
+
+Route::prefix('pua')->group(function () {
+	Route::post('/documentos', [PuaDocumentoController::class, 'store']);
+	Route::get('/documentos/{documento}', [PuaDocumentoController::class, 'show']);
+	Route::get('/documentos/{documento}/modulos', [PuaDocumentoController::class, 'modules']);
+	Route::put('/documentos/{documento}/modulos/{slug}', [PuaDocumentoController::class, 'saveModule']);
+	Route::get('/documentos/{documento}/versiones', [PuaDocumentoController::class, 'versions']);
+	Route::post('/documentos/{documento}/generar-pdf', [PuaDocumentoController::class, 'generatePdf']);
+});
+
+Route::get('/pua/versiones/{version}/descargar', [PuaDocumentoController::class, 'downloadVersion']);

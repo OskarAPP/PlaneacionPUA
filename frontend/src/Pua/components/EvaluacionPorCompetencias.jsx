@@ -1,15 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePuaModulo } from "../context/PuaDocumentoContext";
+
+const createDefaultInstrumentos = () => ([
+  { nombre: "Exades", porcentaje: "40" },
+  { nombre: "", porcentaje: "" },
+  { nombre: "", porcentaje: "" },
+  { nombre: "", porcentaje: "" },
+]);
 
 const EvaluacionPorCompetencias = () => {
-  const [instrumentos, setInstrumentos] = useState([
-    { nombre: 'Exades', porcentaje: '40' },
-    { nombre: '', porcentaje: '' },
-    { nombre: '', porcentaje: '' },
-    { nombre: '', porcentaje: '' },
-  ]);
+  const [instrumentos, setInstrumentos] = useState(createDefaultInstrumentos());
+  const [moduloData, setModuloData] = usePuaModulo("evaluacion_competencias", {
+    instrumentos: createDefaultInstrumentos(),
+  });
+
+  useEffect(() => {
+    if (!moduloData) return;
+    const stored = Array.isArray(moduloData.instrumentos) && moduloData.instrumentos.length
+      ? moduloData.instrumentos
+      : createDefaultInstrumentos();
+    setInstrumentos(stored.map(item => ({
+      nombre: item?.nombre ?? "",
+      porcentaje: item?.porcentaje ?? "",
+    })));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const syncModuloData = (nextInstrumentos) => {
+    setModuloData(prev => ({
+      ...(prev || {}),
+      instrumentos: nextInstrumentos,
+    }));
+  };
 
   const handleChange = (idx, field, value) => {
-    setInstrumentos(instrumentos.map((ins, i) => i === idx ? { ...ins, [field]: value } : ins));
+    const next = instrumentos.map((ins, i) => (i === idx ? { ...ins, [field]: value } : ins));
+    setInstrumentos(next);
+    syncModuloData(next);
   };
 
   const handleGuardar = e => {

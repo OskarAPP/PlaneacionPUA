@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { usePuaModulo } from "../context/PuaDocumentoContext";
+import { API_BASE_URL } from "../utils/api";
 
 const MIN_SEARCH_LENGTH = 3;
 
 // Props: materiaId (string|number)
 const BibliografiaSugerida = ({ materiaId }) => {
   const [tipo, setTipo] = useState("Básica");
-  const [agregados, setAgregados] = useState([]);
+  const [moduloData, setModuloData] = usePuaModulo("bibliografia_sugerida", { agregados: [] });
+  const agregados = moduloData.agregados || [];
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
@@ -41,7 +44,7 @@ const BibliografiaSugerida = ({ materiaId }) => {
       per_page: String(perPage),
     });
 
-    fetch(`http://localhost:8000/api/bibliografia/search?${params.toString()}`)
+    fetch(`${API_BASE_URL}/api/bibliografia/search?${params.toString()}`)
       .then(async res => {
         const contentType = res.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
@@ -79,7 +82,13 @@ const BibliografiaSugerida = ({ materiaId }) => {
     if (!selectedResult) return;
     const yaExiste = agregados.some(item => item.id === selectedResult.id && item.tipo === tipo);
     if (yaExiste) return;
-    setAgregados([...agregados, { ...selectedResult, tipo }]);
+    setModuloData(prev => {
+      const lista = prev?.agregados || [];
+      return {
+        ...(prev || {}),
+        agregados: [...lista, { ...selectedResult, tipo }],
+      };
+    });
   };
 
   const handleSelectResultado = (resultado) => {
@@ -93,7 +102,13 @@ const BibliografiaSugerida = ({ materiaId }) => {
     fetchResultados(debouncedTerm, siguiente, true);
   };
   const handleEliminar = idx => {
-    setAgregados(agregados.filter((_, i) => i !== idx));
+    setModuloData(prev => {
+      const lista = prev?.agregados || [];
+      return {
+        ...(prev || {}),
+        agregados: lista.filter((_, i) => i !== idx),
+      };
+    });
   };
 
   return (

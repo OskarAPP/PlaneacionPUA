@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { usePuaModulo } from "../context/PuaDocumentoContext";
+import { API_BASE_URL } from "../utils/api";
 
 const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
   const [tab, setTab] = useState(0);
@@ -6,9 +8,18 @@ const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
   const [selectedEspecificas, setSelectedEspecificas] = useState([]);
   const [competenciasGenericas, setCompetenciasGenericas] = useState([]);
   const [competenciasEspecificas, setCompetenciasEspecificas] = useState([]);
+  const [formacionTexto, setFormacionTexto] = useState("");
+  const [unidadTexto, setUnidadTexto] = useState("");
+
+  const [moduloData, setModuloData, meta] = usePuaModulo("competencias_perfil", {
+    genericas: [],
+    especificas: [],
+    formacion: "",
+    unidad: "",
+  });
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/competenciasgenericas")
+    fetch(`${API_BASE_URL}/api/competenciasgenericas`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -23,7 +34,7 @@ const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/competenciaespecifica")
+    fetch(`${API_BASE_URL}/api/competenciaespecifica`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setCompetenciasEspecificas(data);
@@ -32,24 +43,59 @@ const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
       .catch(() => setCompetenciasEspecificas([]));
   }, []);
 
+  useEffect(() => {
+    if (!moduloData) return;
+    setSelectedGenericas(Array.isArray(moduloData.genericas) ? moduloData.genericas.map(item => item.index) : []);
+    setSelectedEspecificas(Array.isArray(moduloData.especificas) ? moduloData.especificas.map(item => item.id) : []);
+    setFormacionTexto(moduloData.formacion || "");
+    setUnidadTexto(moduloData.unidad || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Genéricas handlers
   const handleCheck = idx => {
-    setSelectedGenericas(selectedGenericas.includes(idx)
+    const next = selectedGenericas.includes(idx)
       ? selectedGenericas.filter(i => i !== idx)
-      : [...selectedGenericas, idx]);
+      : [...selectedGenericas, idx];
+    setSelectedGenericas(next);
+    setModuloData(prev => ({
+      ...(prev || {}),
+      genericas: next.map(i => ({ index: i, competencia: competenciasGenericas[i] || null })),
+    }));
   };
   const handleRemove = idx => {
-    setSelectedGenericas(selectedGenericas.filter(i => i !== idx));
+    const next = selectedGenericas.filter(i => i !== idx);
+    setSelectedGenericas(next);
+    setModuloData(prev => ({
+      ...(prev || {}),
+      genericas: next.map(i => ({ index: i, competencia: competenciasGenericas[i] || null })),
+    }));
   };
 
   // Específicas handlers
   const handleCheckEsp = id => {
-    setSelectedEspecificas(selectedEspecificas.includes(id)
+    const next = selectedEspecificas.includes(id)
       ? selectedEspecificas.filter(i => i !== id)
-      : [...selectedEspecificas, id]);
+      : [...selectedEspecificas, id];
+    setSelectedEspecificas(next);
+    setModuloData(prev => ({
+      ...(prev || {}),
+      especificas: next.map(i => {
+        const data = competenciasEspecificas.find(c => String(c.competencia_esp_id) === String(i));
+        return data ? { id: data.competencia_esp_id, nombre: data.nombre } : { id: i };
+      }),
+    }));
   };
   const handleRemoveEsp = id => {
-    setSelectedEspecificas(selectedEspecificas.filter(i => i !== id));
+    const next = selectedEspecificas.filter(i => i !== id);
+    setSelectedEspecificas(next);
+    setModuloData(prev => ({
+      ...(prev || {}),
+      especificas: next.map(i => {
+        const data = competenciasEspecificas.find(c => String(c.competencia_esp_id) === String(i));
+        return data ? { id: data.competencia_esp_id, nombre: data.nombre } : { id: i };
+      }),
+    }));
   };
 
   const filteredEspecificas = useMemo(() => {
@@ -146,21 +192,38 @@ const CompetenciasPerfilEgresoTabs = ({ carreraId = "", facultadId = "" }) => {
         )}
         {/* Competencias de Formación y Unidad */}
         {tab === 2 && (
-          <form className="w-full flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-1">Competencias del área de formación</label>
-              <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" placeholder="" />
+              <textarea
+                className="w-full border rounded px-2 py-2 min-h-[60px]"
+                value={formacionTexto}
+                onChange={e => {
+                  const value = e.target.value;
+                  setFormacionTexto(value);
+                  setModuloData(prev => ({
+                    ...(prev || {}),
+                    formacion: value,
+                  }));
+                }}
+              />
             </div>
             <div>
               <label className="block font-semibold text-gray-700 mb-1">Competencia de Unidad de Aprendizaje</label>
-              <textarea className="w-full border rounded px-2 py-2 min-h-[60px]" placeholder="" />
+              <textarea
+                className="w-full border rounded px-2 py-2 min-h-[60px]"
+                value={unidadTexto}
+                onChange={e => {
+                  const value = e.target.value;
+                  setUnidadTexto(value);
+                  setModuloData(prev => ({
+                    ...(prev || {}),
+                    unidad: value,
+                  }));
+                }}
+              />
             </div>
-            <div>
-              <button type="submit" className="border border-blue-700 text-blue-700 bg-white rounded px-4 py-2 mt-2 flex items-center gap-2 shadow hover:bg-blue-50 hover:border-blue-800">
-                <span className="fa fa-check" />
-              </button>
-            </div>
-          </form>
+          </div>
         )}
       </div>
     </div>

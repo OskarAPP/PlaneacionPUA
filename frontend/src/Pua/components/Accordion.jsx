@@ -1,37 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const Accordion = ({ accordionData }) => {
+const Accordion = ({ items }) => {
   const [openIndex, setOpenIndex] = useState(null);
-  const [completedPanels, setCompletedPanels] = useState(() => accordionData.map(() => false));
-
-  useEffect(() => {
-    setCompletedPanels(prev => {
-      if (prev.length === accordionData.length) return prev;
-      const next = accordionData.map((_, idx) => prev[idx] || false);
-      return next;
-    });
-  }, [accordionData.length]);
 
   const togglePanel = (idx) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };
 
-  const toggleComplete = (idx) => {
-    setCompletedPanels(prev => {
-      const next = [...prev];
-      next[idx] = !next[idx];
-      return next;
-    });
-    setOpenIndex(current => (current === idx ? null : current));
-  };
-
   return (
     <div className="space-y-3">
-      {accordionData.map((item, idx) => {
+      {items.map((item, idx) => {
         const isOpen = openIndex === idx;
-        const isCompleted = completedPanels[idx];
+        const isCompleted = item.status === "listo";
+        const isDisabled = item.disabled;
         return (
-          <div key={item.title} className="border rounded">
+          <div key={item.slug || item.title} className="border rounded">
             <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700">
               <button
                 type="button"
@@ -42,20 +25,22 @@ const Accordion = ({ accordionData }) => {
                 <span>{item.title}</span>
                 <span>{isOpen ? "▲" : "▼"}</span>
               </button>
-              <div className="flex items-center gap-2">
-                {isCompleted && <span className="text-xs font-semibold text-green-700">Listo</span>}
+              <div className="flex items-center gap-2 text-xs">
+                {item.isDirty && <span className="font-semibold text-amber-600">Cambios sin guardar</span>}
+                {isCompleted && !item.isDirty && <span className="font-semibold text-green-700">Listo</span>}
                 <button
                   type="button"
-                  className="text-xs border rounded px-3 py-1 font-semibold text-blue-700 border-blue-600 hover:bg-blue-50"
-                  onClick={() => toggleComplete(idx)}
+                  className="border rounded px-3 py-1 font-semibold text-blue-700 border-blue-600 hover:bg-blue-50 disabled:opacity-50"
+                  disabled={isDisabled || item.saving}
+                  onClick={() => item.onToggleComplete && item.onToggleComplete(item.slug, !isCompleted)}
                 >
-                  {isCompleted ? "Editar" : "Listo"}
+                  {item.saving ? 'Guardando...' : (isCompleted && !item.isDirty ? 'Editar' : 'Listo')}
                 </button>
               </div>
             </div>
             <div className={`${isOpen ? "block" : "hidden"} px-4 py-3 border-t bg-white dark:bg-gray-900`}>
-              <div className={`relative ${isCompleted ? "pointer-events-none opacity-60" : ""}`}>
-                {isCompleted && (
+              <div className={`relative ${isCompleted && !item.isDirty ? "pointer-events-none opacity-60" : ""}`}>
+                {isCompleted && !item.isDirty && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/60 flex items-center justify-center text-sm font-semibold text-gray-600 dark:text-gray-200">
                     Módulo marcado como listo. Pulsa "Editar" para continuar.
                   </div>

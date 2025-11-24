@@ -40,6 +40,7 @@ class DocenteController extends Controller
             return response()->json([
                 'success' => true,
                 'docente' => [
+                    'docente_id' => $docente->docente_id,
                     'nombre' => $docente->nombre,
                     'apellido_paterno' => $docente->apellido_paterno,
                     'apellido_materno' => $docente->apellido_materno,

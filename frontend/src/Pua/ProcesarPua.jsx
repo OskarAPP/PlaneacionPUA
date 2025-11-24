@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 // Importaciones de los componentes modulares
 import SidebarProcesarPua from "./components/SidebarProcesarPua";
@@ -11,6 +11,8 @@ import EvaluacionFinal from "./components/EvaluacionFinal";
 import EvaluacionPorCompetencias from "./components/EvaluacionPorCompetencias";
 import Accordion from "./components/Accordion";
 import SubcompetenciaPanel from "./components/SubcompetenciaPanel";
+import { PuaDocumentoProvider } from "./context/PuaDocumentoContext";
+import { API_BASE_URL } from "./utils/api";
 
 // Importación del hook personalizado
 import useDocente from "./hooks/useDocente";
@@ -33,9 +35,144 @@ const ProcesarPua = () => {
   const [carrerasDisponibles, setCarrerasDisponibles] = useState([]);
   const [carrerasLoading, setCarrerasLoading] = useState(false);
   const [carrerasError, setCarrerasError] = useState('');
+  const [puaDocumento, setPuaDocumento] = useState(null);
+  const [modulosEstado, setModulosEstado] = useState({});
+  const [documentoLoading, setDocumentoLoading] = useState(false);
+  const [documentoError, setDocumentoError] = useState('');
+  const [versiones, setVersiones] = useState([]);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState('');
 
   // Uso del hook para obtener los datos del docente y el mensaje de bienvenida
   const { docente, bienvenida } = useDocente();
+
+  const resetDocumentoState = useCallback(() => {
+    setPuaDocumento(null);
+    setModulosEstado({});
+    setVersiones([]);
+    setDocumentoError('');
+    setGeneratingPdf(false);
+    setPdfError('');
+  }, []);
+
+  const normalizarModulos = useCallback((modulos = []) => {
+    return (modulos || []).reduce((acc, modulo) => {
+      acc[modulo.slug] = {
+        data: modulo.payload || {},
+        status_revision: modulo.status_revision || "borrador",
+        isDirty: false,
+        saving: false,
+        lastSavedAt: modulo.updated_at || null,
+      };
+      return acc;
+    }, {});
+  }, []);
+
+  const updateModuloData = useCallback((slug, updater) => {
+    setModulosEstado(prev => {
+      const actual = prev[slug] || {};
+      const base = actual.data ?? {};
+      const nextData = typeof updater === "function" ? updater(base) : updater;
+      return {
+        ...prev,
+        [slug]: {
+          ...actual,
+          data: nextData,
+          isDirty: true,
+        },
+      };
+    });
+  }, []);
+
+  const saveModulo = useCallback(async (slug, status = "borrador") => {
+    if (!puaDocumento) return null;
+    const objetivo = modulosEstado[slug] || {};
+    const payload = objetivo.data || {};
+
+    setModulosEstado(prev => ({
+      ...prev,
+      [slug]: {
+        ...(prev[slug] || {}),
+        saving: true,
+        error: null,
+      },
+    }));
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/pua/documentos/${puaDocumento.id}/modulos/${slug}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({
+          payload,
+          status_revision: status,
+          docente_id: docente?.docente_id || null,
+        }),
+      });
+      const body = await response.json();
+      if (!response.ok || body.success === false) {
+        throw new Error(body.message || "No se pudo guardar el módulo");
+      }
+
+      const modulo = body.modulo;
+
+      setModulosEstado(prev => ({
+        ...prev,
+        [slug]: {
+          ...(prev[slug] || {}),
+          data: modulo.payload || {},
+          status_revision: modulo.status_revision || status,
+          isDirty: false,
+          saving: false,
+          lastSavedAt: modulo.updated_at || new Date().toISOString(),
+        },
+      }));
+
+      return modulo;
+    } catch (error) {
+      setModulosEstado(prev => ({
+        ...prev,
+        [slug]: {
+          ...(prev[slug] || {}),
+          saving: false,
+          error: error.message,
+        },
+      }));
+      throw error;
+    }
+  }, [puaDocumento, modulosEstado, docente?.docente_id]);
+
+  const handleToggleModulo = useCallback((slug, shouldComplete) => {
+    const nextStatus = shouldComplete ? "listo" : "borrador";
+    return saveModulo(slug, nextStatus).catch(error => {
+      setDocumentoError(error.message);
+    });
+  }, [saveModulo]);
+
+  const handleGenerarPdf = useCallback(async () => {
+    if (!puaDocumento) return;
+    setGeneratingPdf(true);
+    setPdfError('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/pua/documentos/${puaDocumento.id}/generar-pdf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docente_id: docente?.docente_id || null }),
+      });
+      const body = await response.json();
+      if (!response.ok || body.success === false) {
+        throw new Error(body.message || "No se pudo generar el PDF");
+      }
+      setVersiones(prev => [body.version, ...prev]);
+    } catch (error) {
+      setPdfError(error.message);
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }, [puaDocumento, docente?.docente_id]);
 
   // Efecto para cargar materias según la carrera seleccionada
   useEffect(() => {
@@ -75,6 +212,7 @@ const ProcesarPua = () => {
   useEffect(() => {
     if (!carreraSeleccionada) {
       setPlanEstudio(null);
+      resetDocumentoState();
       return;
     }
     fetch(`http://localhost:8000/api/carreras/${carreraSeleccionada}/planestudio`)
@@ -84,6 +222,49 @@ const ProcesarPua = () => {
       })
       .catch(() => setPlanEstudio(null));
   }, [carreraSeleccionada]);
+
+  useEffect(() => {
+    if (!carreraSeleccionada || !materiaIdSeleccionada) {
+      resetDocumentoState();
+      return;
+    }
+
+    let cancelado = false;
+    setDocumentoLoading(true);
+    setDocumentoError('');
+
+    fetch(`${API_BASE_URL}/api/pua/documentos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        carrera_id: Number(carreraSeleccionada),
+        materia_id: Number(materiaIdSeleccionada),
+        docente_id: docente?.docente_id || null,
+      }),
+    })
+      .then(async res => {
+        const body = await res.json();
+        if (!res.ok || body.success === false) {
+          throw new Error(body.message || 'No se pudo cargar el documento');
+        }
+        return body;
+      })
+      .then(body => {
+        if (cancelado) return;
+        setPuaDocumento(body.documento);
+        setModulosEstado(normalizarModulos(body.documento?.modulos || []));
+        setVersiones(body.documento?.versiones || []);
+        setDocumentoLoading(false);
+      })
+      .catch(err => {
+        if (cancelado) return;
+        setDocumentoError(err.message || 'Error al cargar el documento');
+        setDocumentoLoading(false);
+        resetDocumentoState();
+      });
+
+    return () => { cancelado = true; };
+  }, [carreraSeleccionada, materiaIdSeleccionada, docente?.docente_id, normalizarModulos, resetDocumentoState]);
 
   // Prefetch: cargar nombres de planes para las carreras visibles en el combo
   useEffect(() => {
@@ -174,20 +355,42 @@ const ProcesarPua = () => {
   };
 
   // Definir accordionData DENTRO del componente y pasar materiaData y planEstudio
-  const accordionData = useMemo(() => [
-    { title: "Datos del pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
-    { title: "Competencias del Perfil de Egreso", content: (
+  const accordionBlueprint = useMemo(() => [
+    { title: "Datos del pua", slug: "datos_pua", content: <DatosPuaForm materiaSeleccionada={materiaData} planEstudio={planEstudio} /> },
+    { title: "Competencias del Perfil de Egreso", slug: "competencias_perfil", content: (
         <CompetenciasPerfilEgresoTabs
           carreraId={carreraSeleccionada}
           facultadId={facultadSeleccionada}
         />
       ) },
-    { title: "Bibliografía sugerida", content: <BibliografiaSugerida materiaId={materiaIdSeleccionada} /> },
-    { title: "Comité Curricular", content: <ComiteCurricular /> },
-    { title: "Perfil del docente", content: <PerfilDocenteTabs /> },
-    { title: "Evaluación Final", content: <EvaluacionFinal /> },
-    { title: "Evaluación Por Competencias", content: <EvaluacionPorCompetencias /> },
+    { title: "Bibliografía sugerida", slug: "bibliografia_sugerida", content: <BibliografiaSugerida materiaId={materiaIdSeleccionada} /> },
+    { title: "Comité Curricular", slug: "comite_curricular", content: <ComiteCurricular /> },
+    { title: "Perfil del docente", slug: "perfil_docente", content: <PerfilDocenteTabs /> },
+    { title: "Evaluación Final", slug: "evaluacion_final", content: <EvaluacionFinal /> },
+    { title: "Evaluación Por Competencias", slug: "evaluacion_competencias", content: <EvaluacionPorCompetencias /> },
   ], [materiaData, planEstudio, carreraSeleccionada, facultadSeleccionada, materiaIdSeleccionada]);
+
+  const accordionItems = useMemo(() => {
+    return accordionBlueprint.map(item => {
+      const meta = modulosEstado[item.slug] || {};
+      return {
+        ...item,
+        status: meta.status_revision || 'borrador',
+        isDirty: Boolean(meta.isDirty),
+        saving: Boolean(meta.saving),
+        disabled: !puaDocumento,
+        onToggleComplete: handleToggleModulo,
+      };
+    });
+  }, [accordionBlueprint, modulosEstado, puaDocumento, handleToggleModulo]);
+
+  const puaContextValue = useMemo(() => ({
+    documento: puaDocumento,
+    modulos: modulosEstado,
+    updateModuloData,
+    saveModulo,
+    docenteId: docente?.docente_id || null,
+  }), [puaDocumento, modulosEstado, updateModuloData, saveModulo, docente?.docente_id]);
 
   return (
     <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -236,6 +439,7 @@ const ProcesarPua = () => {
                       setMateriaIdSeleccionada("");
                       setMateriasCarrera([]);
                       setPlanEstudio(null);
+                      resetDocumentoState();
                     }}>
                     <option value="">Seleccione una facultad...</option>
                     {docente && docente.facultades && docente.facultades.length > 0 ? (
@@ -296,8 +500,57 @@ const ProcesarPua = () => {
             </div>
 
             <div className="bg-white border rounded-xl shadow p-4">
-              <Accordion accordionData={accordionData} />
+              {documentoError && (
+                <div className="mb-3 text-sm text-red-600">{documentoError}</div>
+              )}
+              {documentoLoading && (
+                <div className="mb-3 text-sm text-gray-600">Cargando documento del PUA...</div>
+              )}
+              <PuaDocumentoProvider value={puaContextValue}>
+                <Accordion items={accordionItems} />
+              </PuaDocumentoProvider>
             </div>
+
+            {puaDocumento && (
+              <div className="bg-white border rounded-xl shadow p-4 mt-6">
+                <div className="text-base font-semibold text-gray-700 mb-2">Historial de versiones PDF</div>
+                {versiones.length === 0 ? (
+                  <div className="text-sm text-gray-500">Aún no se han generado versiones.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-2 py-1 border">Versión</th>
+                          <th className="px-2 py-1 border">Fecha</th>
+                          <th className="px-2 py-1 border">Estado</th>
+                          <th className="px-2 py-1 border">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {versiones.map(version => (
+                          <tr key={version.id}>
+                            <td className="px-2 py-1 border font-semibold">v{String(version.version).padStart(2, '0')}</td>
+                            <td className="px-2 py-1 border">{version.created_at ? new Date(version.created_at).toLocaleString() : '—'}</td>
+                            <td className="px-2 py-1 border capitalize">{version.status_revision || 'emitido'}</td>
+                            <td className="px-2 py-1 border">
+                              <a
+                                href={`${API_BASE_URL}/api/pua/versiones/${version.id}/descargar`}
+                                className="text-blue-700 underline text-sm"
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Descargar
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
 
             {(subcompetencias.length > 0) && (
               <div className="flex flex-col gap-4 mt-6 w-full items-center">
@@ -323,8 +576,14 @@ const ProcesarPua = () => {
               <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
                 <span className="fa fa-print" /> Imprimir
               </button>
-              <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
-                <span className="fa fa-check" /> Finalizar
+              {pdfError && <div className="text-sm text-red-600 mr-auto">{pdfError}</div>}
+              <button
+                type="button"
+                className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500 disabled:opacity-50"
+                disabled={!puaDocumento || generatingPdf}
+                onClick={handleGenerarPdf}
+              >
+                <span className="fa fa-check" /> {generatingPdf ? "Generando PDF..." : "Generar PDF"}
               </button>
             </div>
           </div>

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePuaModulo } from "../context/PuaDocumentoContext";
 import PerfilAcademicoModal from "./modals/PerfilAcademicoModal";
 
 const PerfilDocenteTabs = () => {
@@ -9,11 +10,43 @@ const PerfilDocenteTabs = () => {
   const [perfilesProfesionales, setPerfilesProfesionales] = useState([]);
   const [perfilesDocentes, setPerfilesDocentes] = useState([]);
 
+  const [moduloData, setModuloData] = usePuaModulo("perfil_docente", {
+    academicos: [],
+    profesionales: [],
+    docentes: [],
+  });
+
+  useEffect(() => {
+    if (!moduloData) return;
+    setPerfilesAcademicos(Array.isArray(moduloData.academicos) ? moduloData.academicos : []);
+    setPerfilesProfesionales(Array.isArray(moduloData.profesionales) ? moduloData.profesionales : []);
+    setPerfilesDocentes(Array.isArray(moduloData.docentes) ? moduloData.docentes : []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const syncModuloData = (nextAcademicos = perfilesAcademicos, nextProfesionales = perfilesProfesionales, nextDocentes = perfilesDocentes) => {
+    setModuloData({
+      academicos: nextAcademicos,
+      profesionales: nextProfesionales,
+      docentes: nextDocentes,
+    });
+  };
+
   const handleAddPerfil = (perfil) => {
     if (!perfil.trim()) return;
-    if (modalType === 0) setPerfilesAcademicos([...perfilesAcademicos, perfil]);
-    else if (modalType === 1) setPerfilesProfesionales([...perfilesProfesionales, perfil]);
-    else if (modalType === 2) setPerfilesDocentes([...perfilesDocentes, perfil]);
+    if (modalType === 0) {
+      const next = [...perfilesAcademicos, perfil];
+      setPerfilesAcademicos(next);
+      syncModuloData(next, perfilesProfesionales, perfilesDocentes);
+    } else if (modalType === 1) {
+      const next = [...perfilesProfesionales, perfil];
+      setPerfilesProfesionales(next);
+      syncModuloData(perfilesAcademicos, next, perfilesDocentes);
+    } else if (modalType === 2) {
+      const next = [...perfilesDocentes, perfil];
+      setPerfilesDocentes(next);
+      syncModuloData(perfilesAcademicos, perfilesProfesionales, next);
+    }
   };
 
   return (
@@ -39,7 +72,11 @@ const PerfilDocenteTabs = () => {
                   <span>{perfil}</span>
                   <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
-                    onClick={() => setPerfilesAcademicos(perfilesAcademicos.filter((_, i) => i !== idx))}
+                    onClick={() => {
+                      const next = perfilesAcademicos.filter((_, i) => i !== idx);
+                      setPerfilesAcademicos(next);
+                      syncModuloData(next, perfilesProfesionales, perfilesDocentes);
+                    }}
                     title="Eliminar"
                   >
                     ×
@@ -58,7 +95,11 @@ const PerfilDocenteTabs = () => {
                   <span>{perfil}</span>
                   <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
-                    onClick={() => setPerfilesProfesionales(perfilesProfesionales.filter((_, i) => i !== idx))}
+                    onClick={() => {
+                      const next = perfilesProfesionales.filter((_, i) => i !== idx);
+                      setPerfilesProfesionales(next);
+                      syncModuloData(perfilesAcademicos, next, perfilesDocentes);
+                    }}
                     title="Eliminar"
                   >
                     ×
@@ -77,7 +118,11 @@ const PerfilDocenteTabs = () => {
                   <span>{perfil}</span>
                   <button type="button"
                     className="text-gray-400 hover:text-red-600 ml-2 text-lg font-bold px-2 py-0.5"
-                    onClick={() => setPerfilesDocentes(perfilesDocentes.filter((_, i) => i !== idx))}
+                    onClick={() => {
+                      const next = perfilesDocentes.filter((_, i) => i !== idx);
+                      setPerfilesDocentes(next);
+                      syncModuloData(perfilesAcademicos, perfilesProfesionales, next);
+                    }}
                     title="Eliminar"
                   >
                     ×
