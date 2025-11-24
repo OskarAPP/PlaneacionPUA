@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PuaDocumento extends Model
@@ -32,5 +33,15 @@ class PuaDocumento extends Model
     public function versiones(): HasMany
     {
         return $this->hasMany(PuaVersion::class, 'pua_documento_id');
+    }
+
+    public function carrera(): BelongsTo
+    {
+        return $this->belongsTo(Carrera::class, 'carrera_id', 'carrera_id');
+    }
+
+    public function materia(): BelongsTo
+    {
+        return $this->belongsTo(Materia::class, 'materia_id', 'materia_id');
     }
 }

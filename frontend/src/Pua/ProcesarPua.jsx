@@ -10,7 +10,7 @@ import PerfilDocenteTabs from "./components/PerfilDocenteTabs";
 import EvaluacionFinal from "./components/EvaluacionFinal";
 import EvaluacionPorCompetencias from "./components/EvaluacionPorCompetencias";
 import Accordion from "./components/Accordion";
-import SubcompetenciaPanel from "./components/SubcompetenciaPanel";
+import SubcompetenciasModule from "./components/SubcompetenciasModule";
 import { PuaDocumentoProvider } from "./context/PuaDocumentoContext";
 import { API_BASE_URL } from "./utils/api";
 
@@ -18,8 +18,7 @@ import { API_BASE_URL } from "./utils/api";
 import useDocente from "./hooks/useDocente";
 
 const ProcesarPua = () => {
-  // Estado para manejar las subcompetencias y el sidebar
-  const [subcompetencias, setSubcompetencias] = useState([]);
+  // Estado para manejar el sidebar
   const [estadisticasOpen, setEstadisticasOpen] = useState(false);
   const [cuentaOpen, setCuentaOpen] = useState(false);
   
@@ -344,11 +343,6 @@ const ProcesarPua = () => {
     return () => { cancelado = true; };
   }, [facultadSeleccionada, docente?.carreras_full]);
 
-  // Funciones para manejar eventos
-  const handleAgregarSubcompetencia = () => {
-    setSubcompetencias([...subcompetencias, `Subcompetencia ${subcompetencias.length + 1}`]);
-  };
-
   const handleSidebarMouseLeave = () => {
     setEstadisticasOpen(false);
     setCuentaOpen(false);
@@ -368,6 +362,7 @@ const ProcesarPua = () => {
     { title: "Perfil del docente", slug: "perfil_docente", content: <PerfilDocenteTabs /> },
     { title: "Evaluación Final", slug: "evaluacion_final", content: <EvaluacionFinal /> },
     { title: "Evaluación Por Competencias", slug: "evaluacion_competencias", content: <EvaluacionPorCompetencias /> },
+    { title: "Subcompetencias", slug: "subcompetencias", content: <SubcompetenciasModule /> },
   ], [materiaData, planEstudio, carreraSeleccionada, facultadSeleccionada, materiaIdSeleccionada]);
 
   const accordionItems = useMemo(() => {
@@ -552,27 +547,7 @@ const ProcesarPua = () => {
               </div>
             )}
 
-            {(subcompetencias.length > 0) && (
-              <div className="flex flex-col gap-4 mt-6 w-full items-center">
-                {subcompetencias.map((nombre, idx) => (
-                  <SubcompetenciaPanel
-                    key={idx}
-                    nombre={nombre}
-                    idx={idx}
-                    onRemove={() => setSubcompetencias(subcompetencias.filter((_, i) => i !== idx))}
-                  />
-                ))}
-              </div>
-            )}
-
             <div className="flex justify-end gap-2 mt-8 w-full">
-              <button
-                type="button"
-                className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500"
-                onClick={handleAgregarSubcompetencia}
-              >
-                Generar subcompetencia...
-              </button>
               <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
                 <span className="fa fa-print" /> Imprimir
               </button>
