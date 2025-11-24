@@ -1,23 +1,46 @@
 import React, { useState } from "react";
-import NuevoTemaModal from "./modals/NuevoTemaModal";
-import NuevoSubtemaModal from "./modals/NuevoSubtemaModal";
-import NuevaBibliografiaModal from "./modals/NuevaBibliografiaModal";
-import NuevoActividadModal from "./modals/NuevoActividadModal";
-import { bibliosEjemplo } from "../constants/puaConstants";
+
+const defaultSubcompetencia = () => ({
+  descripcion: "",
+  notas: "",
+});
 
 const SubcompetenciaPanel = ({ nombre, idx, onRemove }) => {
-  // ...código original, usando los modales y bibliosEjemplo importados...
+  const [subcompetencia, setSubcompetencia] = useState(defaultSubcompetencia);
+
+  const handleChange = (field, value) => {
+    setSubcompetencia(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   return (
-    <div className="border rounded p-3 mb-2">
-      <div className="font-semibold mb-2">{nombre}</div>
-      <input
-        type="text"
-        className="w-full border rounded px-3 py-2 text-sm mb-2"
-        placeholder="Descripción de la subcompetencia"
-        value={subcompetencia.descripcion || ""}
-        onChange={e => onChange({ ...subcompetencia, descripcion: e.target.value })}
+    <div className="border rounded-lg p-4 w-full bg-white shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-sm font-semibold text-gray-700">{nombre}</div>
+        <button
+          type="button"
+          className="text-xs text-red-600 hover:text-red-700"
+          onClick={onRemove}
+        >
+          Eliminar
+        </button>
+      </div>
+      <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
+      <textarea
+        className="w-full border rounded px-3 py-2 text-sm mb-3"
+        placeholder="Describe la subcompetencia"
+        value={subcompetencia.descripcion}
+        onChange={e => handleChange("descripcion", e.target.value)}
       />
-      {/* Aquí podrías agregar más campos si es necesario */}
+      <label className="block text-xs font-semibold text-gray-600 mb-1">Notas</label>
+      <textarea
+        className="w-full border rounded px-3 py-2 text-sm"
+        placeholder="Agrega indicaciones o materiales"
+        value={subcompetencia.notas}
+        onChange={e => handleChange("notas", e.target.value)}
+      />
     </div>
   );
 };
