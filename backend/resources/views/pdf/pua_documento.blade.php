@@ -4,24 +4,59 @@
     <meta charset="UTF-8">
     <title>Programa de Unidad de Aprendizaje</title>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11px; color: #0f172a; margin: 0; padding: 32px; background: #f8fafc; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #cbd5f5; }
-        .brand { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .document-meta { text-align: right; font-size: 10px; color: #475569; }
-        h2 { font-size: 13px; margin: 0 0 8px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
-        section { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 5px 18px rgba(15,23,42,0.05); }
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #e2e8f0; padding: 6px 8px; vertical-align: top; }
-        th { background: #eef2ff; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
-        .two-column { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; background: #1d4ed8; color: #fff; }
-        .list { margin: 0; padding-left: 18px; }
-        .list li { margin-bottom: 4px; }
-        .muted { color: #475569; font-size: 10px; }
-        .subcompetencia-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
-        .subcompetencia-card h3 { margin: 0 0 6px; font-size: 12px; color: #0f172a; }
-        .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        /* RESET Y ESTILOS BASE PARA DOMPDF */
+        body {
+            font-family: Arial, Helvetica, sans-serif; /* Fuente del JRXML  */
+            font-size: 10px;
+            color: #000;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid #000000; /* Bordes sólidos como en el PDF original */
+            padding: 4px 6px;
+            vertical-align: middle;
+            text-align: left;
+        }
+        /* Color de fondo exacto extraído del JRXML  */
+        th, .bg-header {
+            background-color: #EDE8E2; 
+            font-weight: bold;
+            font-size: 11px;
+        }
+        h2 {
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+            display: none; /* Ocultamos los h2 modernos, usaremos tablas con títulos */
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        
+        /* Estilos específicos para replicar el layout */
+        .header-main td { border: none; }
+        .section-title {
+            background-color: #EDE8E2;
+            font-weight: bold;
+            text-align: center;
+        }
+        .footer-code {
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            font-size: 9px;
+            color: #555;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -35,312 +70,259 @@
         $evalCompetencias = $modulos['evaluacion_competencias']['instrumentos'] ?? [];
         $subcompetencias = $modulos['subcompetencias']['items'] ?? [];
 
-        $stringify = function ($value, $placeholder = '—') {
-            if ($value === null) {
-                return $placeholder;
-            }
-
+        // Helper para strings
+        $stringify = function ($value, $placeholder = '') {
+            if ($value === null) return $placeholder;
             if (is_array($value)) {
                 $flattened = array_filter(array_map(function ($item) {
-                    if (is_array($item)) {
-                        return trim(json_encode($item, JSON_UNESCAPED_UNICODE));
-                    }
+                    if (is_array($item)) return trim(json_encode($item, JSON_UNESCAPED_UNICODE));
                     return trim((string) $item);
                 }, $value));
-
                 return empty($flattened) ? $placeholder : implode('; ', $flattened);
             }
-
-            $text = trim((string) $value);
-            return $text === '' ? $placeholder : $text;
+            return trim((string) $value) === '' ? $placeholder : trim((string) $value);
         };
     @endphp
 
-    <header>
-        <div class="brand">
-            {{ $resumen['facultad'] ?? 'Universidad Autónoma de Campeche' }}<br>
-            Programa de Unidad de Aprendizaje
-        </div>
-        <div class="document-meta">
-            Documento #{{ $documento->id }} · Versión {{ str_pad($version, 2, '0', STR_PAD_LEFT) }}<br>
-            Estado: {{ ucfirst($documento->status_revision) }}<br>
-            Actualizado: {{ optional($documento->updated_at)->format('d/m/Y H:i') ?? '—' }}
-        </div>
-    </header>
+    <div class="footer-code">
+        R00/2014 &nbsp;&nbsp;&nbsp;&nbsp; R-DES-15 &nbsp;&nbsp;&nbsp;&nbsp; Página <script type="text/php">if (isset($pdf)) { echo $pdf->get_page_number(); }</script>
+    </div>
 
-    <section>
-        <h2>Identificación de la unidad</h2>
-        <table>
-            <tr>
-                <th>Facultad</th>
-                <td>{{ $resumen['facultad'] ?? '—' }}</td>
-                <th>Carrera</th>
-                <td>{{ $resumen['carrera'] ?? '—' }}</td>
-            </tr>
-            <tr>
-                <th>Plan de estudios</th>
-                <td>{{ $resumen['plan'] ?? '—' }}</td>
-                <th>Unidad de aprendizaje</th>
-                <td>{{ data_get($resumen, 'materia.nombre') ?? '—' }}</td>
-            </tr>
-            <tr>
-                <th>Créditos</th>
-                <td>{{ data_get($resumen, 'materia.creditos') ?? '—' }}</td>
-                <th>Horas totales</th>
-                <td>{{ data_get($resumen, 'materia.horas_totales') ?? '—' }}</td>
-            </tr>
-            <tr>
-                <th>Horas teóricas</th>
-                <td>{{ data_get($resumen, 'materia.horas_teoricas') ?? '—' }}</td>
-                <th>Horas prácticas</th>
-                <td>{{ data_get($resumen, 'materia.horas_practicas') ?? '—' }}</td>
-            </tr>
-            <tr>
-                <th>Área / Núcleo</th>
-                <td>{{ data_get($resumen, 'materia.area') ?? '—' }} / {{ data_get($resumen, 'materia.nucleo') ?? '—' }}</td>
-                <th>Tipo</th>
-                <td>{{ data_get($resumen, 'materia.tipo') ?? '—' }}</td>
-            </tr>
-            <tr>
-                <th>Art. 57 RGA</th>
-                <td colspan="3">{{ data_get($resumen, 'materia.art57') ?? '—' }}</td>
-            </tr>
-        </table>
-    </section>
+    <table>
+        <tr>
+            <td class="bg-header" width="30%">Nombre de la Facultad o Escuela</td>
+            <td>{{ $resumen['facultad'] ?? 'Facultad de Ingeniería' }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Nombre del Programa Educativo</td>
+            <td>{{ $resumen['carrera'] ?? 'Ingeniero en Tecnología de Software' }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Plan de Estudio:</td>
+            <td>{{ $resumen['plan'] ?? '2017' }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Nombre de la academia(s) que lo aprobó (aron):</td>
+            <td>{{ data_get($resumen, 'materia.academia') ?? 'Tecnología de Software' }}</td>
+        </tr>
+    </table>
 
-    <section>
-        <h2>Competencias del perfil de egreso</h2>
-        <div class="two-column">
-            <div>
-                <span class="badge">Genéricas</span>
-                <ul class="list">
+    <table style="border:none; margin-bottom:5px;">
+        <tr>
+            <td style="border:none; text-align:right; font-size:14px; font-weight:bold; color:#0099CC;">
+                Programa de Unidad Académica
+            </td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td class="bg-header" width="25%">Nombre de la Unidad de Aprendizaje:</td>
+            <td colspan="5"><strong>{{ data_get($resumen, 'materia.nombre') ?? '—' }}</strong></td>
+        </tr>
+        <tr>
+            <td class="bg-header">Créditos:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.creditos') ?? '—' }}</td>
+            <td class="bg-header">Horas totales:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.horas_totales') ?? '—' }}</td>
+            <td class="bg-header">Horas prácticas:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.horas_practicas') ?? '—' }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Área:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.area') ?? '—' }}</td>
+            <td class="bg-header">Horas teóricas:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.horas_teoricas') ?? '—' }}</td>
+            <td class="bg-header">Tipo:</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.tipo') ?? '—' }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Núcleo:</td>
+            <td colspan="3">{{ data_get($resumen, 'materia.nucleo') ?? '—' }}</td>
+            <td class="bg-header">Práctica (Art. 57):</td>
+            <td class="text-center">{{ data_get($resumen, 'materia.art57') ?? 'No' }}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="2" class="section-title">Competencias del Perfil de Egreso del Programa Educativo</th>
+        </tr>
+        <tr>
+            <td class="bg-header" width="20%">Genéricas</td>
+            <td>
+                <ul style="margin: 0; padding-left: 15px;">
                     @forelse(($competencias['genericas'] ?? []) as $item)
                         <li>{{ $stringify($item['competencia'] ?? $item['descripcion'] ?? null) }}</li>
                     @empty
-                        <li class="muted">Sin registros</li>
+                        <li>—</li>
                     @endforelse
                 </ul>
-            </div>
-            <div>
-                <span class="badge">Específicas</span>
-                <ul class="list">
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-header">Específicas</td>
+            <td>
+                <ul style="margin: 0; padding-left: 15px;">
                     @forelse(($competencias['especificas'] ?? []) as $item)
                         <li>{{ $stringify($item['nombre'] ?? $item['descripcion'] ?? null) }}</li>
                     @empty
-                        <li class="muted">Sin registros</li>
+                        <li>—</li>
                     @endforelse
                 </ul>
-            </div>
-        </div>
-        <div class="two-column" style="margin-top:12px;">
-            <div>
-                <small class="muted">Competencias del área de formación</small>
-                <p>{{ $stringify($competencias['formacion'] ?? null) }}</p>
-            </div>
-            <div>
-                <small class="muted">Competencia de unidad de aprendizaje</small>
-                <p>{{ $stringify($competencias['unidad'] ?? null) }}</p>
-            </div>
-        </div>
-    </section>
+            </td>
+        </tr>
+        <tr>
+            <td class="bg-header">Competencias del área de formación</td>
+            <td>{{ $stringify($competencias['formacion'] ?? null) }}</td>
+        </tr>
+        <tr>
+            <td class="bg-header">Competencia de la Unidad de Aprendizaje</td>
+            <td>{{ $stringify($competencias['unidad'] ?? null) }}</td>
+        </tr>
+    </table>
 
-    <section>
-        <h2>Perfil del docente</h2>
-        <div class="two-column">
-            <div>
-                <span class="badge">Académico</span>
-                <ul class="list">
-                    @forelse(($perfilDocente['academicos'] ?? []) as $item)
-                        <li>{{ $stringify($item) }}</li>
-                    @empty
-                        <li class="muted">Sin requisitos definidos</li>
-                    @endforelse
-                </ul>
-            </div>
-            <div>
-                <span class="badge">Profesional</span>
-                <ul class="list">
-                    @forelse(($perfilDocente['profesionales'] ?? []) as $item)
-                        <li>{{ $stringify($item) }}</li>
-                    @empty
-                        <li class="muted">Sin requisitos definidos</li>
-                    @endforelse
-                </ul>
-            </div>
-            <div>
-                <span class="badge">Docente</span>
-                <ul class="list">
-                    @forelse(($perfilDocente['docentes'] ?? []) as $item)
-                        <li>{{ $stringify($item) }}</li>
-                    @empty
-                        <li class="muted">Sin requisitos definidos</li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Evaluación</h2>
-        <div class="two-column">
-            <div>
-                <span class="badge">Evaluación final</span>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Instrumento</th>
-                            <th>%</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($evalFinal as $instrumento)
-                            <tr>
-                                <td>{{ $instrumento['nombre'] ?? '—' }}</td>
-                                <td>{{ $instrumento['porcentaje'] ?? '—' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="2" class="muted">Sin instrumentos registrados</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <span class="badge">Evaluación por competencias</span>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Instrumento</th>
-                            <th>%</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($evalCompetencias as $instrumento)
-                            <tr>
-                                <td>{{ $instrumento['nombre'] ?? '—' }}</td>
-                                <td>{{ $instrumento['porcentaje'] ?? '—' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="2" class="muted">Sin instrumentos registrados</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Bibliografía sugerida</h2>
-        @if(empty($bibliografia))
-            <p class="muted">Sin referencias registradas.</p>
-        @else
-            <table>
+    @if(!empty($subcompetencias))
+        @foreach($subcompetencias as $index => $sub)
+            <table style="margin-bottom: 0; border-bottom: none;">
+                <tr>
+                    <td class="bg-header" width="20%">Subcompetencia {{ $index + 1 }}</td>
+                    <td><strong>{{ $sub['titulo'] ?? '—' }}</strong>: {{ $sub['descripcion'] ?? '' }}</td>
+                </tr>
+            </table>
+            
+            <table style="margin-top: 0;">
                 <thead>
                     <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>Editorial</th>
-                        <th>Año</th>
-                        <th>Tipo</th>
+                        <th width="15%">Temas / Subtemas</th>
+                        <th width="35%">Actividades de Aprendizaje / Resultados</th>
+                        <th width="25%">Evidencias / Evaluación</th>
+                        <th width="25%">Recursos / Bibliografía</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($bibliografia as $item)
-                        <tr>
-                            <td>{{ $item['titulo'] ?? 'Sin título' }}</td>
-                            <td>{{ $item['autor'] ?? $item['autores'] ?? 'Sin autor' }}</td>
-                            <td>{{ $item['editorial'] ?? '—' }}</td>
-                            <td>{{ $item['anio'] ?? '—' }}</td>
-                            <td>{{ $item['tipo'] ?? '—' }}</td>
-                        </tr>
-                    @endforeach
+                    <tr>
+                        <td>
+                            <em>Contenido:</em><br>
+                           {{-- Aquí puedes iterar si tienes 'temas' dentro de subcompetencia, si no, mostramos descripción general --}}
+                           {{ $sub['temas'] ?? 'Consultar programa extendido.' }}
+                        </td>
+
+                        <td>
+                            <strong>Actividades:</strong><br>
+                            {{ $sub['actividades'] ?? '—' }}
+                            <br><br>
+                            <strong>Resultados:</strong><br>
+                            {{ $sub['resultados'] ?? '—' }}
+                        </td>
+
+                        <td>
+                            {{ $sub['evidencias'] ?? '—' }}
+                        </td>
+
+                        <td>
+                            {{ $sub['recursos'] ?? '—' }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-        @endif
-    </section>
+        @endforeach
+    @else
+        <p class="text-center">No hay subcompetencias registradas.</p>
+    @endif
 
-    <section>
-        <h2>Comité curricular</h2>
-        <div class="two-column">
-            <div>
-                <table>
-                    <tr>
-                        <th>Responsable</th>
-                        <td>{{ $comite['responsable']['display'] ?? 'Sin definir' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Participante extra</th>
-                        <td>{{ $comite['participanteExtra']['display'] ?? '—' }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div>
-                <table>
-                    <tr>
-                        <th>Fecha de elaboración</th>
-                        <td>{{ $comite['fecha'] ?? now()->format('d/m/Y') }}</td>
-                    </tr>
-                    <tr>
-                        <th>Estado del módulo</th>
-                        <td>{{ ucfirst($comite['status'] ?? ($documento->status_revision ?? 'borrador')) }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+    <table>
+        <tr>
+            <th colspan="4" class="section-title">Criterios de Evaluación</th>
+        </tr>
+        <tr class="bg-header">
+            <td width="50%">Instrumento / Evidencia</td>
+            <td width="20%">Ponderación</td>
+            <td width="30%">Tipo</td>
+        </tr>
+        {{-- Combinamos las dos listas de evaluación --}}
+        @foreach(array_merge($evalFinal, $evalCompetencias) as $inst)
+            <tr>
+                <td>{{ $inst['nombre'] ?? '—' }}</td>
+                <td class="text-center">{{ $inst['porcentaje'] ?? '—' }}</td>
+                <td class="text-center">
+                    {{-- Determinar si es final o por competencia basado en el origen --}}
+                    {{ in_array($inst, $evalFinal) ? 'Evaluación Final' : 'Por Competencias' }}
+                </td>
+            </tr>
+        @endforeach
+    </table>
+
+    <table>
+        <tr>
+            <th colspan="5" class="section-title">Bibliografía Sugerida</th>
+        </tr>
+        <tr class="bg-header">
+            <td>Título</td>
+            <td>Autor</td>
+            <td>Editorial</td>
+            <td>Año</td>
+            <td>Tipo</td>
+        </tr>
+        @forelse($bibliografia as $book)
+            <tr>
+                <td>{{ $book['titulo'] ?? '—' }}</td>
+                <td>{{ $book['autor'] ?? $book['autores'] ?? '—' }}</td>
+                <td>{{ $book['editorial'] ?? '—' }}</td>
+                <td>{{ $book['anio'] ?? '—' }}</td>
+                <td>{{ $book['tipo'] ?? '—' }}</td>
+            </tr>
+        @empty
+            <tr><td colspan="5" class="text-center">Sin bibliografía registrada</td></tr>
+        @endforelse
+    </table>
+
+    <table>
+        <tr>
+            <th class="section-title">Perfil del Docente</th>
+        </tr>
+        <tr>
+            <td>
+                <strong>Académicos:</strong><br>
+                <ul style="margin-top:0;">
+                    @forelse(($perfilDocente['academicos'] ?? []) as $item) <li>{{ $stringify($item) }}</li> @empty <li>—</li> @endforelse
+                </ul>
+                <strong>Profesionales:</strong><br>
+                <ul style="margin-top:0;">
+                    @forelse(($perfilDocente['profesionales'] ?? []) as $item) <li>{{ $stringify($item) }}</li> @empty <li>—</li> @endforelse
+                </ul>
+                <strong>Docentes:</strong><br>
+                <ul style="margin-top:0;">
+                    @forelse(($perfilDocente['docentes'] ?? []) as $item) <li>{{ $stringify($item) }}</li> @empty <li>—</li> @endforelse
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <table style="margin-top: 20px;">
+        <tr>
+            <th colspan="2" class="section-title">Comité Curricular</th>
+        </tr>
         @php($firmantes = $comite['firmantes'] ?? [])
-        <table style="margin-top:12px;">
-            <thead>
-                <tr>
-                    <th>Rol</th>
-                    <th>Nombre</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($firmantes as $rol => $persona)
-                    <tr>
-                        <td>{{ ucfirst(str_replace('_', ' ', $rol)) }}</td>
-                        <td>{{ $persona['display'] ?? '—' }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="2" class="muted">Sin firmantes registrados.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </section>
-
-    <section>
-        <h2>Subcompetencias</h2>
-        @if(empty($subcompetencias))
-            <p class="muted">Aún no se han capturado subcompetencias en este documento.</p>
-        @else
-            @foreach($subcompetencias as $index => $subcompetencia)
-                <div class="subcompetencia-card">
-                    <h3>Subcompetencia {{ $index + 1 }} · {{ $subcompetencia['titulo'] ?? 'Sin título' }}</h3>
-                    <p>{{ $subcompetencia['descripcion'] ?? 'Sin descripción' }}</p>
-                    <div class="grid-two" style="margin:8px 0;">
-                        <div>
-                            <small class="muted">Resultados de aprendizaje</small>
-                            <p>{{ $subcompetencia['resultados'] ?? '—' }}</p>
-                        </div>
-                        <div>
-                            <small class="muted">Actividades de aprendizaje</small>
-                            <p>{{ $subcompetencia['actividades'] ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div class="grid-two">
-                        <div>
-                            <small class="muted">Evidencias</small>
-                            <p>{{ $subcompetencia['evidencias'] ?? '—' }}</p>
-                        </div>
-                        <div>
-                            <small class="muted">Recursos</small>
-                            <p>{{ $subcompetencia['recursos'] ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <p class="muted">Horas T/P: {{ $subcompetencia['horasTeoricas'] ?? '0' }} / {{ $subcompetencia['horasPracticas'] ?? '0' }}</p>
-                </div>
-            @endforeach
-        @endif
-    </section>
+        @forelse($firmantes as $rol => $persona)
+            <tr>
+                <td width="40%" class="bg-header">
+                    {{ ucfirst(str_replace('_', ' ', $rol)) }}
+                </td>
+                <td height="40">
+                    {{ $persona['display'] ?? '—' }} <br>
+                    <span style="font-size: 8px; color: #777;">(Firma)</span>
+                </td>
+            </tr>
+        @empty
+            <tr><td colspan="2">Sin firmantes definidos.</td></tr>
+        @endforelse
+        <tr>
+             <td class="bg-header">Fecha de elaboración/modificación:</td>
+             <td>{{ $comite['fecha'] ?? now()->format('d/m/Y') }}</td>
+        </tr>
+    </table>
 
 </body>
 </html>
