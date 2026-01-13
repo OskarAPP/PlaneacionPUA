@@ -88,6 +88,25 @@
         R00/2014 &nbsp;&nbsp;&nbsp;&nbsp; R-DES-15 &nbsp;&nbsp;&nbsp;&nbsp; Página <script type="text/php">if (isset($pdf)) { echo $pdf->get_page_number(); }</script>
     </div>
 
+    {{-- Encabezado con logos --}}
+    <table style="border: none; margin-bottom: 10px;">
+        <tr>
+            <td style="border: none; width: 15%; text-align: left; vertical-align: middle;">
+                {{-- Asegúrate de colocar la imagen uac_logo.png en public/images/ --}}
+                <img src="{{ public_path('images/uac_logo.png') }}" style="width: 70px; height: auto;" alt="Logo UAC">
+            </td>
+            <td style="border: none; width: 70%; text-align: center; vertical-align: middle;">
+                <div style="font-weight: bold; font-size: 14px;">UNIVERSIDAD AUTÓNOMA DE CAMPECHE</div>
+                <div style="font-weight: bold; font-size: 12px; margin-top: 4px;">{{ mb_strtoupper($resumen['facultad'] ?? 'FACULTAD DE INGENIERÍA') }}</div>
+                <div style="font-size: 11px; margin-top: 4px;">PROGRAMA DE UNIDAD DE APRENDIZAJE</div>
+            </td>
+            <td style="border: none; width: 15%; text-align: right; vertical-align: middle;">
+                {{-- Asegúrate de colocar la imagen ingenieria_logo.png en public/images/ --}}
+                <img src="{{ public_path('images/ingenieria_logo.png') }}" style="width: 70px; height: auto;" alt="Logo Ingeniería">
+            </td>
+        </tr>
+    </table>
+
     <table>
         <tr>
             <td class="bg-header" width="30%">Nombre de la Facultad o Escuela</td>
