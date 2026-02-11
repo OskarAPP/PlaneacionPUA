@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import defaultAvatar from "../Imagenes/60aniversario.png";
+import { API_BASE_URL } from "../utils/api";
 
 const PanelAcceso = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -7,7 +9,7 @@ const PanelAcceso = () => {
   const [cuentaOpen, setCuentaOpen] = useState(false);
   const [docente, setDocente] = useState(null);
   const [greeting, setGreeting] = useState("");
-  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [fotoPerfil, setFotoPerfil] = useState(defaultAvatar);
   const [notificaciones, setNotificaciones] = useState([]);
   const [notifModalOpen, setNotifModalOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -16,7 +18,7 @@ const PanelAcceso = () => {
   // Cargar notificaciones al montar el componente y actualizar cada 10 segundos
   useEffect(() => {
     const fetchNotificaciones = () => {
-      fetch("http://localhost:8000/api/notificaciones")
+      fetch(`${API_BASE_URL}/notificaciones`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && Array.isArray(data)) {
@@ -92,7 +94,7 @@ const PanelAcceso = () => {
   useEffect(() => {
     const id_docente = localStorage.getItem("id_docente");
     if (id_docente) {
-      fetch(`http://localhost:8000/api/docente/${id_docente}`)
+      fetch(`${API_BASE_URL}/docente/${id_docente}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setDocente(data.docente);
@@ -104,11 +106,12 @@ const PanelAcceso = () => {
   useEffect(() => {
     const id_acceso = localStorage.getItem("id_acceso");
     if (id_acceso) {
-      fetch(`http://localhost:8000/api/perfil-imagen/${id_acceso}`)
+      fetch(`${API_BASE_URL}/perfil-imagen/${id_acceso}`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.url) setFotoPerfil(data.url);
-        });
+        })
+        .catch(() => setFotoPerfil(defaultAvatar));
     }
   }, []);
 
@@ -139,19 +142,19 @@ const PanelAcceso = () => {
 
   // Ajuste: envuelve todo el contenido en un div que cubre toda la pantalla y aplica fondo claro/oscuro
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen w-full bg-gray-50">
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 w-full bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 z-30">
+      <nav className="fixed top-0 left-0 right-0 w-full bg-white border-b border-gray-200 z-30">
         <div className="w-full px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
               <a href="../Dashboard" className="flex items-center ms-4">
                 <img
-                  src="../src/imagenes/60aniversario.png"
+                  src="/imagenes/60aniversario.png"
                   className="h-12 me-3"
                   alt="FDI"
                 />
-                <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+                <span className="self-center text-xl font-semibold whitespace-nowrap text-gray-800">
                   Programas de Unidad<br />de Aprendizaje
                 </span>
               </a>
@@ -161,13 +164,13 @@ const PanelAcceso = () => {
                 <div className="flex items-center ms-3">
                   <button
                     type="button"
-                    className="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 items-center justify-center bg-transparent"
+                    className="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 items-center justify-center bg-transparent"
                     aria-expanded="false"
                     style={{ padding: 0 }}
                   >
                     <span className="sr-only">Open user menu</span>
                     <img
-                      className="w-16 h-16 rounded-full object-cover transition-all duration-300 hover:scale-110 border-2 border-white dark:border-gray-800"
+                      className="w-16 h-16 rounded-full object-cover transition-all duration-300 hover:scale-110 border-2 border-gray-200"
                       src={fotoPerfil || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
                       alt="user photo"
                     />
@@ -182,9 +185,9 @@ const PanelAcceso = () => {
 
       {notifModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
             <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={() => setNotifModalOpen(false)}>&times;</button>
-            <h2 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300">Todas las notificaciones</h2>
+            <h2 className="text-xl font-bold mb-4 text-blue-700">Todas las notificaciones</h2>
             <div className="max-h-[60vh] overflow-auto pr-2 space-y-3">
               {sortedNotifs.length === 0 ? (
                 <div className="text-gray-500 text-center">No hay notificaciones.</div>
@@ -193,8 +196,8 @@ const PanelAcceso = () => {
                   <div key={idx} className="flex items-start gap-3 border-b pb-3">
                     <span className={`inline-block w-2 h-2 mt-2 rounded-full ${getNotifColor(notif.tipo)}`}></span>
                     <div>
-                      <div className="font-semibold text-blue-700 dark:text-blue-300">{notif.tipo}</div>
-                      <div className="text-gray-700 dark:text-gray-200 text-sm">{notif.mensaje}</div>
+                      <div className="font-semibold text-blue-700">{notif.tipo}</div>
+                      <div className="text-gray-700 text-sm">{notif.mensaje}</div>
                       <div className="text-xs text-gray-400">{formatFecha(notif.fecha)}</div>
                     </div>
                   </div>
@@ -210,7 +213,7 @@ const PanelAcceso = () => {
 
       {/* SIDEBAR */}
       <aside 
-        className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-lg overflow-hidden${sidebarOpen ? ' w-64' : ''}`}
+        className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-gray-50 border-r border-gray-200 shadow-lg overflow-hidden${sidebarOpen ? ' w-64' : ''}`}
         aria-label="Sidebar"
         onMouseLeave={handleSidebarMouseLeave}
       >
@@ -309,7 +312,13 @@ const PanelAcceso = () => {
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Configuración</a>
                   </li>
                   <li>
-                    <a href="#" className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Cerrar sesión</a>
+                    <a
+                      href="#"
+                      className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                      onClick={e => { e.preventDefault(); localStorage.removeItem('user'); window.location.href = '/login'; }}
+                    >
+                      Cerrar sesión
+                    </a>
                   </li>
                 </ul>
               )}
@@ -319,27 +328,27 @@ const PanelAcceso = () => {
       </aside>
 
       {/* CONTENEDOR PRINCIPAL */}
-      <div className="p-4 sm:ml-16 sm:mt-[78px] min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="p-4 border-2 border-gray-200 dark:border-gray-800 rounded-lg min-h-[calc(100vh-120px)] relative bg-gray-50 dark:bg-gray-900">
+      <div className="p-4 sm:ml-16 sm:mt-[78px] min-h-screen bg-gray-50">
+        <div className="p-4 border-2 border-gray-200 rounded-lg min-h-[calc(100vh-120px)] relative bg-gray-50">
           {/* Fecha actual en la esquina superior derecha, en tarjeta blanca */}
           <div className="absolute right-6 top-6">
-            <div className="bg-white rounded-lg shadow px-4 py-2 text-sm text-gray-700 dark:bg-gray-900 dark:text-white font-semibold select-none border border-gray-200 dark:border-gray-700">
+            <div className="bg-white rounded-lg shadow px-4 py-2 text-sm text-gray-700 font-semibold select-none border border-gray-200">
               {fechaActual.charAt(0).toUpperCase() + fechaActual.slice(1)}
             </div>
           </div>
           {/* Contenido original de PanelAcceso */}
           <div className="space-y-6">
             {/* Tarjeta de Bienvenida */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-900 dark:to-blue-700 rounded-xl shadow-lg overflow-hidden text-white mb-2">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg overflow-hidden text-white mb-2">
               <div className="p-6">
                 <h2 className="text-3xl font-extrabold mb-2">Bienvenido</h2>
                 <p className="text-2xl font-bold mb-6">{greeting}, <span className="text-2xl font-extrabold">{docente ? `${docente.nombre} ${docente.apellido_paterno}` : "Usuario"}</span></p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">       
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg dark:bg-gray-800/30">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
                     <h3 className="font-extrabold text-2xl text-white mb-3">Accesos Rápidos</h3>
                     <div className="grid grid-cols-2 gap-3">
-                      <a href="/procesarpua" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
+                      <a href="/procesarpua" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -347,7 +356,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Crear PUA</span>
                         </div>
                       </a>
-                      <a href="/puaversion" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
+                      <a href="/puaversion" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -355,7 +364,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Consultar PUA</span>
                         </div>
                       </a>
-                      <a href="#" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
+                      <a href="#" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -363,7 +372,7 @@ const PanelAcceso = () => {
                           <span className="text-sm text-white">Perfil</span>
                         </div>
                       </a>
-                      <a href="/docentes" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 dark:bg-gray-800/30 dark:hover:bg-gray-800/50 transition-all duration-200">
+                      <a href="/docentes" className="bg-white/10 backdrop-blur-sm p-3 rounded hover:bg-white/20 transition-all duration-200">
                         <div className="flex flex-col items-center">
                           <svg className="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -374,15 +383,15 @@ const PanelAcceso = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full dark:bg-gray-800/30">
+                  <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg flex flex-col h-full">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-extrabold text-2xl text-white">Notificaciones Nuevas</h3>
                       <button
                         onClick={() => setNotifModalOpen(true)}
-                        className="text-sm text-black/90 underline hover:text-blue-500"
+                        className="text-sm text-white/90 underline hover:text-white"
                       >Ver todas</button>
                     </div>
-                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] dark:bg-gray-900/80 cursor-pointer" onClick={() => setNotifModalOpen(true)}>
+                    <div className="bg-white bg-opacity-70 rounded-lg p-3 flex-1 flex flex-col gap-2 min-h-[100px] cursor-pointer" onClick={() => setNotifModalOpen(true)}>
                       {top3Notifs.length === 0 ? (
                         <div className="text-gray-500 text-center">No hay notificaciones recientes.</div>
                       ) : (
@@ -407,8 +416,8 @@ const PanelAcceso = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 w-full max-w-full">
               {/* Tarjeta PUA */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('pua')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-blue-900 dark:to-blue-700`}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className={`bg-gradient-to-br ${getGradientClass('pua')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
+                onClick={() => { window.location.href = '/procesarpua'; }}
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between">
@@ -426,7 +435,7 @@ const PanelAcceso = () => {
 
               {/* Tarjeta Estadísticas */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('estadisticas')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-purple-900 dark:to-purple-700`}
+                className={`bg-gradient-to-br ${getGradientClass('estadisticas')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
                 onClick={() => setEstadisticasOpen(!estadisticasOpen)}
               >
                 <div className="p-6">
@@ -445,12 +454,12 @@ const PanelAcceso = () => {
 
               {/* Tarjeta Mi Cuenta */}
               <div 
-                className={`bg-gradient-to-br ${getGradientClass('cuenta')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full dark:from-green-900 dark:to-green-700`}
-                onClick={() => setCuentaOpen(!cuentaOpen)}
+                className={`bg-gradient-to-br ${getGradientClass('cuenta')} rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer w-full`}
+                onClick={() => { window.location.href = '/perfilusuario'; }}
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-white mb-2">Mi Cuenta</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">Mi Perfil</h3>
                     <div className="bg-white/20 p-3 rounded-full">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -467,10 +476,10 @@ const PanelAcceso = () => {
           </div>
 
           {/* Footer */}
-          <footer className="bg-white dark:bg-gray-950 rounded-xl shadow p-4 text-center mt-8 dark:text-gray-200">
+          <footer className="bg-white rounded-xl shadow p-4 text-center mt-8 text-gray-700">
             <div className="flex items-center justify-center gap-4 mb-2">
-              <img src="../src/imagenes/60aniversario.png" alt="Logo UAC" className="w-10 h-10 object-contain" />
-              <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-10 h-10 object-contain" />
+              <img src="/imagenes/60aniversario.png" alt="Logo UAC" className="w-10 h-10 object-contain" />
+              <img src="/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-10 h-10 object-contain" />
             </div>
             <p className="text-xs text-gray-600">
               Facultad de Ingeniería | Laboratorio de Diseño de Aplicaciones Móviles

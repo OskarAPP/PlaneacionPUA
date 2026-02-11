@@ -96,3 +96,9 @@ Route::prefix('pua')->group(function () {
 });
 
 Route::get('/pua/versiones/{version}/descargar', [PuaDocumentoController::class, 'downloadVersion']);
+Route::get('/ping', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API funcionando correctamente'
+    ]);
+});

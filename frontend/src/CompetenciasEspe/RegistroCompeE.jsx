@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../Components/Sidebar";
+import { API_BASE_URL } from "../utils/api";
 
 const RegistroCompeE = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,9 +27,9 @@ const RegistroCompeE = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id_docente) {
-      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+      fetch(`${API_BASE_URL}/docente/${user.id_docente}`)
         .then((res) => res.json())
-        .then((data) => {
+        .then((data) => { 
           // Usar el nuevo formato: array de objetos con facultad_id y nombre
           if (data.success && Array.isArray(data.docente.facultades)) {
             setFacultades(data.docente.facultades);
@@ -47,7 +48,7 @@ const RegistroCompeE = () => {
       return;
     }
     fetch(
-      `http://localhost:8000/api/carreras/facultad/${facultadSeleccionada}`
+      `${API_BASE_URL}/carreras/facultad/${facultadSeleccionada}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -63,7 +64,7 @@ const RegistroCompeE = () => {
       alert("Todos los campos son obligatorios");
       return;
     }
-    fetch("http://localhost:8000/api/competenciaespecifica", {
+    fetch(`${API_BASE_URL}/competenciaespecifica`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -87,7 +88,7 @@ const RegistroCompeE = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
       {/* Sidebar modular */}
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -113,10 +114,10 @@ const RegistroCompeE = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12 dark:bg-gray-800 dark:border-gray-700">
+        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400"
+            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -134,13 +135,13 @@ const RegistroCompeE = () => {
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-gray-800 font-semibold leading-tight text-right dark:text-gray-100">
+            <span className="text-xs text-gray-800 font-semibold leading-tight text-right">
               Programas de Unidad
               <br />
               de Aprendizaje
             </span>
             <img
-              src="../src/imagenes/imagen_salida1.png"
+              src="/imagenes/imagen_salida1.png"
               alt="UAC Logo"
               className="w-8 h-8 object-contain"
             />
@@ -150,28 +151,28 @@ const RegistroCompeE = () => {
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">
+            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">
               Registro de Competencia Específica
             </div>
-            <div className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+            <div className="bg-white border border-gray-200 rounded-b-md p-6 flex flex-col gap-6">
               <form className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                  <label className="block text-gray-800 font-bold mb-1">
                     Competencia Específica:
                   </label>
                   <input
                     type="text"
-                    className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900"
                     value={nombreCompetencia}
                     onChange={e => setNombreCompetencia(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                  <label className="block text-gray-800 font-bold mb-1">
                     Facultad:
                   </label>
                   <select
-                    className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    className="w-full border rounded px-3 py-2 text-gray-900 bg-white border-gray-300"
                     value={facultadSeleccionada}
                     onChange={(e) => setFacultadSeleccionada(e.target.value)}
                   >
@@ -184,11 +185,11 @@ const RegistroCompeE = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">
+                  <label className="block text-gray-800 font-bold mb-1">
                     Carrera:
                   </label>
                   <select
-                    className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+                    className="w-full border rounded px-3 py-2 text-gray-900 bg-white border-gray-300"
                     value={carreraSeleccionada}
                     onChange={(e) => setCarreraSeleccionada(e.target.value)}
                   >
@@ -203,7 +204,7 @@ const RegistroCompeE = () => {
                 <div className="md:col-span-3 flex justify-center mt-2">
                   <button
                     type="submit"
-                    className="w-1/2 bg-[#3578b3] hover:bg-[#285a8c] text-white font-semibold rounded px-4 py-2 transition-colors dark:bg-blue-900 dark:hover:bg-blue-800"
+                    className="w-1/2 bg-[#3578b3] hover:bg-[#285a8c] text-white font-semibold rounded px-4 py-2 transition-colors"
                   >
                     Registrar
                   </button>
@@ -214,9 +215,9 @@ const RegistroCompeE = () => {
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-600/90 text-white py-4 flex flex-col items-center mt-auto shadow-glass dark:bg-gray-900/90 dark:text-gray-200">
+        <footer className="bg-gray-100 text-gray-600 py-4 flex flex-col items-center mt-auto border-t border-gray-200">
           <img
-            src="../src/imagenes/imagen_salida1.png"
+            src="/imagenes/imagen_salida1.png"
             alt="Facultad de Ingeniería"
             className="w-16 h-16 mb-2"
           />

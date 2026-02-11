@@ -48,7 +48,7 @@ class ImagenController extends Controller
         }
         return response()->json([
             'imagen_id' => $imagen->imagen_id,
-            'url' => asset('storage/' . $imagen->ruta_imagen),
+            'url' => '/api/imagenes/' . $imagen->imagen_id,
             'fecha_subida' => $imagen->fecha_subida,
         ]);
     }

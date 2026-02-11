@@ -14,11 +14,11 @@ const Accordion = ({ items }) => {
         const isCompleted = item.status === "listo";
         const isDisabled = item.disabled;
         return (
-          <div key={item.slug || item.title} className="border rounded">
-            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700">
+          <div key={item.slug || item.title} className="border border-gray-200 rounded bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white text-gray-800">
               <button
                 type="button"
-                className="flex-1 text-left font-semibold flex items-center justify-between"
+                className="flex-1 text-left font-semibold text-gray-800 flex items-center justify-between bg-white"
                 onClick={() => togglePanel(idx)}
                 aria-expanded={isOpen}
               >
@@ -38,10 +38,10 @@ const Accordion = ({ items }) => {
                 </button>
               </div>
             </div>
-            <div className={`${isOpen ? "block" : "hidden"} px-4 py-3 border-t bg-white dark:bg-gray-900`}>
+            <div className={`${isOpen ? "block" : "hidden"} px-4 py-3 border-t bg-white`}>
               <div className={`relative ${isCompleted && !item.isDirty ? "pointer-events-none opacity-60" : ""}`}>
                 {isCompleted && !item.isDirty && (
-                  <div className="absolute inset-0 bg-white/70 dark:bg-gray-900/60 flex items-center justify-center text-sm font-semibold text-gray-600 dark:text-gray-200">
+                  <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-sm font-semibold text-gray-600">
                     Módulo marcado como listo. Pulsa "Editar" para continuar.
                   </div>
                 )}

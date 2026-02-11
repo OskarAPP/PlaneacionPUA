@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { API_BASE_URL } from "../utils/api";
 import Sidebar from "../Components/Sidebar";
 
 
@@ -23,12 +24,12 @@ const CompetenciasG = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("¿Está seguro de eliminar la competencia genérica?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/competenciasgenericas/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/competenciasgenericas/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
         // Refrescar la lista desde el backend para asegurar que se eliminó
-        const competenciasRes = await fetch("http://localhost:8000/api/competenciasgenericas");
+        const competenciasRes = await fetch(`${API_BASE_URL}/competenciasgenericas`);
         const competenciasData = await competenciasRes.json();
         if (Array.isArray(competenciasData.competencias)) setCompetencias(competenciasData.competencias);
         else if (Array.isArray(competenciasData)) setCompetencias(competenciasData);
@@ -45,7 +46,7 @@ const CompetenciasG = () => {
 
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/competenciasgenericas")
+    fetch(`${API_BASE_URL}/competenciasgenericas`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.competencias)) setCompetencias(data.competencias);
@@ -58,7 +59,7 @@ const CompetenciasG = () => {
 
 
   return (
-    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
       {/* Sidebar modular */}
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -82,73 +83,73 @@ const CompetenciasG = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12 dark:bg-gray-800 dark:border-gray-700">
+        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400"
+            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-gray-800 font-semibold leading-tight text-right dark:text-gray-100">
+            <span className="text-xs text-gray-800 font-semibold leading-tight text-right">
               Programas de Unidad<br />de Aprendizaje
             </span>
-            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
+            <img src="/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
           </div>
         </header>
         {/* Main Body */}
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
-            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Buscar</div>
-            <div className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
+            <div className="bg-white border border-gray-200 rounded-b-md p-6 flex flex-col gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-2">
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Academia:</label>
+                  <label className="block text-gray-800 font-bold mb-1">Academia:</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4-4m0 0A7 7 0 104 4a7 7 0 0013 13z" /></svg>
                     </span>
-                    <input type="text" placeholder="Nombre de la competencia genérica" className="w-full border rounded pl-10 pr-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                    <input type="text" placeholder="Nombre de la competencia genérica" className="w-full border rounded pl-10 pr-3 py-2 bg-white border-gray-300 text-gray-900" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-800 font-bold mb-1 dark:text-gray-200">Ordenar alfabéticamente por:</label>
-                  <select className="w-full border rounded px-3 py-2 text-gray-700 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100">
+                  <label className="block text-gray-800 font-bold mb-1">Ordenar alfabéticamente por:</label>
+                  <select className="w-full border rounded px-3 py-2 text-gray-900 bg-white border-gray-300">
                     <option value="az">A a Z</option>
                     <option value="za">Z a A</option>
                   </select>
                 </div>
               </div>
             </div>
-            <div className="bg-[#d4ecfa] text-[#3578b3] text-base font-semibold rounded-t-md px-4 py-2 text-center border-b border-[#b5d6ea] dark:bg-blue-950 dark:text-blue-200 dark:border-blue-900">Lista de Competencias Genéricas</div>
-            <div className="overflow-x-auto dark:bg-gray-800 dark:shadow-2xl">
-              <table className="min-w-full border border-[#b5d6ea] dark:border-gray-700 dark:text-blue-200">
+            <div className="bg-[#d4ecfa] text-[#3578b3] text-base font-semibold rounded-t-md px-4 py-2 text-center border-b border-[#b5d6ea]">Lista de Competencias Genéricas</div>
+            <div className="overflow-x-auto bg-white shadow">
+              <table className="min-w-full border border-[#b5d6ea] text-blue-900">
                 <thead>
-                  <tr className="bg-white dark:bg-gray-900 dark:border-gray-700">
-                    <th className="border border-[#b5d6ea] px-2 py-2 text-center font-bold w-20 dark:border-gray-700">Eliminar</th>
-                    <th className="border border-[#b5d6ea] px-4 py-2 text-center font-bold dark:border-gray-700">#</th>
-                    <th className="border border-[#b5d6ea] px-4 py-2 text-center font-bold dark:border-gray-700">Competencia Genérica</th>
+                  <tr className="bg-white">
+                    <th className="border border-[#b5d6ea] px-2 py-2 text-center font-bold w-20">Eliminar</th>
+                    <th className="border border-[#b5d6ea] px-4 py-2 text-center font-bold">#</th>
+                    <th className="border border-[#b5d6ea] px-4 py-2 text-center font-bold">Competencia Genérica</th>
                   </tr>
                 </thead>
                 <tbody>
                   {competencias.length === 0 ? (
-                    <tr className="dark:bg-gray-900 dark:border-gray-700">
-                      <td colSpan={3} className="text-center py-4 text-gray-400 dark:text-gray-500">No hay competencias registradas.</td>
+                    <tr>
+                      <td colSpan={3} className="text-center py-4 text-gray-500">No hay competencias registradas.</td>
                     </tr>
                   ) : (
                     competencias.map((comp, idx) => (
-                      <tr key={comp.competencia_gen_id} className="dark:bg-gray-900 dark:border-gray-700">
-                        <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20 dark:border-gray-700">
-                          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-2 py-1 rounded text-xs dark:bg-red-800 dark:hover:bg-red-900" title="Eliminar" onClick={() => handleDelete(comp.competencia_gen_id)}>
+                      <tr key={comp.competencia_gen_id} className="border-b">
+                        <td className="border border-[#b5d6ea] px-2 py-2 text-center align-middle font-semibold w-20">
+                          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-2 py-1 rounded text-xs" title="Eliminar" onClick={() => handleDelete(comp.competencia_gen_id)}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </button>
                         </td>
-                        <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold dark:border-gray-700">{idx + 1}</td>
-                        <td className="border border-[#b5d6ea] px-4 py-2 dark:border-gray-700">{comp.nombre}</td>
+                        <td className="border border-[#b5d6ea] px-4 py-2 text-center align-middle font-semibold">{idx + 1}</td>
+                        <td className="border border-[#b5d6ea] px-4 py-2">{comp.nombre}</td>
                       </tr>
                     ))
                   )}
@@ -158,8 +159,8 @@ const CompetenciasG = () => {
           </div>
         </main>
         {/* Footer */}
-        <footer className="bg-gray-600/90 text-white py-4 flex flex-col items-center mt-auto shadow-glass dark:bg-gray-900/90 dark:text-gray-200">
-          <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
+        <footer className="bg-gray-100 text-gray-600 py-4 flex flex-col items-center mt-auto border-t border-gray-200">
+          <img src="/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
           <div className="text-center text-sm">
             Facultad de Ingeniería<br />
             Laboratorio de Diseño de Aplicaciones Móviles
@@ -177,17 +178,6 @@ const CompetenciasG = () => {
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: #fff;
-        }
-        @media (prefers-color-scheme: dark) {
-          .custom-scrollbar::-webkit-scrollbar {
-            background: #1a202c;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #2563eb;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1a202c;
-          }
         }
       `}</style>
     </div>

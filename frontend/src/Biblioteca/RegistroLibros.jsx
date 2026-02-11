@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Sidebar from '../Components/Sidebar';
+import { API_BASE_URL } from "../utils/api";
 
 const camposIniciales = {
   titulo: '',
@@ -143,7 +144,7 @@ const LibrosRegistro = () => {
     setEnviando(true);
     setMensaje(null);
     const payload = sanitizePayload();
-    fetch('http://localhost:8000/api/bibliografia', {
+    fetch(`${API_BASE_URL}/bibliografia`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
@@ -171,7 +172,7 @@ const LibrosRegistro = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 relative">
+    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900 relative">
       {/* Overlay para móvil */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
@@ -192,20 +193,20 @@ const LibrosRegistro = () => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-h-screen z-0">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12 dark:bg-gray-800 dark:border-gray-700">
+        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-700 dark:hover:border-blue-400"
+            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-gray-800 font-semibold leading-tight text-right dark:text-gray-100">
+            <span className="text-xs text-gray-800 font-semibold leading-tight text-right">
               Programas de Unidad<br />de Aprendizaje
             </span>
-            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
+            <img src="/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
           </div>
         </header>
 
@@ -213,92 +214,92 @@ const LibrosRegistro = () => {
         <main className="flex-1 flex flex-col items-center py-8 overflow-auto">
           <div className="w-full max-w-5xl">
             {/* Bloque Formulario */}
-            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2 dark:bg-blue-900">Registro Bibliográfico</div>
-            <form onSubmit={onSubmit} className="bg-white border rounded-b-md p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+            <div className="bg-[#3578b3] text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Registro Bibliográfico</div>
+            <form onSubmit={onSubmit} className="bg-white border border-gray-200 rounded-b-md p-6 flex flex-col gap-6">
               {mensaje && (
-                <div className={`text-sm px-3 py-2 rounded border ${mensaje.tipo === 'ok' ? 'bg-green-50 border-green-300 text-green-700 dark:bg-green-900/30 dark:border-green-600 dark:text-green-300' : 'bg-red-50 border-red-300 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-300'}`}>{mensaje.texto}</div>
+                <div className={`text-sm px-3 py-2 rounded border ${mensaje.tipo === 'ok' ? 'bg-green-50 border-green-300 text-green-700' : 'bg-red-50 border-red-300 text-red-700'}`}>{mensaje.texto}</div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Autor *</label>
-                  <input name="autor" value={form.autor} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Autor *</label>
+                  <input name="autor" value={form.autor} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                   {tocar.autor && errores.autor && <p className="text-red-600 text-xs mt-1">{errores.autor}</p>}
                 </div>
                 <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Título *</label>
-                  <input name="titulo" value={form.titulo} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Título *</label>
+                  <input name="titulo" value={form.titulo} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                   {tocar.titulo && errores.titulo && <p className="text-red-600 text-xs mt-1">{errores.titulo}</p>}
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Editorial</label>
-                  <input name="editorial" value={form.editorial} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Editorial</label>
+                  <input name="editorial" value={form.editorial} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Edición</label>
-                  <input name="edicion" value={form.edicion} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Edición</label>
+                  <input name="edicion" value={form.edicion} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Clasificación</label>
-                  <input name="clasificacion" value={form.clasificacion} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Clasificación</label>
+                  <input name="clasificacion" value={form.clasificacion} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Cutter</label>
-                  <input name="cutter" value={form.cutter} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Cutter</label>
+                  <input name="cutter" value={form.cutter} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Año</label>
-                  <input name="anio" type="number" value={form.anio} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Año</label>
+                  <input name="anio" type="number" value={form.anio} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                   {tocar.anio && errores.anio && <p className="text-red-600 text-xs mt-1">{errores.anio}</p>}
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">ISBN</label>
-                  <input name="isbn" value={form.isbn} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">ISBN</label>
+                  <input name="isbn" value={form.isbn} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vol./Ejem.</label>
-                  <input name="vol_ejem" value={form.vol_ejem} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Vol./Ejem.</label>
+                  <input name="vol_ejem" value={form.vol_ejem} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Item</label>
-                  <input name="item" value={form.item} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Item</label>
+                  <input name="item" value={form.item} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">ISBN extra</label>
-                  <input name="isbn_extra" value={form.isbn_extra} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">ISBN extra</label>
+                  <input name="isbn_extra" value={form.isbn_extra} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">TI. obsoletos</label>
-                  <input name="ti_obsoletos" value={form.ti_obsoletos} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">TI. obsoletos</label>
+                  <input name="ti_obsoletos" value={form.ti_obsoletos} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vol. obsoletos</label>
-                  <input name="volum_obsol" value={form.volum_obsol} onChange={onChange} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Vol. obsoletos</label>
+                  <input name="volum_obsol" value={form.volum_obsol} onChange={onChange} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Cantidad total</label>
-                  <input name="cant_total" type="number" value={form.cant_total} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Cantidad total</label>
+                  <input name="cant_total" type="number" value={form.cant_total} onChange={onChange} onBlur={onBlur} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                   {tocar.cant_total && errores.cant_total && <p className="text-red-600 text-xs mt-1">{errores.cant_total}</p>}
                 </div>
                 <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Observación</label>
-                  <textarea name="observacion" value={form.observacion} onChange={onChange} rows={3} className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+                  <label className="block text-gray-700 font-semibold mb-1">Observación</label>
+                  <textarea name="observacion" value={form.observacion} onChange={onChange} rows={3} className="w-full border rounded px-3 py-2 bg-white border-gray-300 text-gray-900" />
                 </div>
                 <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-gray-700 font-semibold mb-1 dark:text-gray-200">Vista previa ficha</label>
-                  <div className="text-xs bg-gray-50 dark:bg-gray-900 border rounded px-3 py-2 dark:border-gray-700 min-h-[46px] whitespace-pre-wrap">{ficha || '—'}</div>
+                  <label className="block text-gray-700 font-semibold mb-1">Vista previa ficha</label>
+                  <div className="text-xs bg-gray-50 border rounded px-3 py-2 border-gray-200 min-h-[46px] whitespace-pre-wrap">{ficha || '—'}</div>
                 </div>
               </div>
               <div className="flex justify-center gap-4">
-                <button type="submit" disabled={enviando} className="bg-[#3578b3] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors dark:bg-blue-900 dark:hover:bg-blue-800">{enviando ? 'Guardando...' : 'Guardar'}</button>
-                <button type="button" disabled={enviando} onClick={resetForm} className="border font-medium px-10 py-2 rounded hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed dark:hover:bg-gray-700 dark:border-gray-600">Limpiar</button>
+                <button type="submit" disabled={enviando} className="bg-[#3578b3] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold px-10 py-2 rounded hover:bg-[#285a87] transition-colors">{enviando ? 'Guardando...' : 'Guardar'}</button>
+                <button type="button" disabled={enviando} onClick={resetForm} className="border font-medium px-10 py-2 rounded hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed border-gray-300 text-gray-700">Limpiar</button>
               </div>
             </form>
           </div>
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-600/90 text-white py-4 flex flex-col items-center mt-auto shadow-glass dark:bg-gray-900/90 dark:text-gray-200">
-          <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
+        <footer className="bg-gray-100 text-gray-600 py-4 flex flex-col items-center mt-auto border-t border-gray-200">
+          <img src="/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
           <div className="text-center text-sm">
             Facultad de Ingeniería<br />
             Laboratorio de Diseño de Aplicaciones Móviles

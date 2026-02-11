@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import defaultAvatar from "../Imagenes/60aniversario.png";
+import { API_BASE_URL } from "../utils/api";
 
 const PerfilUsuario = () => {
   const fileInputRef = useRef(null);
@@ -13,7 +14,7 @@ const PerfilUsuario = () => {
   useEffect(() => {
     const acceso_id = localStorage.getItem("id_acceso");
     if (acceso_id) {
-      fetch(`http://localhost:8000/api/perfil-imagen/${acceso_id}`)
+      fetch(`${API_BASE_URL}/perfil-imagen/${acceso_id}`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.url) setFotoPerfil(data.url);
@@ -25,7 +26,7 @@ const PerfilUsuario = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id_docente) {
-      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+      fetch(`${API_BASE_URL}/docente/${user.id_docente}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setDocente(data.docente);
@@ -56,7 +57,7 @@ const PerfilUsuario = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id_docente) {
-      fetch(`http://localhost:8000/api/docentes/${user.id_docente}/materias`)
+      fetch(`${API_BASE_URL}/docentes/${user.id_docente}/materias`)
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) setMaterias(data);
@@ -87,7 +88,7 @@ const PerfilUsuario = () => {
     formData.append("acceso_id", acceso_id);
 
     try {
-      const response = await fetch("http://localhost:8000/api/imagenes", {
+      const response = await fetch(`${API_BASE_URL}/imagenes`, {
         method: "POST",
         body: formData,
       });
@@ -95,7 +96,7 @@ const PerfilUsuario = () => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       // Refrescar la imagen de perfil desde el backend
-      fetch(`http://localhost:8000/api/perfil-imagen/${acceso_id}`)
+      fetch(`${API_BASE_URL}/perfil-imagen/${acceso_id}`)
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.url) setFotoPerfil(data.url);
@@ -120,10 +121,10 @@ const PerfilUsuario = () => {
   );
 
   return (
-    <div className="min-h-screen min-w-screen w-full h-full bg-gray-50 dark:bg-gray-900 flex flex-row">
+    <div className="min-h-screen min-w-screen w-full h-full bg-gray-50 flex flex-row">
       {/* SIDEBAR */}
       <aside 
-        className={`fixed left-0 top-[104px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden`}
+        className={`fixed left-0 top-[104px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-xl overflow-hidden`}
         aria-label="Sidebar"
         onMouseLeave={handleSidebarMouseLeave}
       >
@@ -216,7 +217,13 @@ const PerfilUsuario = () => {
                     <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Configuración</a>
                   </li>
                   <li>
-                    <a href="#" className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Cerrar sesión</a>
+                    <a
+                      href="#"
+                      className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                      onClick={e => { e.preventDefault(); localStorage.removeItem('user'); window.location.href = '/login'; }}
+                    >
+                      Cerrar sesión
+                    </a>
                   </li>
                 </ul>
               )}
@@ -226,38 +233,38 @@ const PerfilUsuario = () => {
       </aside>
 
       {/* MAIN DASHBOARD */}
-      <div className="flex-1 min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 ml-16 md:ml-40">
+      <div className="flex-1 min-h-screen flex flex-col bg-gray-50 ml-16 md:ml-40">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-6 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-md">
+        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-6 bg-white border-b border-gray-200 shadow-md">
           <div>
             <a href="../PanelAcceso" className="flex items-center ms-4">
               <img
-                src="../src/imagenes/60aniversario.png"
+                src="/imagenes/60aniversario.png"
                 className="h-12 me-2"
                 alt="FDI"
               />
-              <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+              <span className="self-center text-xl font-semibold whitespace-nowrap text-gray-800">
                 Programas de Unidad<br />de Aprendizaje
               </span>
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <img src={fotoPerfil} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-800" alt="avatar" />
-            <span className="text-gray-700 dark:text-gray-200 font-medium">{docente?.nombre || 'Usuario'}</span>
-            <i className="fa fa-chevron-down text-gray-400 dark:text-gray-300" />
+            <img src={fotoPerfil} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" alt="avatar" />
+            <span className="text-gray-700 font-medium">{docente?.nombre || 'Usuario'}</span>
+            <i className="fa fa-chevron-down text-gray-400" />
           </div>
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 flex flex-col items-start justify-start bg-gray-50 dark:bg-gray-900 px-0 pt-32 pb-16 w-full relative">
+        <main className="flex-1 flex flex-col items-start justify-start bg-gray-50 px-0 pt-32 pb-16 w-full relative">
           <div className="w-full max-w-7xl ml-0 mr-0 grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-80 px-10 md:px-25 mt-0">
             {/* Profile Card */}
-            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-blue-900/30" style={{minWidth: 320}}>
+            <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center col-span-1 md:col-span-1 border border-gray-200" style={{minWidth: 320}}>
               <div className="relative mb-4">
                 <img
                   src={fotoPerfil}
                   alt="Foto de perfil"
-                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-blue-900 shadow"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 shadow"
                   onClick={handleFotoClick}
                   style={{ cursor: 'pointer' }}
                 />
@@ -269,16 +276,16 @@ const PerfilUsuario = () => {
                   onChange={handleFileChange}
                   disabled={subiendo}
                 />
-                <span className="absolute bottom-2 right-2 bg-orange-500 text-white rounded-full p-1 cursor-pointer text-xs border-2 border-white dark:border-gray-900" onClick={handleFotoClick} title="Editar foto">
+                <span className="absolute bottom-2 right-2 bg-orange-500 text-white rounded-full p-1 cursor-pointer text-xs border-2 border-white" onClick={handleFotoClick} title="Editar foto">
                   <i className="fa fa-pencil" />
                 </span>
               </div>
               <div className="w-full text-left">
-                <div className="font-semibold text-lg text-gray-800 dark:text-white mb-1">{docente?.nombre || 'Usuario'}</div>
-                <div className="text-xs text-gray-400 dark:text-gray-300 mb-2">{docente?.correo || 'Sin correo'}</div>
-                <div className="border-b border-gray-200 dark:border-gray-700 mb-2" />
-                <div className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">{docente?.titulo || 'Sin título'}</div>
-                <div className="text-sm text-gray-500 dark:text-gray-300 mb-1">{docente?.apellido_paterno || ''} {docente?.apellido_materno || ''}</div>
+                <div className="font-semibold text-lg text-gray-800 mb-1">{docente?.nombre || 'Usuario'}</div>
+                <div className="text-xs text-gray-500 mb-2">{docente?.correo || 'Sin correo'}</div>
+                <div className="border-b border-gray-200 mb-2" />
+                <div className="text-base text-gray-700 font-medium mb-1">{docente?.titulo || 'Sin título'}</div>
+                <div className="text-sm text-gray-500 mb-1">{docente?.apellido_paterno || ''} {docente?.apellido_materno || ''}</div>
                 {/* Puedes agregar más datos aquí si lo deseas */}
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-xs text-orange-500">SMS alerts activation</span>
@@ -288,62 +295,62 @@ const PerfilUsuario = () => {
               </div>
             </div>
             {/* Datos Academicos Tarjeta */}
-            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-purple-900/30" style={{minWidth: 320}}>
+            <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-200" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800 dark:text-white">DATOS ACADEMICOS</div>
+                <div className="font-semibold text-lg text-gray-800">DATOS ACADEMICOS</div>
               </div>
               <div className="flex flex-col gap-2">
                 {/* Cargo */}
                 <div className="flex flex-col mb-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Cargo</span>
-                  <span className="text-base text-gray-800 dark:text-gray-100 font-semibold">{docente?.titulo || 'Sin cargo'}</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-wide">Cargo</span>
+                  <span className="text-base text-gray-800 font-semibold">{docente?.titulo || 'Sin cargo'}</span>
                 </div>
                 {/* Facultades */}
                 <div className="flex flex-col mb-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Facultad(es)</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-wide">Facultad(es)</span>
                   {docente?.facultades && docente.facultades.length > 0 ? (
                     <ul className="list-disc list-inside ml-2">
                       {docente.facultades.map((fac, idx) => (
-                        <li key={(fac && fac.facultad_id) ?? idx} className="text-gray-800 dark:text-gray-100 text-sm">
+                        <li key={(fac && fac.facultad_id) ?? idx} className="text-gray-800 text-sm">
                           {typeof fac === 'string' ? fac : (fac?.nombre ?? 'Sin nombre')}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400 text-sm">Sin facultades</span>
+                    <span className="text-gray-500 text-sm">Sin facultades</span>
                   )}
                 </div>
                 {/* Carreras */}
                 <div className="flex flex-col mb-2">
-                  <span className="text-xs text-gray-400 dark:text-gray-300 uppercase tracking-wide">Carrera(s)</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-wide">Carrera(s)</span>
                   {docente?.carreras && docente.carreras.length > 0 ? (
                     <ul className="list-disc list-inside ml-2">
                       {docente.carreras.map((car, idx) => (
-                        <li key={(car && car.carrera_id) ?? idx} className="text-gray-800 dark:text-gray-100 text-sm">
+                        <li key={(car && car.carrera_id) ?? idx} className="text-gray-800 text-sm">
                           {typeof car === 'string' ? car : (car?.nombre ?? 'Sin nombre')}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400 text-sm">Sin carreras</span>
+                    <span className="text-gray-500 text-sm">Sin carreras</span>
                   )}
                 </div>
               </div>
             </div>
             {/* Materias impartidas */}
-            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-100 dark:border-gray-700 dark:shadow-2xl dark:shadow-yellow-900/30" style={{minWidth: 320}}>
+            <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col col-span-1 border border-gray-200" style={{minWidth: 320}}>
               <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-lg text-gray-800 dark:text-white">MATERIAS IMPARTIDAS</div>
+                <div className="font-semibold text-lg text-gray-800">MATERIAS IMPARTIDAS</div>
               </div>
               <div className="flex flex-col gap-2">
                 {materias.length > 0 ? (
                   <ul className="list-disc list-inside ml-2">
                     {materias.map((mat, idx) => (
-                      <li key={mat.materia_id || idx} className="text-gray-800 dark:text-gray-100 text-sm">{mat.nombre}</li>
+                      <li key={mat.materia_id || idx} className="text-gray-800 text-sm">{mat.nombre}</li>
                     ))}
                   </ul>
                 ) : (
-                  <span className="text-gray-500 dark:text-gray-400 text-sm">No tiene materias asignadas</span>
+                  <span className="text-gray-500 text-sm">No tiene materias asignadas</span>
                 )}
               </div>
             </div>

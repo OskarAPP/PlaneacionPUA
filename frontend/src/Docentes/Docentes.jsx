@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { API_BASE_URL } from "../utils/api";
 
 import Sidebar from "../Components/Sidebar";
 
@@ -85,7 +86,7 @@ const Docentes = () => {
     setCarrerasDocenteMateria([]);
     try {
       // Consultar carreras del docente desde el nuevo endpoint backend
-      const res = await fetch(`http://localhost:8000/api/docentes/${docente.docente_id}/carreras`);
+      const res = await fetch(`${API_BASE_URL}/docentes/${docente.docente_id}/carreras`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setCarrerasDocenteMateria(data);
@@ -110,7 +111,7 @@ const Docentes = () => {
     }
     setMateriaModalError("");
     setMateriasCarrera([]);
-    fetch(`http://localhost:8000/api/materias/carrera/${selectedCarreraMateria}`)
+    fetch(`${API_BASE_URL}/materias/carrera/${selectedCarreraMateria}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -149,7 +150,7 @@ const Docentes = () => {
     setMateriaModalLoading(true);
     setMateriaModalError("");
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/materias`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/materias`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ materia_id: selectedMateria })
@@ -157,7 +158,7 @@ const Docentes = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         // Actualizar docentes (para reflejar materias asignadas si el backend lo retorna)
-        fetch('http://localhost:8000/api/docentes')
+        fetch(`${API_BASE_URL}/docentes`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setDocentesData(data.docentes);
@@ -181,7 +182,7 @@ const Docentes = () => {
 
   // Obtener docentes desde la API
   useEffect(() => {
-    fetch('http://localhost:8000/api/docentes')
+    fetch(`${API_BASE_URL}/docentes`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setDocentesData(data.docentes);
@@ -190,7 +191,7 @@ const Docentes = () => {
 
   // Obtener facultades para el modal
   useEffect(() => {
-    fetch('http://localhost:8000/api/facultades')
+    fetch(`${API_BASE_URL}/facultades`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setFacultades(data);
@@ -268,7 +269,7 @@ const Docentes = () => {
     setModalLoading(true);
     setModalError("");
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/facultades`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/facultades`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ facultad_id: selectedFacultad })
@@ -276,7 +277,7 @@ const Docentes = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         // Actualizar facultades en la tabla (recargar docentes)
-        fetch('http://localhost:8000/api/docentes')
+        fetch(`${API_BASE_URL}/docentes`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setDocentesData(data.docentes);
@@ -328,20 +329,20 @@ const Docentes = () => {
       const updates = [];
       // Actualizar cargo (puede ser vacío)
       updates.push(
-        fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/cargo`, {
+        fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/cargo`, {
           method: 'PATCH', headers, body: JSON.stringify({ cargo_id: selectedCargo || null })
         }).then(r => r.json())
       );
       // Actualizar rol (puede ser vacío)
       updates.push(
-        fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/rol`, {
+        fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/rol`, {
           method: 'PATCH', headers, body: JSON.stringify({ rol_id: selectedAdminCargo || null })
         }).then(r => r.json())
       );
       const [cargoRes, rolRes] = await Promise.all(updates);
       if ((cargoRes && cargoRes.success !== false) && (rolRes && rolRes.success !== false)) {
         // Refrescar lista de docentes para reflejar cambios
-        const res = await fetch('http://localhost:8000/api/docentes');
+        const res = await fetch(`${API_BASE_URL}/docentes`);
         const data = await res.json();
         if (data.success) setDocentesData(data.docentes);
         handleCloseCargoModal();
@@ -359,8 +360,8 @@ const Docentes = () => {
     if (!cargoModalOpen) return;
     setCargoModalLoading(true);
     Promise.all([
-      fetch('http://localhost:8000/api/cargos').then(r => r.json()).catch(() => []),
-      fetch('http://localhost:8000/api/roles').then(r => r.json()).catch(() => [])
+      fetch(`${API_BASE_URL}/cargos`).then(r => r.json()).catch(() => []),
+      fetch(`${API_BASE_URL}/roles`).then(r => r.json()).catch(() => [])
     ])
       .then(([cargosData, rolesData]) => {
         if (Array.isArray(cargosData)) setCargos(cargosData);
@@ -392,7 +393,7 @@ const Docentes = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/facultades/${facObj.facultad_id}`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/facultades/${facObj.facultad_id}`, {
         method: 'DELETE',
       });
       let data = {};
@@ -405,7 +406,7 @@ const Docentes = () => {
       }
       if (res.ok && data.success) {
         setFacultadesDocente(prev => prev.filter((_, i) => i !== idx));
-        fetch('http://localhost:8000/api/docentes')
+        fetch(`${API_BASE_URL}/docentes`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setDocentesData(data.docentes);
@@ -445,7 +446,7 @@ const Docentes = () => {
     }
     setCarreraModalError("");
     setCarrerasFacultad([]);
-    fetch(`http://localhost:8000/api/carreras/facultad/${selectedFacultadCarrera}`)
+    fetch(`${API_BASE_URL}/carreras/facultad/${selectedFacultadCarrera}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -484,7 +485,7 @@ const Docentes = () => {
     setCarreraModalLoading(true);
     setCarreraModalError("");
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/carreras`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/carreras`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ carrera_id: selectedCarrera })
@@ -492,7 +493,7 @@ const Docentes = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         // Actualizar docentes
-        fetch('http://localhost:8000/api/docentes')
+        fetch(`${API_BASE_URL}/docentes`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setDocentesData(data.docentes);
@@ -524,7 +525,7 @@ const Docentes = () => {
         // Obtener todas las carreras de esas facultades
         for (const facId of facIds) {
           try {
-            const res = await fetch(`http://localhost:8000/api/carreras/facultad/${facId}`);
+            const res = await fetch(`${API_BASE_URL}/carreras/facultad/${facId}`);
             const data = await res.json();
             if (Array.isArray(data)) {
               carrerasAll = carrerasAll.concat(data);
@@ -578,7 +579,7 @@ const Docentes = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/carreras/${carreraId}`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/carreras/${carreraId}`, {
         method: 'DELETE',
       });
       let data = {};
@@ -592,7 +593,7 @@ const Docentes = () => {
       if (res.ok && data.success) {
         setCarrerasDocente(prev => prev.filter((_, i) => i !== idx));
         // Actualizar docentes global
-        fetch('http://localhost:8000/api/docentes')
+        fetch(`${API_BASE_URL}/docentes`)
           .then(res => res.json())
           .then(data => {
             if (data.success) setDocentesData(data.docentes);
@@ -616,7 +617,7 @@ const Docentes = () => {
     setMateriaDeleteLoading(prev => ({ ...prev, [idx]: true }));
     setMateriaDeleteError("");
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${selectedDocente.docente_id}/materias/${materiaObj.materia_id}`, {
+      const res = await fetch(`${API_BASE_URL}/docentes/${selectedDocente.docente_id}/materias/${materiaObj.materia_id}`, {
         method: 'DELETE',
       });
       let data = {};
@@ -647,7 +648,7 @@ const Docentes = () => {
     setMateriasDocenteError("");
     setMateriasDocenteNombre(`${docente.nombre} ${docente.apellido_paterno} ${docente.apellido_materno || ''}`);
     try {
-      const res = await fetch(`http://localhost:8000/api/docentes/${docente.docente_id}/materias`);
+      const res = await fetch(`${API_BASE_URL}/docentes/${docente.docente_id}/materias`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setMateriasDocente(data);
@@ -673,7 +674,7 @@ const Docentes = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen w-screen flex bg-gray-100 text-gray-900">
       {/* Sidebar modular */}
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -689,35 +690,35 @@ const Docentes = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
+        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-3 py-1 shadow-sm min-h-0 h-12">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-1 rounded bg-white dark:bg-gray-800 border border-blue-700 dark:border-blue-400 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-800 dark:hover:border-blue-500 focus:outline-none transition-colors"
+            className="p-1 rounded bg-white border border-blue-700 text-blue-700 hover:bg-blue-50 hover:border-blue-800 focus:outline-none transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-gray-800 dark:text-gray-100 font-semibold leading-tight text-right">
+            <span className="text-xs text-gray-800 font-semibold leading-tight text-right">
               Programas de Unidad<br />de Aprendizaje
             </span>
-            <img src="../src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
+            <img src="/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-8 h-8 object-contain" />
           </div>
         </header>
         {/* Main Body */}
-        <main className="flex-1 flex flex-col items-center py-8 overflow-auto bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <main className="flex-1 flex flex-col items-center py-8 overflow-auto bg-gray-100 text-gray-900">
           <div className="w-full max-w-7xl">
             {/* Barra de búsqueda */}
-            <div className="bg-blue-700 dark:bg-blue-900 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
-            <div className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+            <div className="bg-blue-700 text-white text-lg font-semibold rounded-t-md px-4 py-2 text-center mb-2">Buscar</div>
+            <div className="bg-white border border-gray-200 rounded-b-md p-4 flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
               <div className="flex-1">
-                <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Docente:</label>
+                <label className="block text-gray-700 font-semibold mb-1">Docente:</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i className="fa fa-search" /></span>
                   <input
                     type="text"
-                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                    className="w-full pl-10 pr-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white text-gray-900 border-gray-300"
                     placeholder="Nombre del Docente o Apellidos"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
@@ -725,19 +726,19 @@ const Docentes = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Ordenar alfabéticamente por:</label>
-                <select className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700" value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+                <label className="block text-gray-700 font-semibold mb-1">Ordenar alfabéticamente por:</label>
+                <select className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300" value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
                   <option value="az">A a Z</option>
                   <option value="za">Z a A</option>
                 </select>
               </div>
             </div>
             {/* Lista de docentes */}
-            <div className="bg-blue-100 dark:bg-blue-950 text-blue-900 dark:text-blue-200 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
-            <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-b-md shadow">
-              <table className="min-w-full text-sm text-left text-blue-900 dark:text-blue-200">
+            <div className="bg-blue-100 text-blue-900 text-center font-semibold rounded-t-md py-2 mb-0.5">Lista de docentes</div>
+            <div className="overflow-x-auto bg-white rounded-b-md shadow">
+              <table className="min-w-full text-sm text-left text-blue-900">
                 <thead>
-                  <tr className="border-b bg-blue-50 dark:bg-gray-900">
+                  <tr className="border-b bg-blue-50">
                     <th className="px-3 py-2 font-bold">#</th>
                     <th className="px-3 py-2 font-bold">Titulo</th>
                     <th className="px-3 py-2 font-bold">Nombre(s)</th>
@@ -750,10 +751,10 @@ const Docentes = () => {
                     <th className="px-3 py-2 font-bold">Cargo</th>
                   </tr>
                 </thead>
-                <tbody className="text-blue-900 dark:text-blue-200">
+                <tbody className="text-blue-900">
                   {/* Aquí irían los datos de los docentes */}
                   {filteredDocentes.map((docente, idx) => (
-                    <tr key={docente.docente_id} className="border-b hover:bg-blue-50 dark:hover:bg-gray-700">
+                    <tr key={docente.docente_id} className="border-b hover:bg-blue-50">
                       <td className="px-3 py-2">{idx + 1}</td>
                       <td className="px-3 py-2">{docente.titulo}</td>
                       <td className="px-3 py-2">{docente.nombre}</td>
@@ -812,7 +813,7 @@ const Docentes = () => {
                       <td className="px-3 py-2 text-center">
                         <button
                           type="button"
-                          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="p-1 rounded hover:bg-gray-100"
                           onClick={() => handleOpenCargoModal(docente)}
                           title="Configurar cargo"
                           aria-label="Configurar cargo"
@@ -821,7 +822,7 @@ const Docentes = () => {
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             fill="currentColor"
-                            className="w-5 h-5 text-gray-500 dark:text-gray-300"
+                            className="w-5 h-5 text-gray-500"
                             aria-hidden="true"
                             focusable="false"
                           >
@@ -837,10 +838,10 @@ const Docentes = () => {
             {/* Modal de Cargo */}
             {cargoModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseCargoModal}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Cargo</h2>
-                  <div className="mb-3 text-sm text-gray-700 dark:text-gray-200">
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700">Cargo</h2>
+                  <div className="mb-3 text-sm text-gray-700">
                     {selectedDocente ? (
                       <>
                         <div className="font-medium">Docente</div>
@@ -849,9 +850,9 @@ const Docentes = () => {
                     ) : null}
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Selecciona un cargo:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Selecciona un cargo:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300"
                       value={selectedCargo}
                       onChange={e => setSelectedCargo(e.target.value)}
                       disabled={cargoModalLoading || cargos.length === 0}
@@ -868,9 +869,9 @@ const Docentes = () => {
                     )}
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Cargo administrativo:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Cargo administrativo:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300"
                       value={selectedAdminCargo}
                       onChange={e => setSelectedAdminCargo(e.target.value)}
                       disabled={cargoModalLoading || roles.length === 0}
@@ -895,13 +896,13 @@ const Docentes = () => {
             {/* Modal para agregar materia */}
             {addMateriaModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseAddMateriaModal}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar materia</h2>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700">Agregar materia</h2>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Carrera:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 mb-2"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300 mb-2"
                       value={selectedCarreraMateria}
                       onChange={e => {
                         setSelectedCarreraMateria(e.target.value);
@@ -915,9 +916,9 @@ const Docentes = () => {
                     </select>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Materia:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Materia:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300"
                       value={selectedMateria}
                       onChange={e => setSelectedMateria(e.target.value)}
                       disabled={!selectedCarreraMateria || materiasCarrera.length === 0}
@@ -944,13 +945,13 @@ const Docentes = () => {
             {/* Modal para agregar facultad */}
             {modalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseModal}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar facultad</h2>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700">Agregar facultad</h2>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300"
                       value={selectedFacultad}
                       onChange={e => setSelectedFacultad(e.target.value)}
                     >
@@ -976,13 +977,13 @@ const Docentes = () => {
             {/* Modal para agregar carrera */}
             {addCarreraModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseAddCarreraModal}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">Agregar carrera</h2>
+                  <h2 className="text-lg font-semibold mb-4 text-blue-700">Agregar carrera</h2>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Facultad:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 mb-2"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300 mb-2"
                       value={selectedFacultadCarrera}
                       onChange={e => {
                         setSelectedFacultadCarrera(e.target.value);
@@ -996,9 +997,9 @@ const Docentes = () => {
                     </select>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-1">Carrera:</label>
+                    <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
                     <select
-                      className="w-full border rounded px-3 py-2 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700"
+                      className="w-full border rounded px-3 py-2 bg-white text-gray-900 border-gray-300"
                       value={selectedCarrera}
                       onChange={e => setSelectedCarrera(e.target.value)}
                       disabled={!selectedFacultadCarrera || carrerasFacultad.length === 0}
@@ -1025,10 +1026,10 @@ const Docentes = () => {
             {/* Modal para ver facultades del docente */}
             {viewFacModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewFacModal}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Facultades de {docenteNombreModal}</h2>
-                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold mb-4 text-green-700">Facultades de {docenteNombreModal}</h2>
+                  <ul className="list-disc pl-5 text-gray-800">
                     {facultadesDocente.length > 0 ? (
                       facultadesDocente.map((fac, idx) => (
                         <li key={idx} className="flex items-center justify-between group">
@@ -1062,10 +1063,10 @@ const Docentes = () => {
             {/* Modal para ver carreras del docente */}
             {viewCarrerasModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewCarreras}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Carreras de {docenteNombreCarreraModal}</h2>
-                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold mb-4 text-green-700">Carreras de {docenteNombreCarreraModal}</h2>
+                  <ul className="list-disc pl-5 text-gray-800">
                     {carrerasDocente.length > 0 ? (
                       carrerasDocente.map((carr, idx) => (
                         <li key={idx} className="flex items-center justify-between group">
@@ -1099,10 +1100,10 @@ const Docentes = () => {
             {/* Modal para ver materias del docente */}
             {viewMateriasModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm relative">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm relative">
                   <button className="absolute top-2 right-2 text-gray-500 hover:text-red-600" onClick={handleCloseViewMaterias}>&times;</button>
-                  <h2 className="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Materias de {materiasDocenteNombre}</h2>
-                  <ul className="list-disc pl-5 text-gray-800 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold mb-4 text-green-700">Materias de {materiasDocenteNombre}</h2>
+                  <ul className="list-disc pl-5 text-gray-800">
                     {materiasDocente.length > 0 ? (
                       materiasDocente.map((mat, idx) => (
                         <li key={idx} className="flex items-center justify-between group">
@@ -1137,8 +1138,8 @@ const Docentes = () => {
           </div>
         </main>
         {/* Footer */}
-        <footer className="bg-gray-600/90 dark:bg-gray-900 text-white py-4 flex flex-col items-center mt-auto shadow-glass">
-          <img src="../src/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
+        <footer className="bg-gray-100 text-gray-600 py-4 flex flex-col items-center mt-auto border-t border-gray-200">
+          <img src="/imagenes/imagen_salida1.png" alt="Facultad de Ingeniería" className="w-16 h-16 mb-2" />
           <div className="text-center text-sm">
             Facultad de Ingeniería<br />
             Laboratorio de Diseño de Aplicaciones Móviles

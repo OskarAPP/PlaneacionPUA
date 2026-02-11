@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../../utils/api";
 
 const useDocente = () => {
   const [docente, setDocente] = useState(null);
@@ -6,7 +7,7 @@ const useDocente = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id_docente) {
-      fetch(`http://localhost:8000/api/docente/${user.id_docente}`)
+      fetch(`${API_BASE_URL}/docente/${user.id_docente}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setDocente(data.docente);

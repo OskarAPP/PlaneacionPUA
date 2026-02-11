@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-12-2025 a las 18:00:19
+-- Tiempo de generación: 22-01-2026 a las 06:15:03
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -6952,7 +6952,7 @@ CREATE TABLE `pua_documentos` (
 --
 
 INSERT INTO `pua_documentos` (`id`, `carrera_id`, `materia_id`, `status_revision`, `locked_by`, `locked_at`, `created_by`, `metadata`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'borrador', NULL, NULL, 13, NULL, '2025-11-22 04:05:19', '2025-12-03 00:35:03');
+(1, 1, 1, 'borrador', NULL, NULL, 13, NULL, '2025-11-22 04:05:19', '2026-01-14 02:39:42');
 
 -- --------------------------------------------------------
 
@@ -6979,7 +6979,7 @@ CREATE TABLE `pua_modulos` (
 --
 
 INSERT INTO `pua_modulos` (`id`, `pua_documento_id`, `slug`, `titulo`, `status_revision`, `payload`, `locked_by`, `locked_at`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 'datos_pua', NULL, 'listo', '{\"materia\":{\"nombre\":\"Algoritmos y Estructuras de Datos\",\"creditos_totales\":8,\"horas_totales\":64,\"horas_teoricas\":48,\"horas_practicas\":16,\"area_nombre\":\"Inform\\u00e1tica\",\"nucleo_nombre\":\"Disciplinar\",\"tipo_materia_nombre\":\"Obligatoria\",\"art57\":\"Si\"},\"plan_estudio\":{\"nombre\":\"PE-2020\"},\"materia_id\":1,\"carrera_id\":1}', NULL, NULL, 13, '2025-11-24 13:22:26', '2025-12-03 00:35:03'),
+(1, 1, 'datos_pua', NULL, 'listo', '{\"materia\":{\"nombre\":\"Algoritmos y Estructuras de Datos\",\"creditos_totales\":8,\"horas_totales\":64,\"horas_teoricas\":48,\"horas_practicas\":16,\"area_nombre\":\"Inform\\u00e1tica\",\"nucleo_nombre\":\"Disciplinar\",\"tipo_materia_nombre\":\"Obligatoria\",\"art57\":\"Si\"},\"plan_estudio\":{\"nombre\":\"PE-2020\"},\"materia_id\":1,\"carrera_id\":1}', NULL, NULL, 13, '2025-11-24 13:22:26', '2026-01-14 02:39:42'),
 (2, 1, 'bibliografia_sugerida', NULL, 'listo', '{\"agregados\":[{\"id\":4341,\"titulo\":\"ADVANCED CALCULUS\",\"autor\":\"MURRAY SPIEGEL\",\"anio\":\"1963\",\"editorial\":\"SCHAUM PUBLISHING, CO.\",\"isbn\":\"N\\/T\",\"isbn_extra\":\"968-422-918--6\",\"item\":\"07\\/02525\",\"ficha\":\"MURRAY SPIEGEL (1963). ADVANCED CALCULUS. SCHAUM PUBLISHING, CO.. EJEMP. 1. ISBN: N\\/T\",\"tipo\":\"B\\u00e1sica\"}]}', NULL, NULL, 13, '2025-11-24 13:28:34', '2025-11-24 13:36:39'),
 (3, 1, 'competencias_perfil', NULL, 'listo', '{\"genericas\":[{\"index\":0,\"competencia\":{\"competencia_gen_id\":2,\"nombre\":\"Comunicaci\\u00f3n Efectiva\"}}],\"especificas\":[{\"id\":5,\"nombre\":\"React y Laravel\"}],\"formacion\":\"Formacion\",\"unidad\":\"Aprendizaje\"}', NULL, NULL, 13, '2025-11-24 13:30:54', '2025-11-24 13:30:54'),
 (4, 1, 'comite_curricular', NULL, 'listo', '{\"responsable\":{\"docente_id\":13,\"nombre\":\"Oscar Antonio\",\"apellido_paterno\":\"Perez\",\"apellido_materno\":\"Perez\",\"titulo\":\"Ing\",\"correo\":\"al070144@uacam.mx\",\"prefijo\":null,\"facultades\":[{\"facultad_id\":1,\"nombre\":\"Ingenier\\u00eda\"},{\"facultad_id\":3,\"nombre\":\"Facultad de Medicina\"}],\"facultades_nombres\":[\"Ingenier\\u00eda\",\"Facultad de Medicina\"],\"carreras\":[\"Sistemas computacionales\",\"Enfermeria\"],\"carreras_full\":[{\"carrera_id\":1,\"nombre\":\"Sistemas computacionales\",\"facultad_id\":1,\"plan_estudio_id\":1,\"pivot\":{\"docente_id\":13,\"carrera_id\":1}},{\"carrera_id\":4,\"nombre\":\"Enfermeria\",\"facultad_id\":3,\"plan_estudio_id\":3,\"pivot\":{\"docente_id\":13,\"carrera_id\":4}}],\"id\":13,\"display\":\"Ing Oscar Antonio Perez Perez\"},\"participanteExtra\":{\"id\":16,\"titulo\":\"Abg\",\"nombre\":\"Nidia\",\"apellido_paterno\":\"Lopez\",\"apellido_materno\":\"Acosta\",\"display\":\"Abg Nidia Lopez Acosta\"},\"firmantes\":{\"presidente\":{\"id\":14,\"titulo\":\"lic\",\"nombre\":\"Lisa\",\"apellido_paterno\":\"asda\",\"apellido_materno\":\"dasda\",\"display\":\"lic Lisa asda dasda\"},\"secretario\":{\"id\":14,\"titulo\":\"lic\",\"nombre\":\"Lisa\",\"apellido_paterno\":\"asda\",\"apellido_materno\":\"dasda\",\"display\":\"lic Lisa asda dasda\"},\"coordinador\":{\"id\":13,\"titulo\":\"Ing\",\"nombre\":\"Oscar Antonio\",\"apellido_paterno\":\"Perez\",\"apellido_materno\":\"Perez\",\"display\":\"Ing Oscar Antonio Perez Perez\"},\"secretarioAcademico\":{\"id\":12,\"titulo\":\"Lic. Cp\",\"nombre\":\"Reyna Guadalupe\",\"apellido_paterno\":\"Sanchez\",\"apellido_materno\":\"Chach\",\"display\":\"Lic. Cp Reyna Guadalupe Sanchez Chach\"},\"director\":{\"id\":15,\"titulo\":\"Lic\",\"nombre\":\"Angel\",\"apellido_paterno\":\"Perez\",\"apellido_materno\":\"Perez\",\"display\":\"Lic Angel Perez Perez\"}}}', NULL, NULL, 13, '2025-11-24 13:31:25', '2025-11-24 13:31:25'),
@@ -7017,7 +7017,9 @@ INSERT INTO `pua_versiones` (`id`, `pua_documento_id`, `version`, `generado_por`
 (3, 1, 3, 13, 'emitido', 'pua/1/pua_v03.pdf', NULL, NULL, '2025-11-24 13:52:27', '2025-11-24 13:52:27'),
 (4, 1, 4, 13, 'emitido', 'pua/1/pua_v04.pdf', NULL, NULL, '2025-11-24 14:21:36', '2025-11-24 14:21:36'),
 (5, 1, 5, 13, 'emitido', 'pua/1/pua_v05.pdf', NULL, NULL, '2025-12-02 13:07:19', '2025-12-02 13:07:19'),
-(6, 1, 6, 13, 'emitido', 'pua/1/pua_v06.pdf', NULL, NULL, '2025-12-02 13:21:44', '2025-12-02 13:21:44');
+(6, 1, 6, 13, 'emitido', 'pua/1/pua_v06.pdf', NULL, NULL, '2025-12-02 13:21:44', '2025-12-02 13:21:44'),
+(7, 1, 7, 13, 'emitido', 'pua/1/pua_v07.pdf', NULL, NULL, '2026-01-14 02:24:57', '2026-01-14 02:24:57'),
+(8, 1, 8, 13, 'emitido', 'pua/1/pua_v08.pdf', NULL, NULL, '2026-01-14 02:39:49', '2026-01-14 02:39:49');
 
 -- --------------------------------------------------------
 
@@ -7469,7 +7471,7 @@ ALTER TABLE `pua_modulos`
 -- AUTO_INCREMENT de la tabla `pua_versiones`
 --
 ALTER TABLE `pua_versiones`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`

@@ -1,0 +1,257 @@
+MANUAL DE EJECUCION EN VM LINUX (DOCKER)
+========================================
+
+1) OBJETIVO
+-----------
+Este manual explica paso a paso como ejecutar PlaneacionPUA en una VM Linux usando Docker y los archivos ya configurados del proyecto. Incluye requisitos, instalacion, puesta en marcha, verificaciones, y que hacer despues de modificar el codigo y actualizar las imagenes.
+
+2) RESUMEN DEL PROYECTO
+-----------------------
+- Backend: Laravel (PHP-FPM) en contenedor.
+- Frontend: React + Vite compilado y servido por Nginx.
+- Base de datos: MySQL 8.0.
+- Cache/colas: Redis.
+- Orquestacion: docker-compose.yml en la raiz del proyecto.
+
+3) REQUISITOS BASICOS EN LA VM LINUX
+------------------------------------
+Hardware recomendado:
+- 2 CPU, 4 GB RAM minimo (8 GB recomendado), 20 GB disco.
+
+Software requerido:
+- Docker Engine
+- Docker Compose (plugin)
+- Git (opcional, si se clonara el repositorio en la VM)
+
+Sistemas probados (referencia):
+- Ubuntu 22.04/24.04, Debian 12, Rocky/Alma 9
+
+4) INSTALACION DE DOCKER (EJEMPLO UBUNTU/DEBIAN)
+-------------------------------------------------
+Ejecutar como usuario con permisos sudo:
+
+1) Actualizar repositorios:
+   sudo apt-get update
+
+2) Instalar dependencias:
+   sudo apt-get install -y ca-certificates curl gnupg
+
+3) Agregar llaves y repo de Docker:
+   sudo install -m 0755 -d /etc/apt/keyrings
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+     $(. /etc/os-release && echo $VERSION_CODENAME) stable" | \
+     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+4) Instalar Docker Engine y Compose plugin:
+   sudo apt-get update
+   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+5) Validar instalacion:
+   docker --version
+   docker compose version
+
+6) (Opcional) Permitir ejecutar docker sin sudo:
+   sudo usermod -aG docker $USER
+   Cerrar sesion y volver a entrar.
+
+Nota: En otras distros consultar la documentacion oficial de Docker.
+
+5) PREPARACION DEL PROYECTO EN LA VM
+------------------------------------
+1) Copiar el proyecto a la VM o clonar el repositorio:
+   git clone <URL_DEL_REPOSITORIO>
+   cd PlaneacionPUA
+
+2) Verificar que exista el archivo docker-compose.yml en la raiz.
+
+3) Crear archivo .env para Docker (opcional pero recomendado):
+   En la raiz del proyecto, crear un archivo .env con las variables que usa docker-compose.yml.
+
+   Ejemplo (ajustar valores reales):
+   APP_URL=http://<IP_DE_LA_VM>
+   CORS_ALLOWED_ORIGINS=http://<IP_DE_LA_VM>
+   DB_DATABASE=pua_db
+   DB_USERNAME=user
+   DB_PASSWORD=password
+
+   Si no se crea .env, se usaran los valores por defecto del docker-compose.yml.
+
+4) Verificar que la carpeta database/ contenga el archivo SQL de inicializacion.
+   El contenedor MySQL ejecuta automaticamente scripts en ./database al primer arranque.
+
+6) EJECUCION BASICA CON DOCKER COMPOSE
+--------------------------------------
+Desde la raiz del proyecto:
+
+1) Construir imagenes:
+   docker compose build
+
+2) Levantar contenedores en segundo plano:
+   docker compose up -d
+
+3) Verificar estado de servicios:
+   docker compose ps
+
+4) Ver logs en caso de problemas:
+   docker compose logs -f
+
+5) Acceso a la aplicacion:
+   - Frontend (Nginx): http://<IP_DE_LA_VM>
+   - API (Laravel): http://<IP_DE_LA_VM>/api
+
+Nota: El frontend sirve el contenido estatico y reenvia /api a PHP-FPM en el servicio backend.
+
+7) QUE HACE CADA SERVICIO
+-------------------------
+- frontend:
+  - Construye React con Vite.
+  - Sirve /usr/share/nginx/html con Nginx en el puerto 80.
+  - Redirige /api al backend via fastcgi.
+
+- backend:
+  - PHP 8.2 FPM.
+  - Ejecuta migraciones automaticamente al iniciar (docker-entrypoint.sh).
+  - Limpia cache de Laravel al inicio.
+  - Se conecta a MySQL y Redis.
+
+- db:
+  - MySQL 8.0.
+  - Persiste datos en volumen db_data.
+  - Ejecuta scripts SQL en ./database la primera vez.
+
+- redis:
+  - Redis para cache y colas.
+
+8) PRIMER ARRANQUE Y DATOS
+--------------------------
+- El contenedor backend ejecuta php artisan migrate --force al iniciar.
+- Si hay scripts SQL en ./database, MySQL los ejecuta la primera vez.
+- Si necesita datos de prueba, cree un seeder y ejecútelo dentro del contenedor backend:
+  docker compose exec backend php artisan db:seed --force
+
+9) COMANDOS UTILES
+------------------
+- Entrar al contenedor backend:
+  docker compose exec backend bash
+
+- Ejecutar comandos artisan:
+  docker compose exec backend php artisan <comando>
+
+- Ver estado de la base de datos:
+  docker compose exec db mysql -u<usuario> -p<password> <basedatos>
+
+- Detener servicios:
+  docker compose down
+
+- Detener y borrar volúmenes (borra DB):
+  docker compose down -v
+
+10) DESPUES DE MODIFICAR EL CODIGO (REBUILD)
+--------------------------------------------
+Cuando cambie el codigo fuente, es necesario reconstruir las imagenes. Recomendado:
+
+1) Detener servicios si estan corriendo:
+   docker compose down
+
+2) Reconstruir imagenes (sin cache si hay cambios grandes):
+   docker compose build
+   (o) docker compose build --no-cache
+
+3) Levantar nuevamente:
+   docker compose up -d
+
+Notas por tipo de cambio:
+- Cambios en frontend:
+  Se requiere rebuild del servicio frontend porque se genera nuevo build estatico.
+
+- Cambios en backend:
+  Se requiere rebuild del servicio backend.
+  Si hay cambios en migraciones, se ejecutan automaticamente al iniciar por el entrypoint.
+
+- Cambios en docker-compose.yml o Dockerfile:
+  Siempre reconstruir imagenes.
+
+- Cambios en archivos de configuracion (.env, nginx.conf):
+  Reconstruir la imagen correspondiente y reiniciar contenedores.
+
+11) ACTUALIZAR IMAGENES EN PRODUCCION
+-------------------------------------
+Flujo recomendado (en la VM):
+
+1) Obtener cambios (git pull o copiar archivos):
+   git pull
+
+2) Reconstruir imagenes:
+   docker compose build
+
+3) Reiniciar servicios:
+   docker compose up -d
+
+4) Verificar logs y salud:
+   docker compose logs -f
+
+12) CONSIDERACIONES AVANZADAS
+------------------------------
+- Puertos:
+  Asegure que el puerto 80 de la VM este abierto en firewall.
+
+- Base de datos persistente:
+  El volumen db_data mantiene los datos aunque se reinicien contenedores.
+
+- Permisos en storage:
+  El Dockerfile del backend asegura permisos en /var/www/storage y /var/www/bootstrap/cache.
+
+- Variables de entorno:
+  Use un archivo .env en la raiz para configurar APP_URL, DB_* y CORS_ALLOWED_ORIGINS.
+
+- Migraciones automaticas:
+  Si se requiere mas control, ajuste docker-entrypoint.sh.
+
+- Backups:
+  Para respaldar la DB, realizar dumps desde el contenedor db.
+
+13) SOLUCION DE PROBLEMAS BASICOS
+---------------------------------
+- El frontend no carga:
+  Revisar logs: docker compose logs frontend
+  Verificar puerto 80 y firewall.
+
+- Errores 500 en API:
+  Revisar logs backend: docker compose logs backend
+  Verificar variables DB y conexion a MySQL.
+
+- La base de datos no inicia:
+  Revisar logs db: docker compose logs db
+  Verificar espacio en disco y credenciales.
+
+- Cambios no se reflejan:
+  Rebuild de imagenes y reinicio de contenedores.
+
+14) ESTRUCTURA DE ARCHIVOS RELEVANTES
+-------------------------------------
+- docker-compose.yml: define todos los servicios.
+- backend/Dockerfile: imagen PHP-FPM y dependencias.
+- backend/docker-entrypoint.sh: migraciones y limpieza de cache.
+- frontend/Dockerfile: build React y Nginx.
+- frontend/nginx.conf: sirve SPA y reenvia /api.
+
+15) COMANDOS RESUMEN (CHEAT SHEET)
+----------------------------------
+- Construir:
+  docker compose build
+
+- Arrancar:
+  docker compose up -d
+
+- Logs:
+  docker compose logs -f
+
+- Detener:
+  docker compose down
+
+- Rebuild completo:
+  docker compose down
+  docker compose build
+  docker compose up -d

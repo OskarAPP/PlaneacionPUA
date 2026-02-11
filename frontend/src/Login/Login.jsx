@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aniversarioImg from '../Imagenes/60aniversario.png';
+import { API_BASE_URL } from '../utils/api';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,10 +43,17 @@ function Login() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      formRef.current?.requestSubmit();
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('./src/Imagenes/UAC.png')" }}
+      style={{ backgroundImage: "url('/imagenes/UAC.png')" }}
     >
       <div className="w-screen h-screen flex items-center justify-center p-2">
         <div className="flex flex-col w-full items-center justify-center">
@@ -52,7 +61,7 @@ function Login() {
           <div className="p-2 sm:p-6 w-full max-w-sm flex items-center justify-center mx-auto">
             <div className="w-full max-w-xs bg-dark/10 backdrop-blur rounded-2xl shadow-2xl p-4 border border-white/60" style={{boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)'}}>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-pastel-navy mb-4 text-center">¡Bienvenido!</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="block text-pastel-navy font-semibold text-sm uppercase tracking-wide">
                     Correo Institucional
@@ -62,6 +71,7 @@ function Login() {
                     className="w-full px-4 py-3 sm:px-5 sm:py-3 rounded-xl bg-white/70 border border-blue-200 focus:border-pastel-blue-400 focus:ring-2 focus:ring-pastel-blue-300 outline-none transition-all placeholder:text-blue-300"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     required
                     placeholder="usuario@uacam.mx"
                   />
@@ -76,6 +86,7 @@ function Login() {
                     className="w-full px-4 py-3 sm:px-5 sm:py-3 rounded-xl bg-white/70 border border-blue-200 focus:border-pastel-blue-400 focus:ring-2 focus:ring-pastel-blue-300 outline-none transition-all"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     required
                     placeholder="••••••••"
                   />

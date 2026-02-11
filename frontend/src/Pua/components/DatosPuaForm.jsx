@@ -53,9 +53,9 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
   }, [materiaSeleccionada, planEstudio, moduloData, setModuloData]);
 
   return (
-  <form className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-gray-100">
+  <form className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white bg-gray-100">
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Unidad de aprendizaje:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Unidad de aprendizaje:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -64,7 +64,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Créditos:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Créditos:</label>
       <input 
         type="number" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -73,7 +73,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Horas totales:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Horas totales:</label>
       <input 
         type="number" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -82,7 +82,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Horas teóricas:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Horas teóricas:</label>
       <input 
         type="number" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -91,7 +91,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Horas prácticas:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Horas prácticas:</label>
       <input 
         type="number" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -100,7 +100,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Área:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Área:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -109,7 +109,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Núcleo:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Núcleo:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -118,7 +118,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Tipo:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Tipo:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -127,7 +127,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Art. 57 RGA:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Art. 57 RGA:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 
@@ -136,7 +136,7 @@ const DatosPuaForm = ({ materiaSeleccionada, planEstudio }) => {
       />
     </div>
     <div>
-      <label className="block font-semibold text-gray-700 dark:text-blue-900 mb-1">Plan de Estudio:</label>
+      <label className="block font-semibold text-gray-700 text-blue-900 mb-1">Plan de Estudio:</label>
       <input 
         type="text" 
         className="w-full max-w-full border rounded px-2 py-1 bg-gray-100 text-gray-900" 

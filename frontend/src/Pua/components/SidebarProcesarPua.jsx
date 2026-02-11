@@ -4,7 +4,7 @@ import React from "react";
 function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, setCuentaOpen, handleSidebarMouseLeave}) {
   return (
     <aside 
-      className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden`}
+      className={`fixed left-0 top-[78px] z-20 w-16 hover:w-64 h-[calc(100vh-78px)] transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-hidden`}
       aria-label="Sidebar"
       onMouseLeave={handleSidebarMouseLeave}
     >
@@ -14,7 +14,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li>
             <a 
               href="/procesarpua" 
-              className="flex items-center p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group"
+                className="flex items-center p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group"
             >
               <span className="min-w-[20px] flex justify-center items-center">
                 <svg className="w-5 h-5 text-blue-500 transition duration-75 group-hover:text-blue-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -28,7 +28,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li>
             <a 
               href="/puaversion" 
-              className="flex items-center p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group"
+                className="flex items-center p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group"
             >
               <span className="min-w-[20px] flex justify-center items-center">
                 <svg className="w-5 h-5 text-blue-500 transition duration-75 group-hover:text-blue-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -43,7 +43,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li className="relative">
             <button type="button"
               onClick={() => setEstadisticasOpen(!estadisticasOpen)}
-              className="flex items-center w-full p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group focus:outline-none bg-transparent"
+              className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
             >
               <span className="min-w-[20px] flex justify-center items-center">
@@ -72,7 +72,7 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
           <li className="relative">
             <button type="button"
               onClick={() => setCuentaOpen(!cuentaOpen)}
-              className="flex items-center w-full p-2 text-gray-700 dark:text-gray-100 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group focus:outline-none bg-transparent"
+              className="flex items-center w-full p-2 text-gray-700 rounded-lg hover:bg-blue-100 transition-colors group focus:outline-none bg-transparent"
               style={{ backgroundColor: 'transparent' }}
             >
               <span className="min-w-[20px] flex justify-center items-center">
@@ -101,7 +101,13 @@ function SidebarProcesarPua({estadisticasOpen, setEstadisticasOpen, cuentaOpen, 
                   <a href="#" className="block p-2 text-sm text-blue-700 hover:bg-blue-50 rounded-md">Configuración</a>
                 </li>
                 <li>
-                  <a href="#" className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Cerrar sesión</a>
+                  <a
+                    href="#"
+                    className="block p-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                    onClick={e => { e.preventDefault(); localStorage.removeItem('user'); window.location.href = '/login'; }}
+                  >
+                    Cerrar sesión
+                  </a>
                 </li>
               </ul>
             )}

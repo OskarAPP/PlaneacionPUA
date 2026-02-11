@@ -179,7 +179,7 @@ const ProcesarPua = () => {
       setMateriasCarrera([]);
       return;
     }
-    fetch(`http://localhost:8000/api/materias/carrera/${carreraSeleccionada}`)
+    fetch(`${API_BASE_URL}/materias/carrera/${carreraSeleccionada}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -199,7 +199,7 @@ const ProcesarPua = () => {
       setMateriaData(null);
       return;
     }
-    fetch(`http://localhost:8000/api/materias/${materiaIdSeleccionada}`)
+    fetch(`${API_BASE_URL}/materias/${materiaIdSeleccionada}`)
       .then(res => res.json())
       .then(data => {
         setMateriaData(data.materia || data); 
@@ -214,7 +214,7 @@ const ProcesarPua = () => {
       resetDocumentoState();
       return;
     }
-    fetch(`http://localhost:8000/api/carreras/${carreraSeleccionada}/planestudio`)
+    fetch(`${API_BASE_URL}/carreras/${carreraSeleccionada}/planestudio`)
       .then(res => res.json())
       .then(data => {
         setPlanEstudio(data.plan_estudio || null);
@@ -279,7 +279,7 @@ const ProcesarPua = () => {
     let cancelado = false;
     Promise.all(
       faltantes.map(c =>
-        fetch(`http://localhost:8000/api/carreras/${c.carrera_id}/planestudio`)
+        fetch(`${API_BASE_URL}/carreras/${c.carrera_id}/planestudio`)
           .then(r => (r.ok ? r.json() : null))
           .then(d => ({ id: String(c.carrera_id), nombre: d?.plan_estudio?.nombre || "" }))
           .catch(() => ({ id: String(c.carrera_id), nombre: "" }))
@@ -323,7 +323,7 @@ const ProcesarPua = () => {
     setCarrerasError('');
     setCarrerasDisponibles([]);
 
-    fetch(`http://localhost:8000/api/carreras/facultad/${facultadSeleccionada}`)
+    fetch(`${API_BASE_URL}/carreras/facultad/${facultadSeleccionada}`)
       .then(res => {
         if (!res.ok) throw new Error('No se pudieron cargar las carreras de la facultad');
         return res.json();
@@ -388,17 +388,17 @@ const ProcesarPua = () => {
   }), [puaDocumento, modulosEstado, updateModuloData, saveModulo, docente?.docente_id]);
 
   return (
-    <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen w-screen h-screen flex flex-col bg-gray-100 text-gray-900">
       <div className="flex w-full">
         <div className="flex flex-col">
-          <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300 text-gray-700 dark:text-gray-100">
+          <header className="bg-white border-b border-gray-200 flex items-center px-6 py-2 h-[78px] w-full fixed left-0 top-0 z-30 transition-all duration-300 text-gray-700">
             <div className="flex items-center gap-2">
               <a href="/PanelAcceso">
-                <img src="/src/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain cursor-pointer" />
+                <img src="/imagenes/imagen_salida1.png" alt="UAC Logo" className="w-12 h-12 object-contain cursor-pointer" />
               </a>
               <div className="ml-2">
-                <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight"></div>
-                <div className="text-xs text-gray-700 dark:text-gray-200 leading-tight">
+                <div className="text-xs text-gray-700 leading-tight"></div>
+                <div className="text-xs text-gray-700 leading-tight">
                   Programas de Unidad<br />de Aprendizaje
                 </div>
               </div>
@@ -416,7 +416,7 @@ const ProcesarPua = () => {
 
         <main className="flex-1 flex flex-col items-center justify-start pt-28 pb-8 overflow-y-auto ml-16 md:ml-20 transition-all duration-300 h-[calc(100vh)] scrollbar-thin scrollbar-thumb-gray-300 w-full">
           <div className="w-full max-w-4xl mx-auto">
-            <div className="text-center text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">
+            <div className="text-center text-lg font-semibold text-gray-700 mb-4">
               {bienvenida}
             </div>
 
@@ -425,7 +425,7 @@ const ProcesarPua = () => {
               <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Facultad:</label>
-                  <select className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                  <select className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900"
                     value={facultadSeleccionada}
                     onChange={e => {
                       setFacultadSeleccionada(e.target.value);
@@ -449,7 +449,7 @@ const ProcesarPua = () => {
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Carrera:</label>
                   <select
-                    className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                    className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900"
                     value={carreraSeleccionada}
                     onChange={e => {
                       const carreraId = e.target.value;
@@ -477,7 +477,7 @@ const ProcesarPua = () => {
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-gray-700 font-semibold mb-1">Materia:</label>
                   <select
-                    className="w-full border dark:border-gray-700 rounded px-3 py-2 bg-white dark:bg-gray-900 dark:text-gray-100"
+                    className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900"
                     value={materiaIdSeleccionada}
                     onChange={e => setMateriaIdSeleccionada(e.target.value)}
                   >
@@ -548,13 +548,13 @@ const ProcesarPua = () => {
             )}
 
             <div className="flex justify-end gap-2 mt-8 w-full">
-              <button type="button" className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500">
+              <button type="button" className="border border-blue-700 text-blue-700 bg-white px-3 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800">
                 <span className="fa fa-print" /> Imprimir
               </button>
               {pdfError && <div className="text-sm text-red-600 mr-auto">{pdfError}</div>}
               <button
                 type="button"
-                className="border border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-300 bg-white dark:bg-gray-800 px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 dark:hover:bg-blue-950 dark:hover:border-blue-500 disabled:opacity-50"
+                className="border border-blue-700 text-blue-700 bg-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-50 hover:border-blue-800 disabled:opacity-50"
                 disabled={!puaDocumento || generatingPdf}
                 onClick={handleGenerarPdf}
               >
