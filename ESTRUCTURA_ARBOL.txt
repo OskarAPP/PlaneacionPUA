@@ -1,0 +1,208 @@
+PlaneacionPUA/
+├── backend/
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       ├── AcademiaController.php
+│   │   │       ├── AccesoController.php
+│   │   │       ├── AreaController.php
+│   │   │       ├── BibliografiaController.php
+│   │   │       ├── CargoController.php
+│   │   │       ├── CarreraController.php
+│   │   │       ├── CompetenciaEspecificaController.php
+│   │   │       ├── CompetenciaGenericaController.php
+│   │   │       ├── Controller.php
+│   │   │       ├── DocenteController.php
+│   │   │       ├── FacultadController.php
+│   │   │       ├── ImagenController.php
+│   │   │       ├── MateriaController.php
+│   │   │       ├── NotificacionController.php
+│   │   │       ├── NucleoController.php
+│   │   │       ├── PdfDemoController.php
+│   │   │       ├── PersonalController.php
+│   │   │       ├── PlanEstudioController.php
+│   │   │       ├── PuaPdfController.php
+│   │   │       ├── RolController.php
+│   │   │       └── TipoMateriaController.php
+│   │   ├── Models/
+│   │   │   ├── Academia.php
+│   │   │   ├── Acceso.php
+│   │   │   ├── Area.php
+│   │   │   ├── Bibliografia.php
+│   │   │   ├── Cargo.php
+│   │   │   ├── Carrera.php
+│   │   │   ├── CompetenciaEspecifica.php
+│   │   │   ├── CompetenciaGenerica.php
+│   │   │   ├── Docente.php
+│   │   │   ├── DocenteMateria.php
+│   │   │   ├── Facultad.php
+│   │   │   ├── Imagen.php
+│   │   │   ├── Materia.php
+│   │   │   ├── Notificacion.php
+│   │   │   ├── Nucleo.php
+│   │   │   ├── Personal.php
+│   │   │   ├── PlanEstudio.php
+│   │   │   ├── Rol.php
+│   │   │   ├── TipoMateria.php
+│   │   │   └── User.php
+│   │   └── Providers/
+│   │       └── AppServiceProvider.php
+│   ├── bootstrap/
+│   │   ├── app.php
+│   │   ├── cache/
+│   │   └── providers.php
+│   ├── config/
+│   │   ├── app.php
+│   │   ├── auth.php
+│   │   ├── cache.php
+│   │   ├── cors.php
+│   │   ├── database.php
+│   │   ├── filesystems.php
+│   │   ├── logging.php
+│   │   ├── mail.php
+│   │   ├── queue.php
+│   │   ├── services.php
+│   │   └── session.php
+│   ├── database/
+│   │   ├── factories/
+│   │   │   └── UserFactory.php
+│   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   └── 2025_06_19_000000_create_imagenes_table.php
+│   │   ├── seeders/
+│   │   │   └── DatabaseSeeder.php
+│   │   ├── create_imagenes_table.sql.txt
+│   │   └── create_users_table.sql.txt
+│   ├── public/
+│   │   ├── images/
+│   │   │   └── 60aniversario.png
+│   │   ├── storage/
+│   │   ├── .htaccess
+│   │   ├── favicon.ico
+│   │   ├── index.php
+│   │   └── robots.txt
+│   ├── resources/
+│   │   ├── css/
+│   │   │   └── app.css
+│   │   ├── js/
+│   │   │   ├── app.js
+│   │   │   └── bootstrap.js
+│   │   └── views/
+│   │       ├── pdf/
+│   │       │   ├── ejemplo.blade.php
+│   │       │   └── pua_ejemplo.blade.php
+│   │       └── welcome.blade.php
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── console.php
+│   │   └── web.php
+│   ├── storage/
+│   │   ├── app/
+│   │   ├── framework/
+│   │   └── logs/
+│   ├── tests/
+│   │   ├── Feature/
+│   │   │   └── ExampleTest.php
+│   │   ├── Unit/
+│   │   │   └── ExampleTest.php
+│   │   └── TestCase.php
+│   ├── .editorconfig
+│   ├── .env.example
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── README.md
+│   ├── artisan
+│   ├── composer.json
+│   ├── composer.lock
+│   ├── package.json
+│   ├── phpunit.xml
+│   └── vite.config.js
+├── frontend/
+│   ├── public/
+│   │   └── vite.svg
+│   ├── src/
+│   │   ├── Academias/
+│   │   │   ├── Academias.jsx
+│   │   │   └── RegistroAcademias.jsx
+│   │   ├── Area/
+│   │   │   ├── Area.jsx
+│   │   │   └── RegistroAreas.jsx
+│   │   ├── Biblioteca/
+│   │   │   ├── Libros.jsx
+│   │   │   └── RegistroLibros.jsx
+│   │   ├── Carreras/
+│   │   │   ├── Carreras.jsx
+│   │   │   └── RegistroCarreras.jsx
+│   │   ├── CompetenciasEspe/
+│   │   │   ├── CompetenciasE.jsx
+│   │   │   └── RegistroCompeE.jsx
+│   │   ├── CompetenciasGen/
+│   │   │   ├── CompetenciasG.jsx
+│   │   │   └── RegistroCompeG.jsx
+│   │   ├── Components/
+│   │   │   └── Sidebar.jsx
+│   │   ├── Docentes/
+│   │   │   ├── Docentes.jsx
+│   │   │   └── RegistroDocentes.jsx
+│   │   ├── Facultad/
+│   │   │   ├── Facultades.jsx
+│   │   │   └── RegistroFacultad.jsx
+│   │   ├── Imagenes/
+│   │   │   ├── 60aniversario.png
+│   │   │   ├── UAC.png
+│   │   │   └── imagen_salida1.png
+│   │   ├── Inicio/
+│   │   │   └── PanelAcceso.jsx
+│   │   ├── Login/
+│   │   │   └── Login.jsx
+│   │   ├── Materias/
+│   │   │   ├── Materias.jsx
+│   │   │   └── RegistroMaterias.jsx
+│   │   ├── Perfil/
+│   │   │   └── PerfilUsuario.jsx
+│   │   ├── Pua/
+│   │   │   ├── components/
+│   │   │   │   ├── modals/
+│   │   │   │   │   ├── NuevaBibliografiaModal.jsx
+│   │   │   │   │   ├── NuevoActividadModal.jsx
+│   │   │   │   │   ├── NuevoSubtemaModal.jsx
+│   │   │   │   │   ├── NuevoTemaModal.jsx
+│   │   │   │   │   ├── PerfilAcademicoModal.jsx
+│   │   │   │   │   ├── PerfilDocenteModal.jsx
+│   │   │   │   │   └── SubcompetenciaModal.jsx
+│   │   │   │   ├── Accordion.jsx
+│   │   │   │   ├── BibliografiaSugerida.jsx
+│   │   │   │   ├── ComiteCurricular.jsx
+│   │   │   │   ├── CompetenciasPerfilEgresoTabs.jsx
+│   │   │   │   ├── DatosPuaForm.jsx
+│   │   │   │   ├── EvaluacionFinal.jsx
+│   │   │   │   ├── EvaluacionPorCompetencias.jsx
+│   │   │   │   ├── PerfilDocenteTabs.jsx
+│   │   │   │   ├── SidebarProcesarPua.jsx
+│   │   │   │   └── SubcompetenciaPanel.jsx
+│   │   │   ├── constants/
+│   │   │   │   └── puaConstants.js
+│   │   │   ├── hooks/
+│   │   │   │   └── useDocente.js
+│   │   │   ├── ProcesarPua.jsx
+│   │   │   └── PuaVersion.jsx
+│   │   ├── assets/
+│   │   │   └── react.svg
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── .gitignore
+│   ├── README.md
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   └── vite.config.js
+├── README.md
+├── package-lock.json
+└── pua_schema.txt
